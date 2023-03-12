@@ -25,6 +25,9 @@ def modal(request):
 def table(request):
     return render(request, "tables.html")
 
+def deployment(request):
+    return render(request, "deployments.html")
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
 

@@ -11,5 +11,6 @@ urlpatterns = [
     path('chart/', views.chart, name='chart'),
     path('button/', views.button, name='button'),
     path('modal/', views.modal, name='modal'),
-    path('table/', views.table, name='table')
+    path('table/', views.table, name='table'),
+    path('deployment/', views.deployment, name = 'deployment')
 ]
