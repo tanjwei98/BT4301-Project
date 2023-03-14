@@ -12,5 +12,6 @@ urlpatterns = [
     path('button/', views.button, name='button'),
     path('modal/', views.modal, name='modal'),
     path('table/', views.table, name='table'),
-    path('deployment/', views.deployment, name = 'deployment')
+    path('deployment/', views.deployment, name = 'deployment'),
+    path('overview/', views.overview, name = 'overview')
 ]

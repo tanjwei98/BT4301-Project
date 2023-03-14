@@ -28,6 +28,9 @@ def table(request):
 def deployment(request):
     return render(request, "deployments.html")
 
+def overview(request):
+    return render(request, "overview.html")
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
 
