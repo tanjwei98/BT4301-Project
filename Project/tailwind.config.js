@@ -3,7 +3,8 @@ const plugin = require('tailwindcss/plugin')
 const Color = require('color')
 
 module.exports = {
-  purge: ['public/**/*.html'],
+  purge: ["templates/**/*.{html,js}"],
+  //purge: ['public/**/*.html'],
   theme: {
     themeVariants: ['dark'],
     customForms: (theme) => ({
@@ -167,6 +168,10 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
+      gridTemplateColumns: {
+        // Simple 16 column grid
+        '16': 'repeat(16, minmax(0, 1fr))',
       },
     },
   },
