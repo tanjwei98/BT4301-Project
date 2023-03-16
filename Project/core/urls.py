@@ -13,5 +13,6 @@ urlpatterns = [
     path('modal/', views.modal, name='modal'),
     path('table/', views.table, name='table'),
     path('deployment/', views.deployment, name = 'deployment'),
-    path('overview/', views.overview, name = 'overview')
+    path('overview/', views.overview, name = 'overview'),
+    path('drift/', views.datadrift, name = 'drift')
 ]

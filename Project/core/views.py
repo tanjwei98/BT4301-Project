@@ -31,6 +31,9 @@ def deployment(request):
 def overview(request):
     return render(request, "overview.html")
 
+def datadrift(request):
+    return render(request, "datadrift.html")
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
 
