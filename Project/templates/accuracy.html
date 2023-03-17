@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
   <head>
@@ -30,6 +29,106 @@
     <script src={% static '/js/charts-lines.js' %} defer></script>
     <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
     <script src={% static '/js/charts-pie.js' %} defer></script>
+    <script>
+      var test = "TESTING"
+      function displayValue(button) {
+        console.log("pressed")
+        var val = button.querySelector("button h1").innerText;
+        console.log("this is the val",val)
+        document.getElementById("display_metric").innerText = val;
+      }
+      window.onload = function() {
+      // Get the start date button and input field
+      const startDateBtn = document.getElementById('start-date-dropdown');
+      const startDateInput = document.getElementById('start-date');
+
+      // Listen for the input change event
+      startDateInput.addEventListener('change', function() {
+        // Get the selected date value
+        const selectedDate = startDateInput.value;
+
+        // Update the button text with the selected date
+        startDateBtn.textContent = selectedDate;
+      });
+      const EndDateBtn = document.getElementById('end-date-dropdown');
+      const EndDateInput = document.getElementById('end-date');
+
+      // Listen for the input change event
+      EndDateInput.addEventListener('change', function() {
+        // Get the selected date value
+        const selectedDate = EndDateInput.value;
+
+        // Update the button text with the selected date
+        EndDateBtn.textContent = selectedDate;
+      });
+    }
+    </script>
+    <style>
+         .buttons-flex {
+             display: -webkit-flex;
+             display: flex;
+             -webkit-justify-content: space-between;
+             justify-content: space-between;
+             flex-wrap: wrap;
+         }
+
+         .buttons-flex button {
+            width: 200px;
+            margin: 1%;
+         }
+
+         .dropdown-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 2%;
+          }
+
+          .dropdown {
+            position: relative;
+            display: inline-block;
+            flex: 1 1 auto;
+            margin: 1%;
+            margin-right: 20px;
+          }
+
+          .dropdown-btn {
+            background-color: white;
+            color: #333;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+          }
+
+          .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            padding: 10px;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            left: 0;
+            right: 0;
+          }
+
+          .dropdown-content a {
+            color: #333;
+            display: block;
+            padding: 10px;
+          }
+
+          .dropdown:hover .dropdown-content {
+            display: block;
+          }
+
+
+
+      </style>
   </head>
   <body>
     <div
@@ -389,13 +488,13 @@
                   <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="service_health">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="accuracy">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Accuracy</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Humility</a>
@@ -406,8 +505,98 @@
               </ul>
             </div>
             <!--Content for your page-->
+            <div class="dropdown-panel">
+              <label for="start-date-dropdown" style="color: white;">Start Date:</label>
+              <div class="dropdown">
+                <button class="dropdown-btn" id="start-date-dropdown" data-selected-value="">Select</button>
+                <div class="dropdown-content">
+                  <input type="date" id="start-date">
+                </div>
+              </div>
+              <label for="end-date-dropdown" style="color: white;">End Date:</label>
+              <div class="dropdown">
+                <button class="dropdown-btn" id="end-date-dropdown">Select</button>
+                <div class="dropdown-content">
+                  <input type="date" id="end-date">
+                </div>
+              </div>
+              <label for="resolution-date-dropdown" style="color: white;">Resolution:</label>
+              <div class="dropdown">
+                <button class="dropdown-btn" id="resolution-date-dropdown">Select</button>
+                <div class="dropdown-content">
+                  <button value="weekly">Weekly</option>
+                  <a href="#" data-value="monthly">Monthly</a>
+                  <a href="#" data-value="daily">Daily</a>
+                </div>
+              </div>
+              <label for="segment-date-dropdown" style="color: white;">Segment Attribute:</label>
+              <div class="dropdown">
+                <button class="dropdown-btn" id="segment-date-dropdown">Select</button>
+                <div class="dropdown-content">
+                  <a href="#" data-value="north">North</a>
+                  <a href="#" data-value="south">South</a>
+                  <a href="#" data-value="east">East</a>
+                  <a href="#" data-value="west">West</a>
+                </div>
+              </div>
+            </div>
             <div class = "bg-purple-600 dark:bg-gray-800 flex-1 my-6">
-              <h2>XXXXX</h2>
+              <div class="buttons-flex">
+                <button
+                  class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  onclick="displayValue(this)"
+                >
+                  <h1>Response Time</h1> 
+                  <h1 style="padding-top: 8%;">5 ms</h1>
+                </button>
+                <button
+                  class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  onclick="displayValue(this)">
+                  <h1>Execution Time</h1>
+                  <h1 style="padding-top: 8%;">5 ms</h1>
+                </button>
+                  <button
+                  class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  onclick="displayValue(this)">
+                  <h1>Data Error Rate</h1>
+                  <h1 style="padding-top: 8%;">3.00%</h1>
+                </button>
+                <button
+                  class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  onclick="displayValue(this)">
+                 <h1>System Error Rate</h1>
+                 <h1 style="padding-top: 8%;">3.00%</h1>
+                </button>
+                <button
+                  class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                  onclick="displayValue(this)">
+                 <h1>Total Requests</h1>
+                 <h1 style="padding-top: 8%;">30.1k</h1>
+                </button>
+              </div>
+            </div>
+            <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+              <h4 id="display_metric" class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
+                Data Error Rate
+              </h4>
+              <canvas id="line"></canvas>
+                <div
+                  class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400"
+                >
+                  <!-- Chart legend -->
+                  <div class="flex items-center">
+                    <span
+                      class="inline-block w-3 h-3 mr-1 bg-teal-500 rounded-full"
+                    ></span>
+                    <span>Requests</span>
+                  </div>
+                  <div class="flex items-center">
+                    <span
+                      class="inline-block w-3 h-3 mr-1 bg-purple-600 rounded-full"
+                    ></span>
+                  <span>Data Error Rate</span>
+                </div>
+              </div>
             </div>
           </div>
         </main>

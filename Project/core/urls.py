@@ -13,5 +13,8 @@ urlpatterns = [
     path('modal/', views.modal, name='modal'),
     path('table/', views.table, name='table'),
     path('deployment/', views.deployment, name = 'deployment'),
-    path('overview/', views.overview, name = 'overview')
+    path('overview/', views.overview, name = 'overview'),
+    path('overview/accuracy', views.accuracy, name = 'accuracy'),
+    path('overview/service_health', views.service_health, name = 'service_health')
+    
 ]
