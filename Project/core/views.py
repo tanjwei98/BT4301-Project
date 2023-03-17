@@ -34,6 +34,9 @@ def overview(request):
 def datadrift(request):
     return render(request, "datadrift.html")
 
+def humility(request):
+    return render(request, "humility.html")
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
 

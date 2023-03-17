@@ -14,5 +14,6 @@ urlpatterns = [
     path('table/', views.table, name='table'),
     path('deployment/', views.deployment, name = 'deployment'),
     path('overview/', views.overview, name = 'overview'),
-    path('drift/', views.datadrift, name = 'drift')
+    path('drift/', views.datadrift, name = 'drift'),
+    path('humility/', views.humility, name = 'humility')
 ]
