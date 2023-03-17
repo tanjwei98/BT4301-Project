@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Model Overview</title>
+    <title>Humility</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -386,179 +386,71 @@
             <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
               <ul class="flex">
                 <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Overview</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="service_health">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="accuracy">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Accuracy</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
+                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Humility</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Challengers</a>
                 </li>
               </ul>
             </div>
             <!--Content for your page-->
             <div class="container mx-auto grid">
-              <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
+              <div class="flex flex-col justify-between p-4 my-4 text-sm font-semibold text-purple-100">
                   <div>
-                    <p> This deployment has pending changes</p>
-                  </div>
-                  <div>
-                    <button @click="openModal" class="mt-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                      Add Review
+                    <button class="text-sm px-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                      + Add Rule
                     </button>
                   </div>
               </div>
-              <div class="grid gap-6 xl:grid-cols-3" >
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Summary
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Name:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Description:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Importance:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Approval Status:
-                  </h5>
-                </div>
-
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Content
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Dataset:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Target:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Model:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Built Environment:
-                  </h5>
-                </div>
-
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Governance Logs
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Deployment Created:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Updates:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Reviewed:
-                  </h5>
-                </div>
+              <div class="w-full overflow-x-auto">
+                <table class="w-full whitespace-no-wrap">
+                  <thead>
+                    <tr
+                      class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                    >
+                      <th class="px-4 py-3">Rule Name</th>
+                      <th class="px-4 py-3">Trigger</th>
+                      <th class="px-4 py-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
+                  >
+                    <tr class="text-gray-700 dark:text-gray-400">
+                      <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                          <div>
+                            <p class="font-semibold">HDB Pricing Prediction</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">
+                              Updated by xxx@xxx.com
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-sm">
+                        Uncertain Prediction
+                      </td>
+                      <td class="px-4 py-3 text-sm">
+                        Override Prediction
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-            </div>
-
           </div>
         </main>
-      </div>
-    </div>
-    <div
-      x-show="isModalOpen"
-      x-transition:enter="transition ease-out duration-150"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-150"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-      class="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
-    >
-      <!-- Modal -->
-      <div
-        x-show="isModalOpen"
-        x-transition:enter="transition ease-out duration-150"
-        x-transition:enter-start="opacity-0 transform translate-y-1/2"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0  transform translate-y-1/2"
-        @click.away="closeModal"
-        @keydown.escape="closeModal"
-        class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
-        role="dialog"
-        id="modal"
-      >
-        <!-- Remove header if you don't want a close icon. Use modal body to place modal tile. -->
-        <header class="flex justify-end">
-          <button
-            class="inline-flex items-center justify-center w-6 h-6 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-gray-700"
-            aria-label="close"
-            @click="closeModal"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              role="img"
-              aria-hidden="true"
-            >
-              <path
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-                fill-rule="evenodd"
-              ></path>
-            </svg>
-          </button>
-        </header>
-        <!-- Modal body -->
-        <div class="mt-4 mb-6">
-          <!-- Modal title -->
-          <p
-            class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
-          >
-            Submit Review
-          </p>
-          <!-- Modal description -->
-          <p class="text-sm text-gray-700 dark:text-gray-400">
-            Change Summary: 
-          </p>
-
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400 mb-2">Comments:</span>
-            <textarea
-              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              rows="3"
-              placeholder="Enter Comments"
-            ></textarea>
-          </label>
-        </div>
-        <footer
-          class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"
-        >
-          <button
-            @click="closeModal"
-            class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
-          >
-            Cancel
-          </button>
-          <button
-            class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-          >
-            Accept
-          </button>
-        </footer>
       </div>
     </div>
   </body>
