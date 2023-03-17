@@ -33,6 +33,12 @@ def overview(request):
 
 def datadrift(request):
     return render(request, "datadrift.html")
+    
+def challengers(request):
+    return render(request, "challengers.html")
+
+def modelRegistry(request):
+    return render(request, "modelRegistry.html")
 
 def humility(request):
     return render(request, "humility.html")

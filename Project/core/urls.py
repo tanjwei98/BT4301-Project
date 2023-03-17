@@ -15,5 +15,7 @@ urlpatterns = [
     path('deployment/', views.deployment, name = 'deployment'),
     path('overview/', views.overview, name = 'overview'),
     path('drift/', views.datadrift, name = 'drift'),
-    path('humility/', views.humility, name = 'humility')
+    path('humility/', views.humility, name = 'humility'),
+    path('challengers/', views.challengers, name = 'challengers'),
+    path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
 ]
