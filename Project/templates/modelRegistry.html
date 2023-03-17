@@ -60,6 +60,7 @@
       .tab button.active {
         background-color: #ccc;
       }
+
     </style>
 
   </head>
@@ -431,15 +432,89 @@
                     <p> Model Registry </p>
                   </div>
               </div>
-              <div class="grid gap-6 xl:grid-cols-2" >
+              <div class="grid gap-6 xl:grid-cols-2">
                 <div class="tab">
                   <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'addNewModel')" id="defaultOpen">Add new model</button>
                   <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'createNewModel')">Create new model</button>
                 </div>
-                
-                <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
-                  <p>Add new model</p>
-                  <p>[Sweta]</p>
+
+                <div class="flex">
+                  <div class="mr-6 flex-1">
+                    <!-- Your form code goes here -->
+                    <form class="bg-gray-100">
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Name
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                      <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2" for="dropdown">
+                        Language
+                      </label>
+                      <select
+                        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                        id="dropdown"
+                        name="dropdown"
+                      >
+                        <option>Python</option>
+                        <option>JAVA</option>
+                        <option>R</option>
+                      </select>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="version">
+                          Version
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                          </input>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Description
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                          </input>
+                      </div>
+
+                      <button
+                      class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                      type="submit">
+                      +Add new files
+                      </button>
+
+                    </form>
+                  </div>
+
+                  <!-- Your table code goes here -->
+                  <div class="flex-1">
+                    
+                    <table class="table-auto w-full h-full">
+                      <tr>
+                        <td class="border border-black px-4 py-2 text-center">  <button
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          type="submit">
+                          Test Model
+                        </button>
+                        </td>
+                        <td class="border border-black px-4 py-2 text-center">  <button
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          type="submit">
+                          Add to Model Registry
+                        </button></td>
+                      </tr>
+                    </table>
+                  </div>
                 </div>
                 
                 <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
