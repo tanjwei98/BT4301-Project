@@ -36,6 +36,7 @@ def accuracy(request):
 
 def service_health(request):
     return render(request, "service_health.html")
+=======
 def datadrift(request):
     return render(request, "datadrift.html")
     
@@ -50,6 +51,12 @@ def humility(request):
 
 def humility_add(request):
     return render(request, "humilityAdd.html")
+
+def mregistry(request):
+    return render(request, "mregistry.html")
+
+def loginpage(request):
+    return render(request, "loginpage.html")
 
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
