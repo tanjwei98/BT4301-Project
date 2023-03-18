@@ -14,14 +14,12 @@ urlpatterns = [
     path('table/', views.table, name='table'),
     path('deployment/', views.deployment, name = 'deployment'),
     path('overview/', views.overview, name = 'overview'),
-<<<<<<< HEAD
     path('overview/accuracy', views.accuracy, name = 'accuracy'),
-    path('overview/service_health', views.service_health, name = 'service_health')
+    path('overview/service_health', views.service_health, name = 'service_health'),
     
-=======
     path('drift/', views.datadrift, name = 'drift'),
     path('humility/', views.humility, name = 'humility'),
+    path('humility/add', views.humility_add, name = 'humility_add'),
     path('challengers/', views.challengers, name = 'challengers'),
     path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
->>>>>>> origin/main
 ]
