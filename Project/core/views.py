@@ -36,7 +36,7 @@ def accuracy(request):
 
 def service_health(request):
     return render(request, "service_health.html")
-=======
+
 def datadrift(request):
     return render(request, "datadrift.html")
     
