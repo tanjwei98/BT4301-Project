@@ -31,6 +31,13 @@ def deployment(request):
 def overview(request):
     return render(request, "overview.html")
 
+<<<<<<< HEAD
+def accuracy(request):
+    return render(request, "accuracy.html")
+
+def service_health(request):
+    return render(request, "service_health.html")
+=======
 def datadrift(request):
     return render(request, "datadrift.html")
     
@@ -42,6 +49,7 @@ def modelRegistry(request):
 
 def humility(request):
     return render(request, "humility.html")
+>>>>>>> origin/main
 
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
