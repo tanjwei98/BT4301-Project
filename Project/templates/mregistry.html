@@ -156,7 +156,7 @@
     <div class="relative" style='width: 50%; height: 50%;'>
       <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
-        <form id='testmodel_submit' style = 'height: 100%;'>
+        <form id='modreg_submit' style = 'height: 100%;'>
           <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
           {% csrf_token %}
           <div id='m1header' style='color: white; padding: 10px;'>
@@ -172,9 +172,9 @@
               </li>
               <li>
                 <a href="#" style="display: inline">Reason for Change: </a>
-                <div class="dropdown">
-                  <button class="dropbtn">Select Reason</button>
-                  <div class="dropdown-content">
+                <div class="dropdown-mr">
+                  <button class="dropbtn_reason">Select Reason</button>
+                  <div class="dropdown-content-reason">
                     <a>Accuracy</a>
                     <a>Outdated</a>
                     <a>Code error</a>
@@ -242,7 +242,7 @@
 
 
     /* Dropdown Button */
-    .dropbtn {
+    .dropbtn_reason {
       background-color: #04AA6D;
       color: white;
       padding: 5px;
@@ -253,13 +253,13 @@
     }
 
     /* The container <div> - needed to position the dropdown content */
-    .dropdown {
+    .dropdown-mr {
       position: relative;
       display: inline-block;
     }
 
     /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
+    .dropdown-content-reason {
       display: none;
       position: absolute;
       background-color: #f1f1f1;
@@ -269,7 +269,7 @@
     }
 
     /* Links inside the dropdown */
-    .dropdown-content a {
+    .dropdown-content-reason a {
       color: black;
       padding: 12px 16px;
       text-decoration: none;
@@ -277,17 +277,17 @@
     }
 
     /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {
+    .dropdown-content-reason a:hover {
       background-color: #ddd;
     }
 
     /* Show the dropdown menu on hover */
-    .dropdown:hover .dropdown-content {
+    .dropdown-mr:hover .dropdown-content-reason {
       display: block;
     }
 
     /* Change the background color of the dropdown button when the dropdown content is shown */
-    .dropdown:hover .dropbtn {
+    .dropdown-mr:hover .dropbtn_reason {
       background-color: #3e8e41;
     }
   </style>

@@ -2,75 +2,126 @@
 
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Challengers Model Registry [WIP]</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
-    <link rel="stylesheet" href= {% static '/css/tailwind.output.css' %} />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/init-alpine.js"></script> -->
-    <script src={% static '/js/init-alpine.js' %}></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
-    <script src={% static '/js/charts-lines.js' %} defer></script>
-    <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
-    <script src={% static '/js/charts-pie.js' %} defer></script>
 
-    <style>
-      /* Style the tab */
-      .tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challengers Model Registry [WIP]</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
+  <link rel="stylesheet" href={% static '/css/tailwind.output.css' %} />
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <!-- <script src="./assets/js/init-alpine.js"></script> -->
+  <script src={% static '/js/init-alpine.js' %}></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+  <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
+  <script src={% static '/js/charts-lines.js' %} defer></script>
+  <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
+  <script src={% static '/js/charts-pie.js' %} defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
 
-      /* Style the buttons inside the tab */
-      .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-      }
+  <style>
+    /* Style the tab */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
 
-      /* Change background color of buttons on hover */
-      .tab button:hover {
-        background-color: #ddd;
-      }
+    /* Style the buttons inside the tab */
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+      font-size: 17px;
+    }
 
-      /* Create an active/current tablink class */
-      .tab button.active {
-        background-color: #ccc;
-      }
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+      background-color: #ddd;
+    }
 
-    </style>
+    /* Create an active/current tablink class */
+    .tab button.active {
+      background-color: #ccc;
+    }
 
-  </head>
-  <body>
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
-      :class="{ 'overflow-hidden': isSideMenuOpen }"
-    >
-      <!-- Desktop sidebar -->
-      <!-- <aside
+    #consolelog-output {
+      background-color: white;
+      height: 100%;
+      margin-bottom: 10px;
+      border: 1px solid black;
+      color: black;
+      width: 100%;
+      overflow-y: scroll;
+      /* add scrollbar when content exceeds height */
+      padding: 10px;
+      font-size: 14px;
+    }
+
+
+    /* Dropdown Button */
+    .dropbtn_reason {
+      background-color: #04AA6D;
+      color: white;
+      padding: 5px;
+      font-size: 14px;
+      border: none;
+      height: 50%;
+      margin-left: 10px;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown-mr {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content-reason {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content-reason a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content-reason a:hover {
+      background-color: #ddd;
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown-mr:hover .dropdown-content-reason {
+      display: block;
+    }
+
+    /* Change the background color of the dropdown button when the dropdown content is shown */
+    .dropdown-mr:hover .dropbtn_reason {
+      background-color: #3e8e41;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
+    <!-- Desktop sidebar -->
+    <!-- <aside
         class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
       >
         <div class="py-4 text-gray-500 dark:text-gray-400">
@@ -110,20 +161,15 @@
           </ul>
         </div>
       </aside> -->
-      <div class="flex flex-col flex-1 w-full">
-        <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
-          <div
-            class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300"
-          >
-            <a
-              class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-              href="/app/deployment/"
-            >
-              MLOps Suite
-            </a> 
-            <!-- Search input -->
-            <div class="flex justify-center flex-1 mx-30 lg:mr-32">
-              <!-- <div
+    <div class="flex flex-col flex-1 w-full">
+      <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+        <div class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300">
+          <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="/app/deployment/">
+            MLOps Suite
+          </a>
+          <!-- Search input -->
+          <div class="flex justify-center flex-1 mx-30 lg:mr-32">
+            <!-- <div
                 class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
               >
                 <div class="absolute inset-y-0 flex items-center pl-2">
@@ -147,91 +193,56 @@
                   aria-label="Search"
                 />
               </div> -->
-            </div>
-            <ul class="flex items-center flex-shrink-0 space-x-6">
-              <!-- Theme toggler -->
-              <li class="flex">
-                <button
-                  class="rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleTheme"
-                  aria-label="Toggle color mode"
-                >
-                  <template x-if="!dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-                      ></path>
-                    </svg>
-                  </template>
-                  <template x-if="dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </template>
-                </button>
-              </li>
-              <!-- Notifications menu -->
-              <li class="relative">
-                <button
-                  class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleNotificationsMenu"
-                  @keydown.escape="closeNotificationsMenu"
-                  aria-label="Notifications"
-                  aria-haspopup="true"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                    ></path>
+          </div>
+          <ul class="flex items-center flex-shrink-0 space-x-6">
+            <!-- Theme toggler -->
+            <li class="flex">
+              <button class="rounded-md focus:outline-none focus:shadow-outline-purple" @click="toggleTheme"
+                aria-label="Toggle color mode">
+                <template x-if="!dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                   </svg>
-                  <!-- Notification badge -->
-                  <span
-                    aria-hidden="true"
-                    class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-                  ></span>
-                </button>
-                <template x-if="isNotificationsMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeNotificationsMenu"
-                    @keydown.escape="closeNotificationsMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Messages</span>
-                        <span
-                          class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600"
-                        >
-                          13
-                        </span>
-                      </a>
-                    </li>
-                    <!-- <li class="flex">
+                </template>
+                <template x-if="dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </template>
+              </button>
+            </li>
+            <!-- Notifications menu -->
+            <li class="relative">
+              <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+                @click="toggleNotificationsMenu" @keydown.escape="closeNotificationsMenu" aria-label="Notifications"
+                aria-haspopup="true">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                  </path>
+                </svg>
+                <!-- Notification badge -->
+                <span aria-hidden="true"
+                  class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
+              </button>
+              <template x-if="isNotificationsMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeNotificationsMenu"
+                  @keydown.escape="closeNotificationsMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700">
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Messages</span>
+                      <span
+                        class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">
+                        13
+                      </span>
+                    </a>
+                  </li>
+                  <!-- <li class="flex">
                       <a
                         class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="#"
@@ -244,441 +255,361 @@
                         </span>
                       </a>
                     </li> -->
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Alerts</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
-              </li>
-              <!-- Profile menu -->
-              <li class="relative">
-                <button
-                  class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
-                  @click="toggleProfileMenu"
-                  @keydown.escape="closeProfileMenu"
-                  aria-label="Account"
-                  aria-haspopup="true"
-                >
-                  <!-- <img
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Alerts</span>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+            <!-- Profile menu -->
+            <li class="relative">
+              <button class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
+                @click="toggleProfileMenu" @keydown.escape="closeProfileMenu" aria-label="Account" aria-haspopup="true">
+                <!-- <img
                     class="object-cover w-8 h-8 rounded-full"
                     src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
                     alt=""
                     aria-hidden="true"
                   /> -->
-                  <svg
-                    class="w-5 h-5"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                      <path
-                        stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      ></path>
-                  </svg>
-                </button>
-                <template x-if="isProfileMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeProfileMenu"
-                    @keydown.escape="closeProfileMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                    aria-label="submenu"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Profile</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Settings</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Log out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
+                <svg class="w-5 h-5" fill="currentColor" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
+                  </path>
+                </svg>
+              </button>
+              <template x-if="isProfileMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeProfileMenu" @keydown.escape="closeProfileMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                  aria-label="submenu">
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Profile</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Settings</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Log out</span>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+          </ul>
+        </div>
+      </header>
+      <main class="h-full overflow-y-auto">
+        <div class="container px-6 my-6 mx-auto grid">
+          <!-- New Table -->
+          <div class="w-full overflow-hidden shadow-xs">
+            <div class="w-full overflow-x-auto">
+              <table class="w-full whitespace-no-wrap">
+                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                  <tr class="text-gray-700 dark:text-gray-400">
+                    <td class="px-4 py-3">
+                      <div class="flex items-center text-sm">
+                        <div>
+                          <p class="font-semibold">HDB Pricing Prediction</p>
+                          <p class="text-xs text-gray-600 dark:text-gray-400">
+                            <!--Can include pending status here-->
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      High
+                    </td>
+                    <td class="px-4 py-3 text-xs">
+                      <svg fill="none" stroke="green" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      <svg fill="black" stroke="yellow" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z">
+                        </path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      <svg fill="none" stroke="red" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      1 day ago
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--Navigation tabs to other pages-->
+          <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
+            <ul class="flex">
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview">Overview</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview/service_health">Service Health</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/drift">Data Drift</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview/accuracy">Accuracy</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/humility">Humility</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/challengers">Challengers</a>
               </li>
             </ul>
           </div>
-        </header>
-        <main class="h-full overflow-y-auto">
-          <div class="container px-6 my-6 mx-auto grid">
-            <!-- New Table -->
-            <div class="w-full overflow-hidden shadow-xs">
-              <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                  <tbody
-                    class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-                  >
-                    <tr class="text-gray-700 dark:text-gray-400">
-                      <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                          <div>
-                            <p class="font-semibold">HDB Pricing Prediction</p>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">
-                              <!--Can include pending status here-->
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        High
-                      </td>
-                      <td class="px-4 py-3 text-xs">
-                        <svg 
-                          fill="none"
-                          stroke="green"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width = "50"
-                          height = "50"
-                        >
-                          <path
-                            stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        <svg
-                          fill="black"
-                          stroke="yellow"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width="50"
-                          height="50"
-                        >
-                          <path 
-                            stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        <svg 
-                          fill="none"
-                          stroke="red"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width="50"
-                          height="50"
-                        >
-                          <path
-                            stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        1 day ago
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          <!--Content for your page-->
+          <div class="container mx-auto grid">
+            <div class="flex flex-row justify-between p-4 my-8 text-l font-semibold text-purple-100 bg-purple-600">
+              <div>
+                <p> Model Registry </p>
               </div>
             </div>
-            <!--Navigation tabs to other pages-->
-            <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
-              <ul class="flex">
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/service_health">Service Health</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/accuracy">Accuracy</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
-                </li>
-              </ul>
-            </div>
-            <!--Content for your page-->
-            <div class="container mx-auto grid">
-              <div class="flex flex-row justify-between p-4 my-8 text-l font-semibold text-purple-100 bg-purple-600">
-                  <div>
-                    <p> Model Registry </p>
+            <div class="grid gap-6 xl:grid-cols-2">
+              <div class="tab">
+                <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'addNewModel')"
+                  id="defaultOpen">Add new model</button>
+                <button class="tablinks bg-purple-600 text-s font-semibold"
+                  onclick="openTab(event, 'createNewModel')">Create new model</button>
+              </div>
+
+              <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
+                <div class="flex">
+                  <div class="mr-6 flex-1">
+                    <!-- Your form code goes here -->
+                    <form class="bg-gray-100">
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Name
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="dropdown">
+                          Language
+                        </label>
+                        <select
+                          class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                          id="dropdown" name="dropdown">
+                          <option>Python</option>
+                          <option>JAVA</option>
+                          <option>R</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="version">
+                          Version
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Description
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                      <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                        type="submit">
+                        +Add new files
+                      </button>
+
+                    </form>
                   </div>
+
+                  <!-- Your table code goes here -->
+                  <div class="flex-1">
+
+                    <table class="table-auto w-full h-full">
+                      <tr>
+                        <td class="border border-black px-4 py-2 text-center"> <button data-modal-target="testmodel"
+                            data-modal-toggle="testmodel"
+                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                            type="button">
+                            Test Model
+                          </button>
+                        </td>
+                        <td class="border border-black px-4 py-2 text-center"> <button
+                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                            type="submit">
+                            Add to Model Registry
+                          </button></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
               </div>
-              <div class="grid gap-6 xl:grid-cols-2">
-                <div class="tab">
-                  <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'addNewModel')" id="defaultOpen">Add new model</button>
-                  <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'createNewModel')">Create new model</button>
+
+
+              <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
+                <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
+
+                <div class="tab" style="font-size:10px">
+                  <button class="tablinksinner bg-purple-600 text-xs font-semibold"
+                    onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
+                  <button class="tablinksinner bg-purple-600 text-xs font-semibold"
+                    onclick="openTabInner(event, 'codePorting')">Code porting</button>
                 </div>
 
-                  <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
-                    <div class="flex">
-                      <div class="mr-6 flex-1">
-                        <!-- Your form code goes here -->
-                        <form class="bg-gray-100">
-                          <div class="mb-4">
-                            <label class="block text-gray-700 font-bold mb-2" for="username">
-                              Name
-                            </label>
-                            <input
-                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username" type="text" placeholder="">
-                            </input>
-                          </div>
-    
-                          <div class="mb-4">
-                          <label class="block text-gray-700 font-bold mb-2" for="dropdown">
-                            Language
-                          </label>
-                          <select
-                            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            id="dropdown"
-                            name="dropdown"
-                          >
-                            <option>Python</option>
-                            <option>JAVA</option>
-                            <option>R</option>
-                          </select>
-                          </div>
-    
-                          <div class="mb-4">
-                            <label class="block text-gray-700 font-bold mb-2" for="version">
-                              Version
-                            </label>
-                            <input
-                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username" type="text" placeholder="">
-                              </input>
-                          </div>
-    
-                          <div class="mb-4">
-                            <label class="block text-gray-700 font-bold mb-2" for="username">
-                              Description
-                            </label>
-                            <input
-                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username" type="text" placeholder="">
-                              </input>
-                          </div>
-    
-                          <button
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                          type="submit">
-                          +Add new files
-                          </button>
-    
-                        </form>
+                <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
+
+                  <div class="mt-8">
+                    <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
+                    <select id="codeLanguage"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option selected>Choose your code language</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="r">R</option>
+                    </select>
+                  </div>
+
+                  <!-- CODE EDITOR API GOES HERE. -->
+                  <div class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-800">
+
+                    <p> Code editor goes here </p>
+
+                  </div>
+
+                  <div class="flex">
+                    <!-- Form to write model details -->
+                    <form class="bg-gray-100">
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Name
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
                       </div>
-    
-                      <!-- Your table code goes here -->
-                      <div class="flex-1">
-                        
-                        <table class="table-auto w-full h-full">
-                          <tr>
-                            <td class="border border-black px-4 py-2 text-center">  <button
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="version">
+                          Version
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                          Description
+                        </label>
+                        <input
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="username" type="text" placeholder="">
+                        </input>
+                      </div>
+
+                    </form>
+
+                    <!-- Your table code goes here -->
+                    <div class="flex-1">
+
+                      <table class="table-auto w-full h-full">
+                        <tr>
+                          <td class="border border-black px-4 py-2 text-center"> <button
                               class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                              type="submit">
+                              type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel">
                               Test Model
                             </button>
-                            </td>
-                            <td class="border border-black px-4 py-2 text-center">  <button
+                          </td>
+                          <td class="border border-black px-4 py-2 text-center"> <button
                               class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                               type="submit">
                               Add to Model Registry
                             </button></td>
-                          </tr>
-                        </table>
-                      </div>
+                        </tr>
+                      </table>
                     </div>
                   </div>
-               
-                  
-                  <!-- <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2"> -->
-                  <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
-                    <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
-    
-                      <div class="tab" style="font-size:10px">
-                        <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
-                        <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'codePorting')">Code porting</button>
-                      </div>
-                      
-                      <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
-                        
-                        <div class="mt-8 mr-6 flex-1">
-                          <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
-                          <select id="codeLanguage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Choose your code language</option>
-                            <option value="python">Python</option>
-                            <option value="java">Java</option>
-                            <!-- <option value="r">R</option> -->
-                            <option value="javascript">Javascript</option>
-                          </select>
-                        </div>
-    
-                        <!-- CODE EDITOR API GOES HERE. -->
-                        <div class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-800">
-    
-                          <p> Code editor goes here </p>
-                          
-                        </div>
-                        <div class="flex">
-                          <div class="mr-6 flex-1">
-                            <!-- Form to write model details -->
-                            <form class="bg-gray-100">
-                              <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-2" for="username">
-                                  Name
-                                </label>
-                                <input
-                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                  id="username" type="text" placeholder="">
-                                </input>
-                              </div>
-            
-                              <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-2" for="version">
-                                  Version
-                                </label>
-                                <input
-                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                  id="username" type="text" placeholder="">
-                                  </input>
-                              </div>
-        
-                              <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-2" for="username">
-                                  Description
-                                </label>
-                                <input
-                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                  id="username" type="text" placeholder="">
-                                  </input>
-                              </div>
-        
-                            </form>
-                          </div>
+                </div>
 
-                          <!-- Your table code goes here -->
-                          <div class="flex-1">
-                            
-                            <table class="table-auto w-full h-full">
-                              <tr>
-                                <td class="border border-black px-4 py-2 text-center">  <button
-                                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                                  type="submit">
-                                  Test Model
-                                </button>
-                                </td>
-                                <td class="border border-black px-4 py-2 text-center">  <button
-                                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                                  type="submit">
-                                  Add to Model Registry
-                                </button></td>
-                              </tr>
-                            </table>
-                          </div>
-                        </div>
+                <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
 
-                      </div>
-                      
-                      <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
-    
-                        <!-- <div class="mt-8 flex gap-6">
-                          <select id="portFromLanguage" class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Port from...</option>
-                            <option value="python">Python</option>
-                            <option value="java">Java</option>
-                            <option value="r">R</option>
-                          </select>
-    
-                          <select id="portToLanguage" class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Port to...</option>
-                            <option value="python">Python</option>
-                            <option value="java">Java</option>
-                            <option value="r">R</option>
-                          </select>
-    
-                          <button class="p-1 w-1/2 text-s font-semibold border border-gray-300" onclick="validateCodePorting()">Configure settings</button>
-                        </div> -->
+                  <!-- <div class="grid gap-6 m:grid-cols-2"> -->
+                  <div class="mt-8 flex gap-6">
+                    <select id="portFromLanguage"
+                      class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option selected>Port from...</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="r">R</option>
+                    </select>
 
-                        
-                        <div class="mt-2 flex gap-6 mb-4">
-                          <button
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                          type="submit">
-                          +Upload code
-                        </button>
-                        </div>
+                    <select id="portToLanguage"
+                      class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option selected>Port to...</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="r">R</option>
+                    </select>
 
-                        <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
-                        <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
-                          <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
-                            <div class="mb-2 text-lg font-medium uppercase text-left">Code to translate</div>
-
-                            <form method="post" id="translateForm">
-                              {% csrf_token %}
-
-                              <label for="portFromLanguage">Translate from:</label>
-                              <select name="portFromLanguage" id="portFromLanguage">
-                                <option value="python">Python</option>
-                                <option value="java">Java</option>
-                                <option value="javascript">Javascript</option>
-                                <!-- <option value="r">R</option> -->
-                                <!-- Add options for other languages as needed -->
-                              </select><br>
-
-                              <label for="portToLanguage" class="mb-4">Translate to:</label>
-                              <select name="portToLanguage" id="portToLanguage">
-                                <option value="python">Python</option>
-                                <option value="java">Java</option>
-                                <option value="javascript">Javascript</option>
-                                <!-- <option value="r">R</option> -->
-                                <!-- Add options for other languages as needed -->
-                              </select><br>
-
-                              <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
-                              <!-- <button type="submit">Translate</button> -->
-                              <button type="submit" id="translateButton" class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
-                              <!-- <pre id="translatedCode"></pre> -->
-
-                            </form>
+                    <button class="p-1 w-1/2 text-s font-semibold border border-gray-300"
+                      onclick="validateCodePorting()">Configure settings</button>
+                  </div>
 
 
-                          </div>
-                          <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
-                            <div class="mb-2 text-lg font-medium uppercase text-left flex-wrap">Translated code</div>
-                              <pre id="translatedCode"></pre>
+                  <div class="mt-2 flex gap-6">
+                    <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                      type="submit">
+                      +Upload code
+                    </button>
+                  </div>
 
-                          </div>
-                        </div>
-                              
+                  <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12">
+                    <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
+                      <div class="mb-2 text-sm font-medium uppercase">Uploaded code goes heres</div>
+                    </div>
+                    <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
+                      <div class="mb-2 text-sm font-medium uppercase">Code editor API goes here</div>
+                      <!-- CODE EDITOR API  -->
+
                     </div>
                   </div>
 
@@ -688,114 +619,244 @@
             </div>
           </div>
 
-          <div>
-            <!-- CHART - to adapt from Accuracy page. -->
-
-
-          </div>
-
-      </div>
+        </div>
     </div>
 
-    <!-- Javascript for tabs -->
-    <script>
-      // Outer tab: 
-      function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
+    <div>
+      <!-- CHART - to adapt from Accuracy page. -->
 
-        // Get the element with id="defaultOpen" and click on it
-        document.getElementById("defaultOpenInner").click();
+
+    </div>
+
+
+    <div>
+      <!-- popup forms -->
+
+
+      <!-- popup form to select data to test the models -->
+      <div id="testmodel" tabindex="-1" aria-hidden="true"
+        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+        <div class="relative" style='width: 50%; height: 50%;'>
+          <!-- Modal content -->
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+            <form id='testmodel_submit'>
+              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
+              {% csrf_token %}
+              <div id='m1header' style='color: white; padding: 10px;'>
+                <p>Data Catalog</p>
+              </div>
+
+              <div>
+                <div style='float: left; width: 50%;'>
+
+                  <div style='margin: 10px; background-color: white;'>
+                    <input type="text" id="data_input" onkeyup="myFunction()" placeholder="Search for names..">
+
+                    <ul id="myUL">
+                      <li><a href="#">Data1</a></li>
+                      <li><a href="#">Data2</a></li>
+                      <li><a href="#">Data3</a></li>
+                      <li><a href="#">Data4</a></li>
+                      <li><a href="#">Data5</a></li>
+                    </ul>
+                  </div>
+
+
+                </div>
+
+                <div style='float: left; width: 50%;'>
+                  <div style='margin: 10px; color: white;'>
+                    <ul>
+                      <li>Data Set Name: </li>
+                      <li>Number of Rows: </li>
+                      <li>Number of features: </li>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+                <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  Choose this Dataset</button>
+
+                <button id='close-testmodel' data-modal-hide="testmodel" data-dismiss="modal"
+                  style="padding: 2px 10px 2px 10px"
+                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  cancel</button>
+
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- popup form to show console log -->
+      <div id="consolelog" tabindex="-1" aria-hidden="true"
+        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+        <div class="relative" style='width: 50%; height: 50%;'>
+          <!-- Modal content -->
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+
+
+            <p class="modal-title" id="consolelog-title" style="color: white; margin: 20px; padding-top: 10px;">Console
+              Log
+            </p>
+
+            <div class="modal-body" style='height: 70%; padding: 20px;'>
+
+              <!-- {% csrf_token %} -->
+
+              <div id="consolelog-output"></div>
+
+              <div style='right:0; bottom: 0; position: absolute; padding: 20px;'>
+                <button id='close-consolelog' data-dismiss="modal" style="padding: 2px 10px 2px 10px"
+                  data-modal-hide="consolelog"
+                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  cancel</button>
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- popup form to add model to registry   -->
+      <div id="modreg" tabindex="-1" aria-hidden="true"
+        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+        <div class="relative" style='width: 50%; height: 50%;'>
+          <!-- Modal content -->
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+            <form id='modreg_submit' style='height: 100%;'>
+              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
+              {% csrf_token %}
+              <div id='m1header' style='color: white; padding: 10px;'>
+                <p>Data Catalog</p>
+              </div>
+              <div style='margin: 40px; background-color: white; height: 50%; padding: 50px;'>
+                <ul id="myUL">
+                  <li>
+                    <a href="#" style="display: inline">Model Name: </a>
+                  </li>
+                  <li>
+                    <a href="#" style="display: inline">Replace with: </a>
+                  </li>
+                  <li>
+                    <a href="#" style="display: inline">Reason for Change: </a>
+                    <div class="dropdown-mr">
+                      <button class="dropbtn_reason">Select Reason</button>
+                      <div class="dropdown-content-reason">
+                        <a>Accuracy</a>
+                        <a>Outdated</a>
+                        <a>Code error</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+
+              <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+                <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  Accept and Replace</button>
+
+                <button id='close-modreg' data-modal-hide="modreg" data-dismiss="modal"
+                  style="padding: 2px 10px 2px 10px"
+                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  cancel</button>
+
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  </div>
+
+
+
+
+  <!-- Javascript for tabs -->
+  <script>
+    // Outer tab: 
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
       }
-      
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+
       // Get the element with id="defaultOpen" and click on it
-      document.getElementById("defaultOpen").click();
+      document.getElementById("defaultOpenInner").click();
+    }
 
-      // Inner tab: 
-      function openTabInner(evt, tabName) {
-        var i, tabcontentinner, tablinks;
-        tabcontentinner = document.getElementsByClassName("tabcontentinner");
-        for (i = 0; i < tabcontentinner.length; i++) {
-          tabcontentinner[i].style.display = "none";
-        }
-        tablinksinner = document.getElementsByClassName("tablinksinner");
-        for (i = 0; i < tablinksinner.length; i++) {
-          tablinksinner[i].className = tablinksinner[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+
+    // Inner tab: 
+    function openTabInner(evt, tabName) {
+      var i, tabcontentinner, tablinks;
+      tabcontentinner = document.getElementsByClassName("tabcontentinner");
+      for (i = 0; i < tabcontentinner.length; i++) {
+        tabcontentinner[i].style.display = "none";
+      }
+      tablinksinner = document.getElementsByClassName("tablinksinner");
+      for (i = 0; i < tablinksinner.length; i++) {
+        tablinksinner[i].className = tablinksinner[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // Validate the code porting options that user has selected
+    function validateCodePorting() {
+
+      var portFromLanguage = document.getElementById('portFromLanguage').value;
+      var portToLanguage = document.getElementById('portToLanguage').value;
+
+      if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
+        alert("Please select port language.");
+      }
+      else if (portFromLanguage === portToLanguage) {
+        alert("Language to port from should be different from language to port to.")
       }
 
-      // Validate the code porting options that user has selected
-      function validateCodePorting() {
-    
-          var portFromLanguage = document.getElementById('portFromLanguage').value;
-          var portToLanguage = document.getElementById('portToLanguage').value;
-
-          if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
-            alert("Please select port language.");
-          }
-          else if (portFromLanguage === portToLanguage) {
-            alert("Language to port from should be different from language to port to.")
-          } else {
-            return;
-          }
-      }
-
-      // CODE PORTING WITH ROSETTA
-      // Intercept form submission and send via AJAX 
-      const translateForm = document.getElementById('translateForm');
-      const translateButton = document.getElementById('translateButton');
-      const translatedCode = document.getElementById('translatedCode');
-
-      translateForm.addEventListener('submit', event => {
-
-        validateCodePorting();
-
-        console.log('in eventlistener')
-        event.preventDefault();
-        const formData = new FormData(translateForm);
-        fetch('/app/challengers/modelRegistry/translate/', {
-          method: 'POST',
-          body: formData,
-        }).then(response => response.json())
-          .then(data => {
-            console.log('translated_code');
-            console.log(data.translated_code);
-            translatedCode.textContent = data.translated_code;
-          })
-          .catch(error => console.error(error));
-      });
-
-      // translateForm.addEventListener('submit', event => {
-      //   event.preventDefault();
-      //   const formData = new FormData(translateForm);
-      //   fetch('', {
-      //     method: 'POST',
-      //     body: formData,
-      //   }).then(response => response.json())
-      //     .then(data => {
-      //       translatedCode.textContent = data.translated_code;
-      //     });
-      // });
-    
-
-
-      </script>
-
-      
-         
+      return;
+    }
 
 
 
-  </body>
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+
+
+
+
+
+
+</body>
+
 </html>
