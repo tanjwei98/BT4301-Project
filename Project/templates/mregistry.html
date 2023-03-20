@@ -1,0 +1,296 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modals - Windmill Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href={% static '/css/tailwind.output.css' %} />
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <script src={% static '/js/init-alpine.js' %}></script>
+  <!-- You need focus-trap.js to make the modal accessible -->
+  <script src={% static '/js/focus-trap.js' %} defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen}">
+
+    <div class="flex flex-col flex-1">
+
+      <main class="h-full pb-16 overflow-y-auto">
+        <div class="container grid px-6 mx-auto">
+          <!-- CTA -->
+          <div>
+            <button data-modal-target="testmodel" data-modal-toggle="testmodel"
+              class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              type="button">
+              Test Model
+            </button>
+
+            <button data-modal-target="consolelog" data-modal-toggle="consolelog"
+              class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              type="button">
+              Show Console Log
+            </button>
+
+
+            <button data-modal-target="modreg" data-modal-toggle="modreg"
+              class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+              type="button">
+              Add to Model Registry
+            </button>
+
+
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <!-- Modal backdrop. This what you want to place close to the closing body tag -->
+
+
+  <div id="testmodel" tabindex="-1" aria-hidden="true"
+    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+    <div class="relative" style='width: 50%; height: 50%;'>
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+        <form id='testmodel_submit'>
+          <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
+          {% csrf_token %}
+          <div id='m1header' style='color: white; padding: 10px;'>
+            <p>Data Catalog</p>
+          </div>
+
+          <div>
+            <div style='float: left; width: 50%;'>
+
+              <div style='margin: 10px; background-color: white;'>
+                <input type="text" id="data_input" onkeyup="myFunction()" placeholder="Search for names..">
+
+                <ul id="myUL">
+                  <li><a href="#">Data1</a></li>
+                  <li><a href="#">Data2</a></li>
+                  <li><a href="#">Data3</a></li>
+                  <li><a href="#">Data4</a></li>
+                  <li><a href="#">Data5</a></li>
+                </ul>
+              </div>
+
+
+            </div>
+
+            <div style='float: left; width: 50%;'>
+              <div style='margin: 10px; color: white;'>
+                <ul>
+                  <li>Data Set Name: </li>
+                  <li>Number of Rows: </li>
+                  <li>Number of features: </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+            <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              Choose this Dataset</button>
+
+            <button id='close-testmodel' data-modal-hide="testmodel" data-dismiss="modal"
+              style="padding: 2px 10px 2px 10px"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              cancel</button>
+
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- --------------------------------------------------------------------------------------------------------------------- -->
+
+
+  <div id="consolelog" tabindex="-1" aria-hidden="true"
+    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+    <div class="relative" style='width: 50%; height: 50%;'>
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+
+
+        <p class="modal-title" id="consolelog-title" style="color: white; margin: 20px; padding-top: 10px;">Console Log
+        </p>
+
+        <div class="modal-body" style='height: 70%; padding: 20px;'>
+
+          <!-- {% csrf_token %} -->
+
+          <div id="consolelog-output"></div>
+
+          <div style='right:0; bottom: 0; position: absolute; padding: 20px;'>
+            <button id='close-consolelog' data-dismiss="modal" style="padding: 2px 10px 2px 10px"
+              data-modal-hide="consolelog"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              cancel</button>
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------------------------------------------------------------- -->
+
+
+  <div id="modreg" tabindex="-1" aria-hidden="true"
+    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+    <div class="relative" style='width: 50%; height: 50%;'>
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+        <form id='testmodel_submit' style = 'height: 100%;'>
+          <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
+          {% csrf_token %}
+          <div id='m1header' style='color: white; padding: 10px;'>
+            <p>Data Catalog</p>
+          </div>
+          <div style='margin: 40px; background-color: white; height: 50%; padding: 50px;'>
+            <ul id="myUL">
+              <li>
+                <a href="#" style="display: inline">Model Name: </a>
+              </li>
+              <li>
+                <a href="#" style="display: inline">Replace with: </a>
+              </li>
+              <li>
+                <a href="#" style="display: inline">Reason for Change: </a>
+                <div class="dropdown">
+                  <button class="dropbtn">Select Reason</button>
+                  <div class="dropdown-content">
+                    <a>Accuracy</a>
+                    <a>Outdated</a>
+                    <a>Code error</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+
+          <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+            <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              Accept and Replace</button>
+
+            <button id='close-modreg' data-modal-hide="modreg" data-dismiss="modal" style="padding: 2px 10px 2px 10px"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              cancel</button>
+
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+
+  <script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, ul, li, a, i, txtValue;
+      input = document.getElementById('data_input');
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("myUL");
+      li = ul.getElementsByTagName('li');
+
+      // Loop through all list items, and hide those who don't match the search query
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+
+  <style>
+    #consolelog-output {
+      background-color: white;
+      height: 100%;
+      margin-bottom: 10px;
+      border: 1px solid black;
+      color: black;
+      width: 100%;
+      overflow-y: scroll;
+      /* add scrollbar when content exceeds height */
+      padding: 10px;
+      font-size: 14px;
+    }
+
+
+    /* Dropdown Button */
+    .dropbtn {
+      background-color: #04AA6D;
+      color: white;
+      padding: 5px;
+      font-size: 14px;
+      border: none;
+      height: 50%;
+      margin-left: 10px;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    /* Change the background color of the dropdown button when the dropdown content is shown */
+    .dropdown:hover .dropbtn {
+      background-color: #3e8e41;
+    }
+  </style>
+</body>
+
+</html>

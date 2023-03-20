@@ -18,6 +18,9 @@ urlpatterns = [
     path('service_health/', views.service_health, name = 'service_health'),
     path('drift/', views.datadrift, name = 'drift'),
     path('humility/', views.humility, name = 'humility'),
+    path('humility/add', views.humility_add, name = 'humility_add'),
     path('challengers/', views.challengers, name = 'challengers'),
     path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
+    path('mregistry/', views.mregistry, name = 'mregistry'),
+    path('loginpage/', views.loginpage, name='loginpage'),
 ]

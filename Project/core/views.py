@@ -49,6 +49,15 @@ def modelRegistry(request):
 def humility(request):
     return render(request, "humility.html")
 
+def humility_add(request):
+    return render(request, "humilityAdd.html")
+
+def mregistry(request):
+    return render(request, "mregistry.html")
+
+def loginpage(request):
+    return render(request, "loginpage.html")
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
 

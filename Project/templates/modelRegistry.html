@@ -409,16 +409,16 @@
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/service_health">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/accuracy">Accuracy</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Humility</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
@@ -438,99 +438,215 @@
                   <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'createNewModel')">Create new model</button>
                 </div>
 
-                <div class="flex">
-                  <div class="mr-6 flex-1">
-                    <!-- Your form code goes here -->
-                    <form class="bg-gray-100">
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="username">
-                          Name
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                        </input>
-                      </div>
-
-                      <div class="mb-4">
-                      <label class="block text-gray-700 font-bold mb-2" for="dropdown">
-                        Language
-                      </label>
-                      <select
-                        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        id="dropdown"
-                        name="dropdown"
-                      >
-                        <option>Python</option>
-                        <option>JAVA</option>
-                        <option>R</option>
-                      </select>
-                      </div>
-
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="version">
-                          Version
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                          </input>
-                      </div>
-
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="username">
-                          Description
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                          </input>
-                      </div>
-
-                      <button
-                      class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                      type="submit">
-                      +Add new files
-                      </button>
-
-                    </form>
-                  </div>
-
-                  <!-- Your table code goes here -->
-                  <div class="flex-1">
-                    
-                    <table class="table-auto w-full h-full">
-                      <tr>
-                        <td class="border border-black px-4 py-2 text-center">  <button
+                  <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
+                    <div class="flex">
+                      <div class="mr-6 flex-1">
+                        <!-- Your form code goes here -->
+                        <form class="bg-gray-100">
+                          <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="username">
+                              Name
+                            </label>
+                            <input
+                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username" type="text" placeholder="">
+                            </input>
+                          </div>
+    
+                          <div class="mb-4">
+                          <label class="block text-gray-700 font-bold mb-2" for="dropdown">
+                            Language
+                          </label>
+                          <select
+                            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                            id="dropdown"
+                            name="dropdown"
+                          >
+                            <option>Python</option>
+                            <option>JAVA</option>
+                            <option>R</option>
+                          </select>
+                          </div>
+    
+                          <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="version">
+                              Version
+                            </label>
+                            <input
+                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username" type="text" placeholder="">
+                              </input>
+                          </div>
+    
+                          <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="username">
+                              Description
+                            </label>
+                            <input
+                              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username" type="text" placeholder="">
+                              </input>
+                          </div>
+    
+                          <button
                           class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                           type="submit">
-                          Test Model
+                          +Add new files
+                          </button>
+    
+                        </form>
+                      </div>
+    
+                      <!-- Your table code goes here -->
+                      <div class="flex-1">
+                        
+                        <table class="table-auto w-full h-full">
+                          <tr>
+                            <td class="border border-black px-4 py-2 text-center">  <button
+                              class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                              type="submit">
+                              Test Model
+                            </button>
+                            </td>
+                            <td class="border border-black px-4 py-2 text-center">  <button
+                              class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                              type="submit">
+                              Add to Model Registry
+                            </button></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+               
+                  
+                  <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
+                    <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
+    
+                      <div class="tab" style="font-size:10px">
+                        <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
+                        <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'codePorting')">Code porting</button>
+                      </div>
+                      
+                      <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
+                        
+                        <div class="mt-8">
+                          <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
+                          <select id="codeLanguage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected>Choose your code language</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="r">R</option>
+                          </select>
+                        </div>
+    
+                        <!-- CODE EDITOR API GOES HERE. -->
+                        <div class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-800">
+    
+                          <p> Code editor goes here </p>
+                          
+                        </div>
+    
+                        <div class="flex">
+                          <!-- Form to write model details -->
+                          <form class="bg-gray-100">
+                            <div class="mb-4">
+                              <label class="block text-gray-700 font-bold mb-2" for="username">
+                                Name
+                              </label>
+                              <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="username" type="text" placeholder="">
+                              </input>
+                            </div>
+          
+                            <div class="mb-4">
+                              <label class="block text-gray-700 font-bold mb-2" for="version">
+                                Version
+                              </label>
+                              <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="username" type="text" placeholder="">
+                                </input>
+                            </div>
+      
+                            <div class="mb-4">
+                              <label class="block text-gray-700 font-bold mb-2" for="username">
+                                Description
+                              </label>
+                              <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="username" type="text" placeholder="">
+                                </input>
+                            </div>
+      
+                          </form>
+
+                          <!-- Your table code goes here -->
+                          <div class="flex-1">
+                            
+                            <table class="table-auto w-full h-full">
+                              <tr>
+                                <td class="border border-black px-4 py-2 text-center">  <button
+                                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                                  type="submit">
+                                  Test Model
+                                </button>
+                                </td>
+                                <td class="border border-black px-4 py-2 text-center">  <button
+                                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                                  type="submit">
+                                  Add to Model Registry
+                                </button></td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+
+                      </div>
+                      
+                      <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
+    
+                        <!-- <div class="grid gap-6 m:grid-cols-2"> -->
+                        <div class="mt-8 flex gap-6">
+                          <select id="portFromLanguage" class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected>Port from...</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="r">R</option>
+                          </select>
+    
+                          <select id="portToLanguage" class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected>Port to...</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="r">R</option>
+                          </select>
+    
+                          <button class="p-1 w-1/2 text-s font-semibold border border-gray-300" onclick="validateCodePorting()">Configure settings</button>
+                        </div>
+
+                        
+                        <div class="mt-2 flex gap-6">
+                          <button
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          type="submit">
+                          +Upload code
                         </button>
-                        </td>
-                        <td class="border border-black px-4 py-2 text-center">  <button
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                          type="submit">
-                          Add to Model Registry
-                        </button></td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-                
-                <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
-                <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
+                        </div>
 
-                  <div class="tab" style="font-size:10px">
-                    <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
-                    <button class="tablinksinner bg-purple-600 text-xs font-semibold" onclick="openTabInner(event, 'codePorting')">Code porting</button>
-                  </div>
-                  
-                  <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
-                    <p>Write new code goes here</p>
-                  </div>
-                  
-                  <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
-                    <p>Code porting goes here</p>
+                        <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12">
+                          <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
+                            <div class="mb-2 text-sm font-medium uppercase">Uploaded code goes heres</div>
+                          </div>
+                          <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
+                            <div class="mb-2 text-sm font-medium uppercase">Code editor API goes here</div>
+                                                    <!-- CODE EDITOR API  -->
+
+                          </div>
+                        </div>
+                              
+                    </div>
                   </div>
 
                 </div>
@@ -584,6 +700,22 @@
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
+      }
+
+      // Validate the code porting options that user has selected
+      function validateCodePorting() {
+    
+          var portFromLanguage = document.getElementById('portFromLanguage').value;
+          var portToLanguage = document.getElementById('portToLanguage').value;
+
+          if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
+            alert("Please select port language.");
+          }
+          else if (portFromLanguage === portToLanguage) {
+            alert("Language to port from should be different from language to port to.")
+          }
+
+          return;
       }
 
 
