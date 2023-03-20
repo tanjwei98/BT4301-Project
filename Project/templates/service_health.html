@@ -37,6 +37,21 @@
         console.log("this is the val",val)
         document.getElementById("display_metric").innerText = val;
       }
+
+      function selectloc(button) {
+        console.log(button.value)
+        var btn = document.getElementById("segment-dropdown");
+        btn.value = button.value; // will just add a hidden value
+        btn.innerHTML = button.value;
+      }
+
+      function selectres(button) {
+        console.log(button.value)
+        var btn = document.getElementById("resolution-dropdown");
+        btn.value = button.value; // will just add a hidden value
+        btn.innerHTML = button.value;
+      }
+      
       window.onload = function() {
       // Get the start date button and input field
       const startDateBtn = document.getElementById('start-date-dropdown');
@@ -86,7 +101,57 @@
             margin-top: 2%;
           }
 
+          .dropdown-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 2%;
+          }
+
           .dropdown {
+            position: relative;
+            left     : 10px;
+            display: inline-block;
+            margin: 2%;
+          }
+
+          .filterdiv {
+            flex: 1 1 auto
+          }
+
+          .dropdown-btn {
+            background-color: white;
+            color: #333;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            width: 160px;
+            text-align: center;
+          }
+
+          .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            padding: 10px;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            left: 0;
+            right: 0;
+          }
+
+          .dropdown-content button {
+            text-align: center;
+            color: #333;
+            display: block;
+            padding: 10px;
+          }
+
+          .dropdown:hover .dropdown-content {
+            display: block;       
             position: relative;
             display: inline-block;
             flex: 1 1 auto;
@@ -125,9 +190,6 @@
           .dropdown:hover .dropdown-content {
             display: block;
           }
-
-
-
       </style>
   </head>
   <body>
@@ -488,55 +550,63 @@
                   <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/service_health">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Data Drift</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/accuracy">Accuracy</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Humility</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Challengers</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
                 </li>
               </ul>
             </div>
             <!--Content for your page-->
             <div class="dropdown-panel">
-              <label for="start-date-dropdown" style="color: white;">Start Date:</label>
-              <div class="dropdown">
-                <button class="dropdown-btn" id="start-date-dropdown" data-selected-value="">Select</button>
-                <div class="dropdown-content">
-                  <input type="date" id="start-date">
+              <div class="filterdiv">
+                <label for="start-date-dropdown" style="color: white;">Start Date:</label>
+                <div class="dropdown">
+                  <button class="dropdown-btn" id="start-date-dropdown" data-selected-value="">Select</button>
+                  <div class="dropdown-content">
+                    <input type="date" id="start-date">
+                  </div>
                 </div>
               </div>
-              <label for="end-date-dropdown" style="color: white;">End Date:</label>
-              <div class="dropdown">
-                <button class="dropdown-btn" id="end-date-dropdown">Select</button>
-                <div class="dropdown-content">
-                  <input type="date" id="end-date">
+              <div class="filterdiv">
+                <label for="end-date-dropdown" style="color: white;">End Date:</label>
+                  <div class="dropdown">
+                    <button class="dropdown-btn" id="end-date-dropdown">Select</button>
+                    <div class="dropdown-content">
+                      <input type="date" id="end-date">
+                    </div>
+                  </div>
+              </div>
+              <div class="filterdiv">
+                <label for="resolution-dropdown" style="color: white;">Resolution:</label>
+                <div class="dropdown">
+                  <button class="dropdown-btn" id="resolution-dropdown">Select</button>
+                  <div class="dropdown-content">                
+                      <button onclick="selectres(this)" value="Weekly">Weekly</button>
+                      <button onclick="selectres(this)" value="Monthly">Monthly</button>
+                      <button onclick="selectres(this)" value="Daily">Daily</button>
+                  </div>
                 </div>
               </div>
-              <label for="resolution-date-dropdown" style="color: white;">Resolution:</label>
-              <div class="dropdown">
-                <button class="dropdown-btn" id="resolution-date-dropdown">Select</button>
-                <div class="dropdown-content">
-                  <button value="weekly">Weekly</option>
-                  <a href="#" data-value="monthly">Monthly</a>
-                  <a href="#" data-value="daily">Daily</a>
-                </div>
-              </div>
-              <label for="segment-date-dropdown" style="color: white;">Segment Attribute:</label>
-              <div class="dropdown">
-                <button class="dropdown-btn" id="segment-date-dropdown">Select</button>
-                <div class="dropdown-content">
-                  <a href="#" data-value="north">North</a>
-                  <a href="#" data-value="south">South</a>
-                  <a href="#" data-value="east">East</a>
-                  <a href="#" data-value="west">West</a>
+              <div class="filterdiv">
+                <label for="segment-dropdown" style="color: white;">Segment Attribute:</label>
+                <div class="dropdown">
+                  <button class="dropdown-btn" id="segment-dropdown">Select</button>
+                  <div class="dropdown-content">
+                    <button onclick="selectloc(this)" value="North">North</button>
+                    <button onclick="selectloc(this)" value="South">South</button>
+                    <button onclick="selectloc(this)" value="East">East</button>
+                    <button onclick="selectloc(this)" value="West">West</button>
+                  </div>
                 </div>
               </div>
             </div>
