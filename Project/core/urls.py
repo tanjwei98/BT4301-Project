@@ -23,4 +23,5 @@ urlpatterns = [
     path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
     path('mregistry/', views.mregistry, name = 'mregistry'),
     path('loginpage/', views.loginpage, name='loginpage'),
+    path('challengers/modelRegistry/translate/', views.translate_code, name='translate_code'), # Code porting
 ]
