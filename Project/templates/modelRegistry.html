@@ -520,7 +520,8 @@
                   </div>
                
                   
-                  <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
+                  <!-- <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2"> -->
+                  <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
                     <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
     
                       <div class="tab" style="font-size:10px">
@@ -530,13 +531,14 @@
                       
                       <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
                         
-                        <div class="mt-8">
+                        <div class="mt-8 mr-6 flex-1">
                           <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
                           <select id="codeLanguage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option selected>Choose your code language</option>
                             <option value="python">Python</option>
                             <option value="java">Java</option>
-                            <option value="r">R</option>
+                            <!-- <option value="r">R</option> -->
+                            <option value="javascript">Javascript</option>
                           </select>
                         </div>
     
@@ -546,41 +548,42 @@
                           <p> Code editor goes here </p>
                           
                         </div>
-    
                         <div class="flex">
-                          <!-- Form to write model details -->
-                          <form class="bg-gray-100">
-                            <div class="mb-4">
-                              <label class="block text-gray-700 font-bold mb-2" for="username">
-                                Name
-                              </label>
-                              <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="username" type="text" placeholder="">
-                              </input>
-                            </div>
-          
-                            <div class="mb-4">
-                              <label class="block text-gray-700 font-bold mb-2" for="version">
-                                Version
-                              </label>
-                              <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="username" type="text" placeholder="">
+                          <div class="mr-6 flex-1">
+                            <!-- Form to write model details -->
+                            <form class="bg-gray-100">
+                              <div class="mb-4">
+                                <label class="block text-gray-700 font-bold mb-2" for="username">
+                                  Name
+                                </label>
+                                <input
+                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                  id="username" type="text" placeholder="">
                                 </input>
-                            </div>
-      
-                            <div class="mb-4">
-                              <label class="block text-gray-700 font-bold mb-2" for="username">
-                                Description
-                              </label>
-                              <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="username" type="text" placeholder="">
-                                </input>
-                            </div>
-      
-                          </form>
+                              </div>
+            
+                              <div class="mb-4">
+                                <label class="block text-gray-700 font-bold mb-2" for="version">
+                                  Version
+                                </label>
+                                <input
+                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                  id="username" type="text" placeholder="">
+                                  </input>
+                              </div>
+        
+                              <div class="mb-4">
+                                <label class="block text-gray-700 font-bold mb-2" for="username">
+                                  Description
+                                </label>
+                                <input
+                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                  id="username" type="text" placeholder="">
+                                  </input>
+                              </div>
+        
+                            </form>
+                          </div>
 
                           <!-- Your table code goes here -->
                           <div class="flex-1">
@@ -607,8 +610,7 @@
                       
                       <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
     
-                        <!-- <div class="grid gap-6 m:grid-cols-2"> -->
-                        <div class="mt-8 flex gap-6">
+                        <!-- <div class="mt-8 flex gap-6">
                           <select id="portFromLanguage" class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             <option selected>Port from...</option>
                             <option value="python">Python</option>
@@ -624,10 +626,10 @@
                           </select>
     
                           <button class="p-1 w-1/2 text-s font-semibold border border-gray-300" onclick="validateCodePorting()">Configure settings</button>
-                        </div>
+                        </div> -->
 
                         
-                        <div class="mt-2 flex gap-6">
+                        <div class="mt-2 flex gap-6 mb-4">
                           <button
                           class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                           type="submit">
@@ -635,13 +637,44 @@
                         </button>
                         </div>
 
-                        <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12">
-                          <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
-                            <div class="mb-2 text-sm font-medium uppercase">Uploaded code goes heres</div>
+                        <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
+                        <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
+                          <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
+                            <div class="mb-2 text-lg font-medium uppercase text-left">Code to translate</div>
+
+                            <form method="post" id="translateForm">
+                              {% csrf_token %}
+
+                              <label for="portFromLanguage">Translate from:</label>
+                              <select name="portFromLanguage" id="portFromLanguage">
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="javascript">Javascript</option>
+                                <!-- <option value="r">R</option> -->
+                                <!-- Add options for other languages as needed -->
+                              </select><br>
+
+                              <label for="portToLanguage" class="mb-4">Translate to:</label>
+                              <select name="portToLanguage" id="portToLanguage">
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="javascript">Javascript</option>
+                                <!-- <option value="r">R</option> -->
+                                <!-- Add options for other languages as needed -->
+                              </select><br>
+
+                              <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
+                              <!-- <button type="submit">Translate</button> -->
+                              <button type="submit" id="translateButton" class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
+                              <!-- <pre id="translatedCode"></pre> -->
+
+                            </form>
+
+
                           </div>
-                          <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
-                            <div class="mb-2 text-sm font-medium uppercase">Code editor API goes here</div>
-                                                    <!-- CODE EDITOR API  -->
+                          <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
+                            <div class="mb-2 text-lg font-medium uppercase text-left flex-wrap">Translated code</div>
+                              <pre id="translatedCode"></pre>
 
                           </div>
                         </div>
@@ -713,11 +746,48 @@
           }
           else if (portFromLanguage === portToLanguage) {
             alert("Language to port from should be different from language to port to.")
+          } else {
+            return;
           }
-
-          return;
       }
 
+      // CODE PORTING WITH ROSETTA
+      // Intercept form submission and send via AJAX 
+      const translateForm = document.getElementById('translateForm');
+      const translateButton = document.getElementById('translateButton');
+      const translatedCode = document.getElementById('translatedCode');
+
+      translateForm.addEventListener('submit', event => {
+
+        validateCodePorting();
+
+        console.log('in eventlistener')
+        event.preventDefault();
+        const formData = new FormData(translateForm);
+        fetch('/app/challengers/modelRegistry/translate/', {
+          method: 'POST',
+          body: formData,
+        }).then(response => response.json())
+          .then(data => {
+            console.log('translated_code');
+            console.log(data.translated_code);
+            translatedCode.textContent = data.translated_code;
+          })
+          .catch(error => console.error(error));
+      });
+
+      // translateForm.addEventListener('submit', event => {
+      //   event.preventDefault();
+      //   const formData = new FormData(translateForm);
+      //   fetch('', {
+      //     method: 'POST',
+      //     body: formData,
+      //   }).then(response => response.json())
+      //     .then(data => {
+      //       translatedCode.textContent = data.translated_code;
+      //     });
+      // });
+    
 
 
       </script>
