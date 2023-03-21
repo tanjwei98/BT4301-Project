@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template import RequestContext
+# from models import Model_Accuracy
 
 # Create your views here.
 
@@ -44,7 +45,8 @@ def challengers(request):
     return render(request, "challengers.html")
 
 def modelRegistry(request):
-    return render(request, "modelRegistry.html")
+    model_list = Model_List.objects.all()
+    return render(request, "modelRegistry.html", {'model_list': model_list})
 
 def humility(request):
     return render(request, "humility.html")
@@ -93,6 +95,19 @@ def translate_code(request):
     else:
         return render(request, 'modelRegistry.html')
     
+
+# retrieve data information from the database, when user select data to test model
+# def get_dataset_info(request):
+#   dataset_id = request.GET.get("dataset_id")
+#   dataset = Model_Accuracy.objects.filter(Model_ID=dataset_id).first()
+#   data = {
+#     "dataset_name": dataset.Model_name,
+#     "num_rows": dataset.num_rows,
+#     "num_features": dataset.num_features
+#   }
+#   return JsonResponse(data)
+
+
 
 # MODEL-RELATED.
 from rest_framework import permissions, status

@@ -678,15 +678,26 @@
                 <p>Data Catalog</p>
               </div>
 
-              <div>
-                <div style='float: left; width: 50%;'>
 
-                  <select id="select_dataset"
+
+                                <!-- <select id="select_dataset"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option selected>Choose Dataset</option>
                     <option value="Data1">Data1</option>
                     <option value="Data2">Data2</option>
                     <option value="Data3">Data3</option>
+                  </select> -->
+
+
+              <div>
+                <div style='float: left; width: 50%;'>
+
+                  <select id="select_dataset" onchange="getDatasetDetails()"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected>Choose Dataset</option>
+                    {% for ml in model_list.all %}
+                    <option value="{{ ml.Model_ID }}">{{ ml.Model_name }}</option>
+                    {% endfor %}
                   </select>
 
 
@@ -694,7 +705,7 @@
 
                 <div style='float: left; width: 50%;'>
                   <div style='margin: 10px; color: white;'>
-                    <ul>
+                    <ul id="dataset-details">
                       <li>Data Set Name: </li>
                       <li>Number of Rows: </li>
                       <li>Number of features: </li>
