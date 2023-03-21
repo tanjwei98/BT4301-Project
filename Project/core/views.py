@@ -69,7 +69,7 @@ def handler404(request):
 
 # CODE PORTING 
 import pscript
-import js2py
+# import js2py
 
 def translate_code(request):
     if request.method == 'POST':
@@ -81,7 +81,8 @@ def translate_code(request):
             if translate_from == 'python' and translate_to == 'javascript':  # OK 
                 code_translate_to = pscript.py2js(code_translate_from)
             elif translate_from == 'javascript' and translate_to == 'python':  # WIP
-                code_translate_to = js2py.translate_js(code_translate_from)
+                # code_translate_to = js2py.translate_js(code_translate_from)
+                pass
             else: 
                 return JsonResponse({'error':'Language combination still WIP.'})
 

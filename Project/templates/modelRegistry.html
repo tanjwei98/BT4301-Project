@@ -395,7 +395,7 @@
                 <p> Model Registry </p>
               </div>
             </div>
-            <div class="grid gap-6 xl:grid-cols-2">
+            <div class="grid gap-6 xl:grid-cols-2 mx-6">
               <div class="tab">
                 <button class="tablinks bg-purple-600 text-s font-semibold" onclick="openTab(event, 'addNewModel')"
                   id="defaultOpen">Add new model</button>
@@ -403,12 +403,12 @@
                   onclick="openTab(event, 'createNewModel')">Create new model</button>
               </div>
 
-              <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs ">
-                <div class="flex">
+              <div id="addNewModel" class="tabcontent w-full overflow-hidden shadow-xs mx-6">
+                <div class="flex mx-6">
                   <div class="mr-6 flex-1">
                     <!-- Your form code goes here -->
                     <form class="bg-gray-100">
-                      <div class="mb-4">
+                      <div class="mb-4 mx-6">
                         <label class="block text-gray-700 font-bold mb-2" for="username">
                           Name
                         </label>
@@ -425,9 +425,9 @@
                         <select
                           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           id="dropdown" name="dropdown">
-                          <option>Python</option>
-                          <option>JAVA</option>
-                          <option>R</option>
+                          <option value="python">Python</option>
+                          <option value="java">Java</option>
+                          <option value="javascript">Javascript</option>
                         </select>
                       </div>
 
@@ -451,7 +451,7 @@
                         </input>
                       </div>
 
-                      <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                      <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                         type="submit">
                         +Add new files
                       </button>
@@ -498,22 +498,23 @@
                   <div class="mt-8">
                     <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
                     <select id="codeLanguage"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Choose your code language</option>
                       <option value="python">Python</option>
                       <option value="java">Java</option>
-                      <option value="r">R</option>
+                      <option value="javascript">Javascript</option>
                     </select>
                   </div>
 
                   <!-- CODE EDITOR API GOES HERE. -->
-                  <div class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-800">
+                  <div
+                    class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black">
 
                     <p> Code editor goes here </p>
 
                   </div>
-
-                  <div class="flex">
+                  <!-- <div class="grid m:grid-cols-3 w-full shadow-xs mx-6"> -->
+                  <div class="flex mx-4">
                     <!-- Form to write model details -->
                     <form class="bg-gray-100">
                       <div class="mb-4">
@@ -561,8 +562,7 @@
                           </td>
                           <td class="border border-black px-4 py-2 text-center"> <button
                               class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                              type="submit" data-modal-target="modreg" data-modal-toggle="modreg"
-                              >
+                              type="submit">
                               Add to Model Registry
                             </button></td>
                         </tr>
@@ -573,27 +573,25 @@
 
                 <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
 
-                  <!-- <div class="grid gap-6 m:grid-cols-2"> -->
-                  <div class="mt-8 flex gap-6">
+                  <!-- <div class="mt-8 flex gap-6">
                     <select id="portFromLanguage"
-                      class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Port from...</option>
                       <option value="python">Python</option>
                       <option value="java">Java</option>
-                      <option value="r">R</option>
+                      <option value="javascript">Javascript</option>
                     </select>
 
                     <select id="portToLanguage"
-                      class="w-1/2 py-6 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Port to...</option>
                       <option value="python">Python</option>
                       <option value="java">Java</option>
-                      <option value="r">R</option>
+                      <option value="javascript">Javascript</option>
                     </select>
 
-                    <button class="p-1 w-1/2 text-s font-semibold border border-gray-300"
-                      onclick="validateCodePorting()">Configure settings</button>
-                  </div>
+                    <button class="bg-white border border-gray-300 text-gray-900 text-sm font-bold rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" onclick="validateCodePorting()"> Configure settings</button>
+                  </div>  -->
 
 
                   <div class="mt-2 flex gap-6">
@@ -603,16 +601,49 @@
                     </button>
                   </div>
 
-                  <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12">
-                    <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
-                      <div class="mb-2 text-sm font-medium uppercase">Uploaded code goes heres</div>
+                  <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
+                  <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
+                    <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
+                      <div class="mb-2 text-lg font-medium uppercase text-left">Code to translate</div>
+
+                      <form method="post" id="translateForm">
+                        {% csrf_token %}
+
+                        <label for="portFromLanguage">Translate from:</label>
+                        <select name="portFromLanguage" id="portFromLanguage">
+                          <option value="python">Python</option>
+                          <option value="java">Java</option>
+                          <option value="javascript">Javascript</option>
+                          <!-- <option value="r">R</option> -->
+                          <!-- Add options for other languages as needed -->
+                        </select><br>
+
+                        <label for="portToLanguage" class="mb-4">Translate to:</label>
+                        <select name="portToLanguage" id="portToLanguage">
+                          <option value="python">Python</option>
+                          <option value="java">Java</option>
+                          <option value="javascript">Javascript</option>
+                          <!-- <option value="r">R</option> -->
+                          <!-- Add options for other languages as needed -->
+                        </select><br>
+
+                        <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
+                        <!-- <button type="submit">Translate</button> -->
+                        <button type="submit" id="translateButton"
+                          class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
+                        <!-- <pre id="translatedCode"></pre> -->
+
+                      </form>
+
+
                     </div>
-                    <div class="just-a-border h-full p-6 text-center flex-1 flex-grow">
-                      <div class="mb-2 text-sm font-medium uppercase">Code editor API goes here</div>
-                      <!-- CODE EDITOR API  -->
+                    <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
+                      <div class="mb-2 text-lg font-medium uppercase text-left flex-wrap">Translated code</div>
+                      <pre id="translatedCode"></pre>
 
                     </div>
                   </div>
+
 
                 </div>
               </div>
@@ -651,12 +682,12 @@
                 <div style='float: left; width: 50%;'>
 
                   <select id="select_dataset"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <option selected>Choose Dataset</option>
-                      <option value="Data1">Data1</option>
-                      <option value="Data2">Data2</option>
-                      <option value="Data3">Data3</option>
-                    </select>
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected>Choose Dataset</option>
+                    <option value="Data1">Data1</option>
+                    <option value="Data2">Data2</option>
+                    <option value="Data3">Data3</option>
+                  </select>
 
 
                 </div>
@@ -752,12 +783,12 @@
                   <li>
                     <a href="#" style="display: inline">Reason for Change: </a>
                     <div class="dropdown-mr">
-                      <button class="dropbtn_reason">Select Reason</button>
-                      <div class="dropdown-content-reason">
-                        <a>Accuracy</a>
-                        <a>Outdated</a>
-                        <a>Code error</a>
-                      </div>
+                      <select id="select_dataset" aria-placeholder="Select Reason"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="Accuracy" selected>Bug fixes</option>
+                        <option value="Accuracy">Accuracy</option>
+                        <option value="Outdated">Outdated</option>
+                      </select>
                     </div>
                   </li>
                 </ul>
@@ -843,6 +874,59 @@
 
       return;
     }
+
+    // Validate the code porting options that user has selected
+    function validateCodePorting() {
+
+      var portFromLanguage = document.getElementById('portFromLanguage').value;
+      var portToLanguage = document.getElementById('portToLanguage').value;
+
+      if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
+        alert("Please select port language.");
+      }
+      else if (portFromLanguage === portToLanguage) {
+        alert("Language to port from should be different from language to port to.")
+      } else {
+        return;
+      }
+    }
+
+    // CODE PORTING 
+    // Intercept form submission and send via AJAX 
+    const translateForm = document.getElementById('translateForm');
+    const translateButton = document.getElementById('translateButton');
+    const translatedCode = document.getElementById('translatedCode');
+
+    translateForm.addEventListener('submit', event => {
+
+      validateCodePorting();
+
+      console.log('in eventlistener')
+      event.preventDefault();
+      const formData = new FormData(translateForm);
+      fetch('/app/challengers/modelRegistry/translate/', {
+        method: 'POST',
+        body: formData,
+      }).then(response => response.json())
+        .then(data => {
+          console.log('translated_code');
+          console.log(data.translated_code);
+          translatedCode.textContent = data.translated_code;
+        })
+        .catch(error => console.error(error));
+    });
+
+    // translateForm.addEventListener('submit', event => {
+    //   event.preventDefault();
+    //   const formData = new FormData(translateForm);
+    //   fetch('', {
+    //     method: 'POST',
+    //     body: formData,
+    //   }).then(response => response.json())
+    //     .then(data => {
+    //       translatedCode.textContent = data.translated_code;
+    //     });
+    // });
 
 
 
