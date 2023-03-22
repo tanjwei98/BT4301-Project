@@ -24,4 +24,7 @@ urlpatterns = [
     path('mregistry/', views.mregistry, name = 'mregistry'),
     path('loginpage/', views.loginpage, name='loginpage'),
     path('challengers/modelRegistry/translate/', views.translate_code, name='translate_code'), # Code porting
-]
+    # path('saveas/<str:filename>',views.save_saved, name='save_saved'),
+    path('challengers/saveas/',views.save_saved, name='save_saved'),
+    # path('save',views.save),
+    ]

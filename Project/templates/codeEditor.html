@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- CREDIT: https://github.com/KhushalJangid/codeware -->
+<html lang="en">
+{% load static %}
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="/static/css/hamburgers.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/base.css">
+
+  <title>Codeware - {{active}}</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"
+    integrity="sha512-8RnEqURPUc5aqFEN04aQEiPlSAdE0jlFS/9iGgUyNtwFnSKCXhmB6ZTNl7LnDtDWKabJIASzXrzD0K+LYexU9g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
+    integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css"
+    integrity="sha512-gFMl3u9d0xt3WR8ZeW05MWm3yZ+ZfgsBVXLSOiFz2xeVrZ8Neg0+V1kkRIo9LikyA/T9HuS91kDfc2XWse0K0A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"
+    integrity="sha512-2M0GdbU5OxkGYMhakED69bw0c1pW3Nb0PeF3+9d+SnwN1ryPx3wiDdNqK3gSM7KAU/pEV+2tFJFbMKjKAahOkQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"
+    integrity="sha512-tsjcYO5hFvViRssxiM7Jhd8601epWOx1He3Hl4yuI5dKKPxr43KxkOhc9GZeeqzlYJm9ABb7UPA9697NiqZZ7Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closetag.min.js"
+    integrity="sha512-XYx5xhl4B5vKNlaRBWh/nlti0+IPM6eT+dSFc3/oc4rERn2DpwbS3q4OblprqqBLXyRSVePKmf+8mHkDLtGZpg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+  
+  <form action="saveas/" method="post">
+  <!-- onSubmit must return something truthy, before action is run. -->
+  <!-- <form onsubmit="return validateCode(this)" action="saveas/" method="post" >  -->
+    {% csrf_token %}
+    <header>
+
+      <!-- <div id="filename">{{active}}</div> -->
+
+      <label class="block text-gray-700 font-bold mb-2" for="filechooser">
+        Choose your code language
+      </label>      
+      <select name="filechooser" id="filechooser" class="btn-type1" required> 
+        <option value="" disabled selected>Select language</option>
+        <option value="py">Python</option>
+        <option value="js">JavaScript</option>
+        <option value="c">C</option>
+        <option value="cpp">C++</option>
+      </select>
+
+      <label class="block text-gray-700 font-bold mt-2" for="fileName">
+        File name (without extension)
+      </label>
+      <input
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="fileName" type="text" name="fileName" placeholder="" required>
+      </input>
+
+      <button type = 'submit' class="circular-btn mx-4 w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mb-4" id="save-btn">
+        <i class="fa fa-floppy-o fa-lg">  Save file</i>
+      </button>
+
+      <!-- <input id="import-file" accept=".py, .cpp, .c, .js" type="file" onchange="readFile(this)" hidden>
+      <label for="import-file" class="circular-btn d-flex w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
+        <i class="fa fa-upload m-auto fa-lg">  Import file</i>
+      </label> -->
+
+      <input id="form-submit" type="submit" hidden>
+
+    </header>
+    <main>
+      <div id="editor_wrapper">
+        <textarea name="code" id="editor">{{code}}</textarea>
+      </div>
+
+    </main>
+  </form>
+  
+  <footer></footer>
+
+</body>
+
+
+<script>
+  let lang_dic = {
+    python: `print("hello world")`,
+    "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+  cout << "Hello World!";
+  return 0;
+}`,
+    c: `#include <stdio.h>
+
+int main() {
+  printf("Hello World!");
+  return 0;
+}`,
+    javascript: `console.log("hello world");`,
+    dart: `void main(){
+  print("Hello World");
+}`,
+  };
+
+  var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+    mode: "python",
+    theme: "dracula",
+    lineNumbers: true,
+    autoCloseTags: true,
+    autoCloseBrackets: true,
+  });
+
+  var con = editor.getValue();
+  console.log(con);
+
+  const select = document.getElementById("filechooser");
+
+  select.addEventListener("change", (event) => {
+    if (event.target.value === "py") {
+      editor.setValue(lang_dic["python"]);
+    } else if (event.target.value === "js") {
+      editor.setValue(lang_dic["javascript"]);
+    } else if (event.target.value === "c") {
+      editor.setValue(lang_dic["c"]);
+    } else if (event.target.value === "cpp") {
+      editor.setValue(lang_dic["c++"]);
+    } else if (event.target.value === "dart") {
+      editor.setValue(lang_dic["dart"]);
+    }
+  });
+
+  function _format(text_) {
+    text_ = text_.slice(1, -1);
+    text_ = text_.replaceAll(String.raw `\n`, "<br>");
+    text_ = text_.replaceAll(String.raw `\t`, "&nbsp;&nbsp;");
+    text_ = text_.replaceAll(String.raw `\r`, "");
+    return text_;
+  }
+
+</script>
+<script>
+  
+  // Validate options chosen by user
+  // function validateCode() {
+  //   console.log('in validateCode();');
+
+  //   const code = document.getElementById('code');
+  //   const lang = document.getElementById('filechooser');
+
+  //   if (!code) {
+  //     alert("Please write some code before saving.");
+  //     return False;
+  //   }
+  //   else if (!lang) {
+  //     alert("Please select a language before saving.")
+  //     return False;
+  //   } else {
+  //     return True;
+  //   }
+  // }
+   
+  // const saveButton = document.getElementById('save-btn');
+
+  // saveButton.addEventListener('submit', event => {
+  //   validateCode();
+  //   console.log('in saveButton.addEventListener');
+  //   event.preventDefault();
+  // });
+
+  // function save() {
+  //   document.getElementById("form-filename").value = document.getElementById("popup_input").value
+  //   document.getElementById("form-submit").click();
+  // }
+</script>
+<!-- <script>
+  function readFile(input) {
+    let file = input.files[0];
+
+    let reader = new FileReader();
+
+    reader.readAsText(file);
+
+    reader.onload = function () {
+      editor.setValue(reader.result);
+    };
+
+    reader.onerror = function () {
+      console.log(reader.error);
+    };
+  }
+</script> -->
+<!-- <script src="/static/js/hamburger.js"></script>
+<script src="/static/js/console.js"></script> -->
+<script src="/static/js/popup.js"></script>
+
+</html>

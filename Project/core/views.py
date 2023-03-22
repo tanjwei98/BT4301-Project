@@ -1,6 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template import RequestContext
+from django.contrib import messages
+
 # from models import Model_Accuracy
 
 # Create your views here.
@@ -95,6 +97,28 @@ def translate_code(request):
     else:
         return render(request, 'modelRegistry.html')
     
+from pathlib import Path
+from os import path
+from rest_framework.decorators import api_view
+
+
+# CODE EDITOR
+def save_saved(request):
+    if request.method == 'POST':
+        code = request.POST['code']
+        lang = request.POST['filechooser']
+        filename = request.POST['fileName']
+
+        _filename = f'{filename}.{lang}'
+        with open(_filename, 'w') as fp:
+            fp.write(code)
+            fp.close()
+            print(f'saved as {_filename}')
+        messages.success(request, f"Successfully saved file {_filename}.")
+        return redirect('/app/challengers/modelRegistry')
+
+
+
 
 # retrieve data information from the database, when user select data to test model
 # def get_dataset_info(request):
