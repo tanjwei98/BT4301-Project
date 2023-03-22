@@ -680,7 +680,7 @@
 
 
 
-                                <!-- <select id="select_dataset"
+              <!-- <select id="select_dataset"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option selected>Choose Dataset</option>
                     <option value="Data1">Data1</option>
@@ -692,11 +692,11 @@
               <div>
                 <div style='float: left; width: 50%;'>
 
-                  <select id="select_dataset" onchange="getDatasetDetails()"
+                  <select id="select_dataset"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected>Choose Dataset</option>
-                    {% for ml in model_list.all %}
-                    <option value="{{ ml.Model_ID }}">{{ ml.Model_name }}</option>
+                    <option value = 'default' selected>Choose Dataset</option>
+                    {% for ds in dataset_list.all %}
+                    <option value="{{ ds.Dataset_id }}">{{ ds.Dataset_name }}</option>
                     {% endfor %}
                   </select>
 
@@ -706,9 +706,12 @@
                 <div style='float: left; width: 50%;'>
                   <div style='margin: 10px; color: white;'>
                     <ul id="dataset-details">
-                      <li>Data Set Name: </li>
-                      <li>Number of Rows: </li>
-                      <li>Number of features: </li>
+                      <li>Data Set Name: <p id='dataset_name'></p>
+                      </li>
+                      <li>Number of Rows: <p id='dataset_nrows'></p>
+                      </li>
+                      <li>Number of features: <p id='dataset_nfeatures'></p>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -834,6 +837,9 @@
 
   <!-- Javascript for tabs -->
   <script>
+
+    // import { Client } from 'pg';
+
     // Outer tab: 
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
@@ -939,6 +945,52 @@
     //     });
     // });
 
+
+
+    // set the dropdown box to default whenever the user clicks on close button
+    var selectdata_dropdown = document.getElementById("select_dataset");
+    var defaultValue = selectdata_dropdown.querySelector("option[selected]").innerHTML;
+
+    var selectdata_close = document.getElementById("close-testmodel");
+    selectdata_close.addEventListener("click", function () {
+      selectdata_dropdown.value = defaultValue;
+    });
+
+    // function getDatasetDetails() {
+    //   var select_option = selectdata_dropdown.options[selectdata_dropdown.selectedIndex].value;
+    //   const client = new Client({
+    //     user: 'postgres',
+    //     host: 'localhost',
+    //     database: 'BT4301',
+    //     password: 1234,
+    //     port: 5432,
+    //   });
+
+    //   client.connect();
+
+    //   client.query('SELECT * FROM core_dataset_list WHERE Dataset_id = $1 LIMIT 1', [option], (err, res) => {
+    //     if (err) throw err;
+    //     var data = res.rows[0];
+    //     var ds_name = document.getElementById("dataset_name");
+    //     var ds_nrows = document.getElementById("dataset_nrows");
+    //     var ds_nfeatures = document.getElementById("dataset_nfeatures");
+    //     ds_name.textContent = data.Dataset_name
+    //     ds_nrows.textContent = data.num_of_rows
+    //     ds_nfeatures.textContent = data.num_of_features
+
+    //     client.end();
+    //   });
+    // }
+
+
+    selectdata_dropdown.addEventListener("change", function () {
+      if (activities.value != "default") {
+        getDatasetDetails();
+        console.log('hihi')
+      }
+    });
+
+  </script>
 
 
   </script>

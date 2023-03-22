@@ -45,8 +45,8 @@ def challengers(request):
     return render(request, "challengers.html")
 
 def modelRegistry(request):
-    model_list = Model_List.objects.all()
-    return render(request, "modelRegistry.html", {'model_list': model_list})
+    dataset_list = Dataset_List.objects.all()
+    return render(request, "modelRegistry.html", {'dataset_list': dataset_list})
 
 def humility(request):
     return render(request, "humility.html")
