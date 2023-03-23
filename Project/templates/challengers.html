@@ -408,11 +408,54 @@
               </div>
               
               <div class="flex mb-4" >
-                <button class="w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                type="submit">
+                <button class="w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="openFormBtn" type="submit">
                 +Add Challenger Model ABC
-                </button>
+                </button> 
               </div>
+                  <div id="formContainer" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                    <div class="bg-white w-1/2 rounded-lg shadow-lg p-8 border border-black p-4">
+                      <h2 class="text-2xl mb-4">Add Custom Inference Model</h2>
+                      <form class="mr-6 mt-6 mb-6 ml-6 flex-1">
+                        <div class="mb-4">
+                          <label class="block text-gray-700 font-bold mb-2" for="custom">Name your custom model:</label>
+                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="custom" type="text" placeholder="">
+                        </div>
+                        <div class="mb-4">
+                          <label class="block text-gray-700 font-bold mb-2" for="name">Target name:</label>
+                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="">
+                        </div>
+                        <div class="mb-4">
+                          <label class="block text-gray-700 font-bold mb-2" for="type">Target type:</label>
+                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type" type="text" placeholder="">
+                        </div>
+                        <div class="flex items-center justify-between mr-2">
+                          <button onclick="openFolder()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Add custom model</button>
+                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="close" id="close">Close</button>
+                        </div>
+                      </form>
+                      <script>
+                      const openFormBtn = document.getElementById('openFormBtn');
+                      const closeFormBtn = document.getElementById('closeFormBtn');
+                      const formContainer = document.getElementById('formContainer');
+
+                      openFormBtn.addEventListener('click', () => {
+                        formContainer.classList.remove('hidden');
+                      });
+
+                      function openFolder() {
+                        window.location.href = "https://github.com/";
+                      }
+
+                      closeFormBtn.addEventListener('click', () => {
+                        formContainer.classList.add('hidden');
+                      });
+                      </script>
+
+
+
+                    </div>
+                  </div>
+                  
 
               <div class="grid gap-6 xl:grid-cols-3" >
 
@@ -441,11 +484,9 @@
                             <div class="flex items-center text-sm">
                               <div>
                                 <p class="font-semibold" style="cursor:pointer; text-decoration:underline">HDB Pricing Prediction</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">
-                                  <!--Can include pending status here-->
-                                </p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">  
+                                  <!--Can include pending status here--></p>
                               </div>
-                            </div>
                           </td>
                           <td class="px-4 py-3 text-sm">
                             HDB_Price

@@ -114,6 +114,45 @@
     .dropdown-mr:hover .dropbtn_reason {
       background-color: #3e8e41;
     }
+
+    .dropbtn {
+      background-color: #3498DB;
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dropbtn:hover, .dropbtn:focus {
+      background-color: #2980B9;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      overflow: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
   </style>
 
 </head>
@@ -451,20 +490,80 @@
                         </input>
                       </div>
 
-                      <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                        type="submit">
-                        +Add new files
-                      </button>
-
                     </form>
+
+                      <div class="flex gap-4">              
+                        <div>
+                          <button id="uploadBtn" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" 
+                          type="button">+Add new files</button>
+                          <form id="uploadForm" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-4 shadow-lg">
+                            <label for="fileInput" class="block mb-2 font-bold">Choose file to upload:</label>
+                            <input type="file" id="fileInput" class="py-2 px-4 my-4 rounded">
+                            <button type="submit" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Submit</button>
+                            <button type="button" id="closeBtn" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Close</button>
+                          </form>
+                          <script>
+                            const uploadBtn = document.getElementById('uploadBtn');
+                            const uploadForm = document.getElementById('uploadForm');
+                            const closeBtn = document.getElementById('closeBtn');
+
+                            uploadBtn.addEventListener('click', () => {
+                              uploadForm.classList.remove('hidden');
+                            });
+
+                            closeBtn.addEventListener('click', () => {
+                              uploadForm.classList.add('hidden');
+                            });
+                          </script>
+                        </div>
+
+                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
+                            Create new version
+                          </button>
+
+                      </div>
+
+                      <div id="myModal" tabindex="-1" aria-hidden="true"
+                        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+                        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+                      
+                        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+                      
+                          <div class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
+                            <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+                              <path d="M1 1l16 16m-16 0L1 17"></path>
+                            </svg>
+                            <span class="text-sm">(Esc)</span>
+                          </div>
+                      
+                          <div class="modal-content py-4 text-left px-6">
+                            <h1 class="modal-header font-bold text-2xl mb-2">Modal Title</h1>
+                            <p class="modal-text text-gray-700 mb-4">Modal content goes here.</p>
+                      
+                            <div class="modal-buttons flex justify-end pt-2">
+                              <button id="modalCloseButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                Close
+                              </button>
+                              <button id="modalConfirmButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                Confirm
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        
+
+   
                   </div>
+
 
                   <!-- Your table code goes here -->
                   <div class="flex-1">
 
                     <table class="table-auto w-full h-full">
                       <tr>
-                        <td class="border border-black px-4 py-2 text-center"> <button data-modal-target="testmodel"
+                        <td class="border border-black px-4 py-2 text-center"> 
+                          <button data-modal-target="testmodel"
                             data-modal-toggle="testmodel"
                             class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                             type="button">
