@@ -120,9 +120,9 @@
 
 <body>
   {% if messages %}
-    {% for message in messages %}
-        <div id="messageAlert">{{ message }}</div>
-    {% endfor %}
+  {% for message in messages %}
+  <div id="messageAlert">{{ message }}</div>
+  {% endfor %}
   {% endif %}
 
   <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
@@ -677,7 +677,6 @@
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
             <form id='testmodel_submit'>
-              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
               {% csrf_token %}
               <div id='m1header' style='color: white; padding: 10px;'>
                 <p>Data Catalog</p>
@@ -695,32 +694,30 @@
 
 
               <div>
-                <div style='float: left; width: 50%;'>
+                <form id="dataset-form" method="GET">
+                  <div style='float: left; width: 50%;'>
+                    <select id="dataset-select"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value = 'default' selected>Choose Dataset</option>
+                      {% for ds in dataset_list %}
+                      <option value="{{ ds.Dataset_id }}">{{ ds.Dataset_name }}</option>
+                      {% endfor %}
+                    </select>
 
-                  <select id="select_dataset"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value = 'default' selected>Choose Dataset</option>
-                    {% for ds in dataset_list.all %}
-                    <option value="{{ ds.Dataset_id }}">{{ ds.Dataset_name }}</option>
-                    {% endfor %}
-                  </select>
-
-
-                </div>
-
-                <div style='float: left; width: 50%;'>
-                  <div style='margin: 10px; color: white;'>
-                    <ul id="dataset-details">
-                      <li>Data Set Name: <p id='dataset_name'></p>
-                      </li>
-                      <li>Number of Rows: <p id='dataset_nrows'></p>
-                      </li>
-                      <li>Number of features: <p id='dataset_nfeatures'></p>
-                      </li>
-                    </ul>
                   </div>
-                </div>
 
+                  <div style='float: left; width: 50%;'>
+                    <div style='margin: 10px; color: white;'>
+                      <div id='dataset_info'>
+
+                        <h2>Selected dataset information:</h2>
+                        <p>Name: <span id="dataset-name"></span></p>
+                        <p>Number of rows: <span id="num-rows"></span></p>
+                        <p>Number of features: <span id="num-features"></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
 
 
@@ -778,7 +775,6 @@
 
 
 
-
       <!-- popup form to add model to registry   -->
       <div id="modreg" tabindex="-1" aria-hidden="true"
         class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
@@ -786,7 +782,6 @@
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
             <form id='modreg_submit' style='height: 100%;'>
-              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
               {% csrf_token %}
               <div id='m1header' style='color: white; padding: 10px;'>
                 <p>Data Catalog</p>
@@ -802,7 +797,7 @@
                   <li>
                     <a href="#" style="display: inline">Reason for Change: </a>
                     <div class="dropdown-mr">
-                      <select id="select_dataset" aria-placeholder="Select Reason"
+                      <select id="select_reason" aria-placeholder="Select Reason"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="Accuracy" selected>Bug fixes</option>
                         <option value="Accuracy">Accuracy</option>
@@ -944,7 +939,7 @@
 
 
     // set the dropdown box to default whenever the user clicks on close button
-    var selectdata_dropdown = document.getElementById("select_dataset");
+    var selectdata_dropdown = document.getElementById("dataset-select");
     var defaultValue = selectdata_dropdown.querySelector("option[selected]").innerHTML;
 
     var selectdata_close = document.getElementById("close-testmodel");
@@ -979,13 +974,29 @@
     // }
 
 
-    selectdata_dropdown.addEventListener("change", function () {
-      if (activities.value != "default") {
-        getDatasetDetails();
-        console.log('hihi')
-      }
-    });
 
+
+    // Add an event listener to the drop-down box
+    const datasetSelect = document.getElementById('dataset-select');
+    const datasetName = document.getElementById('dataset-name');
+    const numRows = document.getElementById('num-rows');
+    const numFeatures = document.getElementById('num-features');
+
+    datasetSelect.addEventListener('change', () => {
+      console.log('here in selected data')
+      const datasetId = datasetSelect.value;
+      const xhr = new XMLHttpRequest();
+      // xhr.open('GET', `/challengers/modelRegistry/?dataset_id=${datasetId}`);
+      xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
+      xhr.setRequestHeader('Accept', 'application/json'); // add this line
+      xhr.onload = () => {
+        const dataset = JSON.parse(xhr.responseText);
+        datasetName.textContent = dataset.Dataset_name;
+        numRows.textContent = dataset.num_of_rows;
+        numFeatures.textContent = dataset.num_of_features;
+      };
+      xhr.send();
+    });
   </script>
 
 
