@@ -158,6 +158,12 @@
 </head>
 
 <body>
+  {% if messages %}
+  {% for message in messages %}
+  <div id="messageAlert">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+
   <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
     <!-- Desktop sidebar -->
     <!-- <aside
@@ -594,8 +600,7 @@
 
                 <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
 
-                  <div class="mt-8">
-                    <!-- <label for="codeLanguage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code language</label> -->
+                  <!-- <div class="mt-8">
                     <select id="codeLanguage"
                       class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Choose your code language</option>
@@ -603,13 +608,13 @@
                       <option value="java">Java</option>
                       <option value="javascript">Javascript</option>
                     </select>
-                  </div>
+                  </div> -->
 
                   <!-- CODE EDITOR API GOES HERE. -->
                   <div
                     class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black">
 
-                    <p> Code editor goes here </p>
+                    {% include 'codeEditor.html' %}
 
                   </div>
                   <!-- <div class="grid m:grid-cols-3 w-full shadow-xs mx-6"> -->
@@ -771,7 +776,6 @@
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
             <form id='testmodel_submit'>
-              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
               {% csrf_token %}
               <div id='m1header' style='color: white; padding: 10px;'>
                 <p>Data Catalog</p>
@@ -779,7 +783,7 @@
 
 
 
-                                <!-- <select id="select_dataset"
+              <!-- <select id="select_dataset"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option selected>Choose Dataset</option>
                     <option value="Data1">Data1</option>
@@ -789,29 +793,30 @@
 
 
               <div>
-                <div style='float: left; width: 50%;'>
+                <form id="dataset-form" method="GET">
+                  <div style='float: left; width: 50%;'>
+                    <select id="dataset-select"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <option value = 'default' selected>Choose Dataset</option>
+                      {% for ds in dataset_list %}
+                      <option value="{{ ds.Dataset_id }}">{{ ds.Dataset_name }}</option>
+                      {% endfor %}
+                    </select>
 
-                  <select id="select_dataset" onchange="getDatasetDetails()"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected>Choose Dataset</option>
-                    {% for ml in model_list.all %}
-                    <option value="{{ ml.Model_ID }}">{{ ml.Model_name }}</option>
-                    {% endfor %}
-                  </select>
-
-
-                </div>
-
-                <div style='float: left; width: 50%;'>
-                  <div style='margin: 10px; color: white;'>
-                    <ul id="dataset-details">
-                      <li>Data Set Name: </li>
-                      <li>Number of Rows: </li>
-                      <li>Number of features: </li>
-                    </ul>
                   </div>
-                </div>
 
+                  <div style='float: left; width: 50%;'>
+                    <div style='margin: 10px; color: white;'>
+                      <div id='dataset_info'>
+
+                        <h2>Selected dataset information:</h2>
+                        <p>Name: <span id="dataset-name"></span></p>
+                        <p>Number of rows: <span id="num-rows"></span></p>
+                        <p>Number of features: <span id="num-features"></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
 
 
@@ -869,7 +874,6 @@
 
 
 
-
       <!-- popup form to add model to registry   -->
       <div id="modreg" tabindex="-1" aria-hidden="true"
         class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
@@ -877,7 +881,6 @@
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
             <form id='modreg_submit' style='height: 100%;'>
-              <!-- <form method="POST" action="{% url 'mregistry' %}" id='data_catalog'> -->
               {% csrf_token %}
               <div id='m1header' style='color: white; padding: 10px;'>
                 <p>Data Catalog</p>
@@ -893,7 +896,7 @@
                   <li>
                     <a href="#" style="display: inline">Reason for Change: </a>
                     <div class="dropdown-mr">
-                      <select id="select_dataset" aria-placeholder="Select Reason"
+                      <select id="select_reason" aria-placeholder="Select Reason"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="Accuracy" selected>Bug fixes</option>
                         <option value="Accuracy">Accuracy</option>
@@ -933,6 +936,9 @@
 
   <!-- Javascript for tabs -->
   <script>
+
+    // import { Client } from 'pg';
+
     // Outer tab: 
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
@@ -967,22 +973,6 @@
       }
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
-    }
-
-    // Validate the code porting options that user has selected
-    function validateCodePorting() {
-
-      var portFromLanguage = document.getElementById('portFromLanguage').value;
-      var portToLanguage = document.getElementById('portToLanguage').value;
-
-      if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
-        alert("Please select port language.");
-      }
-      else if (portFromLanguage === portToLanguage) {
-        alert("Language to port from should be different from language to port to.")
-      }
-
-      return;
     }
 
     // Validate the code porting options that user has selected
@@ -1038,6 +1028,75 @@
     //     });
     // });
 
+
+    // // listener for alerting messages.
+    // translateForm.addEventListener('messageAlert', event => {
+    //   console.log(document.getElementById('message'))
+    //   console.log(message)
+    //   alert(document.getElementById('message'));
+    // });
+
+
+    // set the dropdown box to default whenever the user clicks on close button
+    var selectdata_dropdown = document.getElementById("dataset-select");
+    var defaultValue = selectdata_dropdown.querySelector("option[selected]").innerHTML;
+
+    var selectdata_close = document.getElementById("close-testmodel");
+    selectdata_close.addEventListener("click", function () {
+      selectdata_dropdown.value = defaultValue;
+    });
+
+    // function getDatasetDetails() {
+    //   var select_option = selectdata_dropdown.options[selectdata_dropdown.selectedIndex].value;
+    //   const client = new Client({
+    //     user: 'postgres',
+    //     host: 'localhost',
+    //     database: 'BT4301',
+    //     password: 1234,
+    //     port: 5432,
+    //   });
+
+    //   client.connect();
+
+    //   client.query('SELECT * FROM core_dataset_list WHERE Dataset_id = $1 LIMIT 1', [option], (err, res) => {
+    //     if (err) throw err;
+    //     var data = res.rows[0];
+    //     var ds_name = document.getElementById("dataset_name");
+    //     var ds_nrows = document.getElementById("dataset_nrows");
+    //     var ds_nfeatures = document.getElementById("dataset_nfeatures");
+    //     ds_name.textContent = data.Dataset_name
+    //     ds_nrows.textContent = data.num_of_rows
+    //     ds_nfeatures.textContent = data.num_of_features
+
+    //     client.end();
+    //   });
+    // }
+
+
+
+
+    // Add an event listener to the drop-down box
+    const datasetSelect = document.getElementById('dataset-select');
+    const datasetName = document.getElementById('dataset-name');
+    const numRows = document.getElementById('num-rows');
+    const numFeatures = document.getElementById('num-features');
+
+    datasetSelect.addEventListener('change', () => {
+      console.log('here in selected data')
+      const datasetId = datasetSelect.value;
+      const xhr = new XMLHttpRequest();
+      // xhr.open('GET', `/challengers/modelRegistry/?dataset_id=${datasetId}`);
+      xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
+      xhr.setRequestHeader('Accept', 'application/json'); // add this line
+      xhr.onload = () => {
+        const dataset = JSON.parse(xhr.responseText);
+        datasetName.textContent = dataset.Dataset_name;
+        numRows.textContent = dataset.num_of_rows;
+        numFeatures.textContent = dataset.num_of_features;
+      };
+      xhr.send();
+    });
+  </script>
 
 
   </script>
