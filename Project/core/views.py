@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.contrib import messages
+from .models import Users
+from . import forms
 
 # from models import Model_Accuracy
 
@@ -131,7 +133,31 @@ def save_saved(request):
 #   }
 #   return JsonResponse(data)
 
+# LOGIN Functions
+def userlogin(request):
+    msg = ''
+    if request.method=='POST':
+        username = request.POST.get("email")
+        pwd = request.POST.get("password")
+        user = Users.objects.filter(User_ID = username, Password = pwd).count()
+        if user == 1:
+            user = Users.objects.filter(User_ID = username, Password = pwd).first()
+            request.session["userLogin"]= True
+            request.session["userID"] = user.User_ID
+            if user.Role == "MLOps Engineer":
+                request.session["role"] = 'MLOps Engineer'
+            else:
+                request.session["role"] = "Data Scientist"
+            return redirect('/app/deployment')
+            # msg = 'Success'
+        else:
+            msg = 'Invalid Email/Password'
+    #form = forms.UserLoginForm
+    return render(request, 'loginpage.html',{'msg':msg})
 
+def userlogout(request):
+    del request.session["userLogin"]
+    redirect('/app/login')
 
 # MODEL-RELATED.
 from rest_framework import permissions, status
