@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .models import *
+from django.db import connection
 
 # from models import Model_Accuracy
 
@@ -38,6 +39,32 @@ def overview(request):
 
 def accuracy(request):
     return render(request, "accuracy.html")
+
+def auc_chart(request):
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT "Date", "AUC" FROM core_model_accuracy')
+        data = cursor.fetchall()
+    auc_data = []
+    date_labels = []
+    for row in data:
+        date_labels.append(row[0])
+        auc_data.append(row[1])
+    chart_data = {
+        'title': "AUC over time",
+        'data': {
+            "labels": date_labels,
+            "datasets": [
+                {
+                    "label": "AUC Over Time",
+                    "data": auc_data,
+                    "fill": False,
+                    "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                }
+            ]
+        }
+    }
+    return JsonResponse(chart_data)
 
 def service_health(request):
     return render(request, "service_health.html")
