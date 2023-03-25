@@ -40,3 +40,22 @@ python3 Project/manage.py migrate core
 3. make migrations by running `python3 Project/manage.py makemigrations core`
 4. run `python3 Project/manage.py migrate --fake core zero`
 5. migrate by running `python3 Project/manage.py migrate core`
+
+## steps to run Gitlab as a docker container
++ install docker on your system
++ After installing docker, open powershell and type the command: docker pull gitlab/gitlab-ce
++ Then run the command: docker run --detach `
+  --hostname gitlab.example.com `
+  --publish 443:443 --publish 80:80 --publish 22:22 `
+  --name gitlab `
+  --restart always `
+  --volume /srv/gitlab/config:/etc/gitlab `
+  --volume /srv/gitlab/logs:/var/log/gitlab `
+  --volume /srv/gitlab/data:/var/opt/gitlab `
+  gitlab/gitlab-ce:latest
++ After this you should be able to see a running container on your docker desktop with the name gitlab and the ports given
++ Find out the name of the ipaddress of your system by typing "ipconfig" in the command line.
++ For example the ipaddress of my system is 192.168.1.109.
++ If gitlab is successfully installed as a docker container, then you would be able to access it as 192.168.1.109:80(wherein 80 is the port number mentioned in the docker gitlab container)
++ To login into gitlab you need userid and password. root is the userid. For password, tyoe in the following command in the command line: docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
++ You will get a password, use it to login into gitlab

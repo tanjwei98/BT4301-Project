@@ -429,7 +429,13 @@
                           <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type" type="text" placeholder="">
                         </div>
                         <div class="flex items-center justify-between mr-2">
-                          <button onclick="openFolder()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Add custom model</button>
+                          <button id="open-form" onclick="openFolder()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Add custom model</button>
+                          <form id="upload-form" class="hidden" enctype="multipart/form-data">
+                            <input type="file" name="file" id="file-input" />
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                              Upload
+                            </button>
+                          </form>
                           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="close" id="close">Close</button>
                         </div>
                       </form>
@@ -437,6 +443,9 @@
                       const openFormBtn = document.getElementById('openFormBtn');
                       const closeFormBtn = document.getElementById('closeFormBtn');
                       const formContainer = document.getElementById('formContainer');
+                      const form = document.getElementById("upload-form");
+                      const button = document.getElementById("open-form");
+                      const fileInput = document.getElementById("file-input")
 
                       openFormBtn.addEventListener('click', () => {
                         formContainer.classList.remove('hidden');
