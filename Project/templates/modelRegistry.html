@@ -732,26 +732,29 @@
                   </div>  -->
 
 
-                  <div class="mt-2 flex gap-6">
+                  <!-- <div class="mt-2 flex gap-6">
                     <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                       type="submit">
                       +Upload code
                     </button>
-                  </div>
+                  </div> -->
 
                   <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
                   <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
                     <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
-                      <div class="mb-2 text-lg font-medium uppercase text-left">Code to translate</div>
+                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left">Code to translate</div>
 
                       <form method="post" id="translateForm">
+                        <p class="font-semibold">Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++ </p>
+
                         {% csrf_token %}
 
                         <label for="portFromLanguage">Translate from:</label>
                         <select name="portFromLanguage" id="portFromLanguage">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                           <!-- <option value="r">R</option> -->
                           <!-- Add options for other languages as needed -->
                         </select><br>
@@ -759,14 +762,15 @@
                         <label for="portToLanguage" class="mb-4">Translate to:</label>
                         <select name="portToLanguage" id="portToLanguage">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                           <!-- <option value="r">R</option> -->
                           <!-- Add options for other languages as needed -->
                         </select><br>
 
                         <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
-                        <!-- <button type="submit">Translate</button> -->
+
                         <button type="submit" id="translateButton"
                           class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
                         <!-- <pre id="translatedCode"></pre> -->
@@ -776,7 +780,7 @@
 
                     </div>
                     <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
-                      <div class="mb-2 text-lg font-medium uppercase text-left flex-wrap">Translated code</div>
+                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left flex-wrap">Translated code</div>
                       <pre id="translatedCode"></pre>
 
                     </div>
@@ -1020,6 +1024,17 @@
       }
       else if (portFromLanguage === portToLanguage) {
         alert("Language to port from should be different from language to port to.")
+      } else if (!(
+        (portFromLanguage === "python" && portToLanguage === "cpp") ||
+        (portFromLanguage === "python" && portToLanguage === "c") ||
+        (portFromLanguage === "python" && portToLanguage === "javascript") ||
+        (portFromLanguage === "javascript" && portToLanguage === "cpp") ||
+        (portFromLanguage === "cpp" && portToLanguage === "python") ||
+        (portFromLanguage === "cpp" && portToLanguage === "javascript") ||
+        (portFromLanguage === "c" && portToLanguage === "python") ||
+        (portFromLanguage === "c" && portToLanguage === "javascript")
+      )) {
+        alert("Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++");
       } else {
         return;
       }
