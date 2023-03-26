@@ -97,7 +97,9 @@ def accuracy_chart(request):
             ]
         }
     }
-    return JsonResponse(
+    return JsonResponse(chart_data)
+
+        
 def service_health(request):
     return render(request, "service_health.html")
 
