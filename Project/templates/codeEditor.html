@@ -33,10 +33,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closetag.min.js"
     integrity="sha512-XYx5xhl4B5vKNlaRBWh/nlti0+IPM6eT+dSFc3/oc4rERn2DpwbS3q4OblprqqBLXyRSVePKmf+8mHkDLtGZpg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Pylint with CodeMirror --> 
   <script src="https://codemirror.net/lib/codemirror.js"></script>
   <script src="https://codemirror.net/mode/javascript/javascript.js"></script>
   <script src="https://codemirror.net/addon/display/autorefresh.js"></script>
-</head>
+  
+  <script src={% static '/js/python-lint.js' %}></script>
+
+
+  </head>
 
 <body>
   
@@ -120,6 +125,10 @@ int main() {
     lineNumbers: true,
     autoCloseTags: true,
     autoCloseBrackets: true,
+    indentUnit: 4,
+    // lint: true,
+    // styleActiveLine: true,
+    // gutters: ["CodeMirror-lint-markers"],
   });
 
   var con = editor.getValue();

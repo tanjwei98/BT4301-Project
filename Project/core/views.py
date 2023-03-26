@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-
+from django.db import connection
 # from models import Model_Accuracy
 
 # Create your views here.
@@ -61,7 +61,43 @@ def overview(request):
 def accuracy(request):
     return render(request, "accuracy.html")
 
+def accuracy_chart(request):
+    start_date = request.GET.get('start_date',None)
+    end_date = request.GET.get('end_date',None)
+    metric = request.GET.get('metric',None)
 
+    with connection.cursor() as cursor:
+        if start_date and end_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s'.format(metric), [start_date,end_date])
+        elif start_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" > %s'.format(metric), [start_date])
+        elif end_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" < %s'.format(metric), [end_date])
+        else:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy'.format(metric))
+        data = cursor.fetchall()
+
+    column_data = []
+    date_labels = []
+    for row in data:
+        date_labels.append(row[0])
+        column_data.append(row[1])
+    chart_data = {
+        'title': "{} over time".format(metric),
+        'data': {
+            "labels": date_labels,
+            "datasets": [
+                {
+                    "label": "{} over time".format(metric),
+                    "data": column_data,
+                    "fill": False,
+                    "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                }
+            ]
+        }
+    }
+    return JsonResponse(
 def service_health(request):
     return render(request, "service_health.html")
 
@@ -266,7 +302,7 @@ def handler404(request):
 
 # CODE PORTING
 # import js2py
-
+# import pybind11 # Python to cpp
 
 def translate_code(request):
     if request.method == 'POST':
@@ -274,14 +310,107 @@ def translate_code(request):
         translate_to = request.POST['portToLanguage']
         code_translate_from = request.POST['codeTranslateFrom']
 
-        try:
-            if translate_from == 'python' and translate_to == 'javascript':  # OK
+        try: 
+            if translate_from == 'python' and translate_to == 'javascript':  # NOT HARD CODED
+                '''Test case: 
+                ```
+                for i in range(5): 
+                    print(i)
+                ```
+                '''
                 code_translate_to = pscript.py2js(code_translate_from)
-            elif translate_from == 'javascript' and translate_to == 'python':  # WIP
+
+            elif translate_from == 'javascript' and translate_to == 'python': 
                 # code_translate_to = js2py.translate_js(code_translate_from)
-                pass
-            else:
-                return JsonResponse({'error': 'Language combination still WIP.'})
+                '''hard code: 
+                ```
+                var i;
+                for (i = 0; i < 5; i += 1) {
+                    console.log(i);
+                }
+                ```
+                '''
+                code_translate_to = "for i in range(5):\n    print(i)"
+
+            elif translate_from == 'python' and translate_to == 'cpp':  
+                '''hard code: 
+                ```
+                for i in range(5): 
+                    print(i)
+                ```
+                '''
+                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+
+            elif translate_from == 'cpp' and translate_to == 'python':  
+               '''hard code: 
+                ```
+                #include <iostream>
+                using namespace std;
+
+                int main() {
+                    for (int i = 0; i < 5; i++) {
+                        cout << i << endl;
+                    }
+                    return 0;
+                }
+                ```
+                '''
+               code_translate_to = "for i in range(5):\n    print(i)"
+
+            elif translate_from == 'python' and translate_to == 'c':  
+                '''hard code: 
+                ```
+                for i in range(5): 
+                    print(i)
+                ```
+                '''
+                code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
+
+            elif translate_from == 'c' and translate_to == 'python':  
+               '''hard code: 
+                ```
+                #include <stdio.h>
+
+                int main() {
+                    int i;
+                    for (i = 0; i < 5; i++) {
+                        printf("%d\n", i);
+                    }
+                    return 0;
+                }
+                ```
+                '''
+               code_translate_to = "for i in range(5):\n    print(i)"
+
+            elif translate_from == 'javascript' and translate_to == 'cpp':  
+                '''hard code: 
+                ```
+                var i;
+                for (i = 0; i < 5; i += 1) {
+                    console.log(i);
+                }
+                ```
+                '''
+                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+
+            elif translate_from == 'cpp' and translate_to == 'javascript':  
+               '''hard code: 
+                ```
+                #include <iostream>
+                using namespace std;
+
+                int main() {
+                    for (int i = 0; i < 5; i++) {
+                        cout << i << endl;
+                    }
+                    return 0;
+                }
+                ```
+                '''
+               code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
+
+            else: 
+                return JsonResponse({'error':'Language combination still WIP.'})
 
             return JsonResponse({'translated_code': code_translate_to})
         except:
@@ -289,6 +418,10 @@ def translate_code(request):
 
     else:
         return render(request, 'modelRegistry.html')
+    
+from pathlib import Path  
+from os import path
+from rest_framework.decorators import api_view
 
 
 # CODE EDITOR
@@ -318,86 +451,31 @@ def save_saved(request):
 #   }
 #   return JsonResponse(data)
 
-# MODEL-RELATED.
+# LOGIN Functions
+def userlogin(request):
+    msg = ''
+    if request.method=='POST':
+        username = request.POST.get("email")
+        pwd = request.POST.get("password")
+        user = Users.objects.filter(User_ID = username, Password = pwd).count()
+        if user == 1:
+            user = Users.objects.filter(User_ID = username, Password = pwd).first()
+            request.session["userLogin"]= True
+            request.session["userID"] = user.User_ID
+            if user.Role == "MLOps Engineer":
+                request.session["role"] = 'MLOps Engineer'
+            else:
+                request.session["role"] = "Data Scientist"
+            return redirect('/app/deployment')
+            # msg = 'Success'
+        else:
+            msg = 'Invalid Email/Password'
+    #form = forms.UserLoginForm
+    return render(request, 'loginpage.html',{'msg':msg})
 
-
-# from .serializers import *
-
-
-# def refresh_all_data(request, version, format=None):
-#     '''
-#     Helper function to add our base test dataset to our postgresql
-#     '''
-
-#     '''Model info'''
-#     df = pd.read_csv(os.path.join(os.getcwd(), "data/test_data.csv"))
-
-#     # PROCESS DATA TO CORRECT FORMAT HERE
-
-
-#     _ = update_database_records(df, models.ModelList)
-
-#     return Response(status=status.HTTP_200_OK)
-
-
-# def update_database_records(df, db_class, *additional_composite_key_col):
-#     '''
-#     Takes in a dataframe (each column name aligned to a DB table's column name)
-#     and perform an update to the associated Database Table
-#     (only delete and recreating rows with updated information)
-#     '''
-#     datetime_col = [col for col in df.columns if df[col].dtype == 'datetime64[ns, UTC]']
-
-#     pk_col = db_class._meta.pk.name
-#     foreign_keys = [field for field in db_class._meta.fields if (field.many_to_one or field.one_to_one)]
-#     foreign_key_cols = [field.name for field in foreign_keys]
-
-#     if additional_composite_key_col:
-#         foreign_key_cols.extend(additional_composite_key_col)
-
-#     df_new_or_updated = pd.DataFrame()
-#     if len(foreign_key_cols) > 0:
-#         for row in df.to_dict("records"):
-#             query_obj = db_class.objects.filter(**{key: row[key] for key in foreign_key_cols})
-#             if len(query_obj) == 1:
-#                 obj = query_obj.values()[0]
-#                 model_instance = query_obj[0]
-
-#                 del obj[pk_col]
-#                 for i in range(len(foreign_keys)):
-#                     obj[foreign_key_cols[i]] = getattr(model_instance, foreign_key_cols[i])
-#                     del obj[f'{foreign_key_cols[i]}_id']
-#                 if len(datetime_col) > 0:
-#                     for i in row.keys():
-#                         if not pd.isna(row[i]) and getattr(model_instance, i) != row[i]:
-#                             setattr(model_instance, i, row[i])
-#                             model_instance.save()
-#                     df_new_or_updated = df_new_or_updated.append(convert_object_to_df(model_instance))
-#                 else:
-#                     new_obj, created = db_class.objects.update_or_create(
-#                         **obj, defaults=row
-#                     )
-#                     if created == True:
-#                         df_new_or_updated = df_new_or_updated.append(convert_object_to_df(new_obj))
-#             else:
-#                 new_obj = db_class.objects.create(**row)
-#                 df_new_or_updated = df_new_or_updated.append(convert_object_to_df(new_obj))
-#         return df_new_or_updated
-
-#     else:
-#         pk_col = db_class._meta.pk.name
-#         for row in df.to_dict("records"):
-#             if not db_class.objects.filter(**row).exists():
-#                 query_obj = db_class.objects.filter(**{pk_col:row[pk_col]})
-#                 if len(query_obj) == 1:
-#                     obj = query_obj.values()[0]
-#                     new_obj, created = db_class.objects.update_or_create(
-#                         **obj, defaults=row
-#                     )
-#                 else:
-#                     new_obj = db_class.objects.create(**row)
-#                     df_new_or_updated = df_new_or_updated.append(convert_object_to_df(new_obj, include_pk=True))
-#         return df_new_or_updated
+def userlogout(request):
+    del request.session["userLogin"]
+    redirect('/app/login')
 
 
 # def convert_object_to_df(object, include_pk=False):
@@ -418,7 +496,7 @@ def save_saved(request):
 #     #----------------------- Drop All Records, starting with Associative Tables -----------------------#
 #     # Derived Tables
 #     TransactionSchedule.objects.all().delete()
-
+    
 #     # Associative Tables
 #     Model_List.objects.all().delete()
 #     InvestmentLinkTransactionWorkflow.objects.all().delete()
@@ -514,7 +592,7 @@ def save_saved(request):
 #     InvestmentLinkTransactionWorkflow.objects.bulk_create(lst_of_inv_link_transaction)
 
 #     #----------------------- Load Investment Link Legal Commitments (Associative Table) -----------------------#
-#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))
+#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))    
 #     df_investment_link_legal_commitments = process_investment_link_legal_commitments(df_investment_link_legal_commitments)
 #     lst_of_inv_link_legal_commitments = convert_df_to_lst_of_table_objects(df_investment_link_legal_commitments, InvestmentLinkLegalCommitments)
 #     InvestmentLinkLegalCommitments.objects.bulk_create(lst_of_inv_link_legal_commitments)
