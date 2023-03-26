@@ -500,27 +500,61 @@
 
                       <div class="flex gap-4">              
                         <div>
-                          <button id="uploadBtn" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" 
+                          <button id="open-form" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mr-1" 
                           type="button">+Add new files</button>
-                          <form id="uploadForm" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-4 shadow-lg">
-                            <label for="fileInput" class="block mb-2 font-bold">Choose file to upload:</label>
-                            <input type="file" id="fileInput" class="py-2 px-4 my-4 rounded">
-                            <button type="submit" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Submit</button>
-                            <button type="button" id="closeBtn" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Close</button>
+                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2" id="gitlab-button">Access GitLab</button>                      
+                          <form id="upload-form" class="hidden" enctype="multipart/form-data">
+                          <div class="flex items-center justify-between mr-1">
+                            <input type="file" name="file" id="file-input" />
+                            <button type="submit" class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                              Upload
+                            </button>
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2" type="close" id="close">Close</button>
                           </form>
+                        </div>
                           <script>
-                            const uploadBtn = document.getElementById('uploadBtn');
-                            const uploadForm = document.getElementById('uploadForm');
-                            const closeBtn = document.getElementById('closeBtn');
+                            var gitlabButton = document.getElementById("gitlab-button");
+                            gitlabButton.addEventListener("click", openGitLab);
+                            const form = document.getElementById("upload-form");
+                            const button = document.getElementById("open-form");
+                            const fileInput = document.getElementById("file-input");
+                            const gitUrlInput = document.getElementById("git-url-input");
 
-                            uploadBtn.addEventListener('click', () => {
-                              uploadForm.classList.remove('hidden');
+                            button.addEventListener("click", () => {
+                              form.classList.remove("hidden");
                             });
 
-                            closeBtn.addEventListener('click', () => {
-                              uploadForm.classList.add('hidden');
+                            var gitlabButton = document.getElementById("gitlab-button");
+                            gitlabButton.addEventListener("click", openGitLab);
+
+                            function openGitLab() {
+                              window.open("http://192.168.1.109:80", "_blank");
+                            }
+
+                            fileInput.addEventListener("change", () => {
+                              gitUrlInput.classList.add("hidden");
+                            });
+
+                            gitUrlInput.addEventListener("input", () => {
+                              fileInput.classList.add("hidden");
+                              const url = gitUrlInput.value;
+                              window.open(url, "_blank");
+                            });
+
+                            form.addEventListener("submit", (event) => {
+                              event.preventDefault();
+                              if (fileInput.files.length > 0) {
+                                const file = fileInput.files[0];
+                                // Upload file to local folder or remote Git repository using a fetch request or a library like Axios
+                              } else if (gitUrlInput.value) {
+                                const gitUrl = gitUrlInput.value;
+                                // Upload files from remote Git repository using a fetch request or a library like Axios
+                              }
+                              form.reset();
+                              form.classList.add("hidden");
                             });
                           </script>
+
                         </div>
 
                           <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
@@ -698,26 +732,29 @@
                   </div>  -->
 
 
-                  <div class="mt-2 flex gap-6">
+                  <!-- <div class="mt-2 flex gap-6">
                     <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                       type="submit">
                       +Upload code
                     </button>
-                  </div>
+                  </div> -->
 
                   <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
                   <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
                     <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
-                      <div class="mb-2 text-lg font-medium uppercase text-left">Code to translate</div>
+                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left">Code to translate</div>
 
                       <form method="post" id="translateForm">
+                        <p class="font-semibold">Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++ </p>
+
                         {% csrf_token %}
 
                         <label for="portFromLanguage">Translate from:</label>
                         <select name="portFromLanguage" id="portFromLanguage">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                           <!-- <option value="r">R</option> -->
                           <!-- Add options for other languages as needed -->
                         </select><br>
@@ -725,14 +762,15 @@
                         <label for="portToLanguage" class="mb-4">Translate to:</label>
                         <select name="portToLanguage" id="portToLanguage">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                           <!-- <option value="r">R</option> -->
                           <!-- Add options for other languages as needed -->
                         </select><br>
 
                         <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
-                        <!-- <button type="submit">Translate</button> -->
+
                         <button type="submit" id="translateButton"
                           class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
                         <!-- <pre id="translatedCode"></pre> -->
@@ -742,7 +780,7 @@
 
                     </div>
                     <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
-                      <div class="mb-2 text-lg font-medium uppercase text-left flex-wrap">Translated code</div>
+                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left flex-wrap">Translated code</div>
                       <pre id="translatedCode"></pre>
 
                     </div>
@@ -986,6 +1024,17 @@
       }
       else if (portFromLanguage === portToLanguage) {
         alert("Language to port from should be different from language to port to.")
+      } else if (!(
+        (portFromLanguage === "python" && portToLanguage === "cpp") ||
+        (portFromLanguage === "python" && portToLanguage === "c") ||
+        (portFromLanguage === "python" && portToLanguage === "javascript") ||
+        (portFromLanguage === "javascript" && portToLanguage === "cpp") ||
+        (portFromLanguage === "cpp" && portToLanguage === "python") ||
+        (portFromLanguage === "cpp" && portToLanguage === "javascript") ||
+        (portFromLanguage === "c" && portToLanguage === "python") ||
+        (portFromLanguage === "c" && portToLanguage === "javascript")
+      )) {
+        alert("Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++");
       } else {
         return;
       }
