@@ -31,52 +31,6 @@
     <script src={% static '/js/charts-pie.js' %} defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
-    <script>
-      function displayValue(button) {
-        var val = button.querySelector("button h1").innerText;
-        document.getElementById("display_metric").innerText = val;
-      }
-
-      function selectloc(button) {
-        console.log(button.value)
-        var btn = document.getElementById("segment-dropdown");
-        btn.value = button.value; // will just add a hidden value
-        btn.innerHTML = button.value;
-      }
-
-      function selectres(button) {
-        console.log(button.value)
-        var btn = document.getElementById("resolution-dropdown");
-        btn.value = button.value; // will just add a hidden value
-        btn.innerHTML = button.value;
-      }
-
-      window.onload = function() {
-      // Get the start date button and input field
-      const startDateBtn = document.getElementById('start-date-dropdown');
-      const startDateInput = document.getElementById('start-date');
-
-      // Listen for the input change event
-      startDateInput.addEventListener('change', function() {
-        // Get the selected date value
-        const selectedDate = startDateInput.value;
-
-        // Update the button text with the selected date
-        startDateBtn.textContent = selectedDate;
-      });
-      const EndDateBtn = document.getElementById('end-date-dropdown');
-      const EndDateInput = document.getElementById('end-date');
-
-      // Listen for the input change event
-      EndDateInput.addEventListener('change', function() {
-        // Get the selected date value
-        const selectedDate = EndDateInput.value;
-
-        // Update the button text with the selected date
-        EndDateBtn.textContent = selectedDate;
-      });
-    }
-    </script>
     <style>
          .buttons-flex {
              display: -webkit-flex;
@@ -538,42 +492,102 @@
         }
       });
     $(document).ready(function() {
-      console.log(aucChart)
         $.ajax({
-          url: "auc_chart",
-          type: "GET",
-          dataType: "json",
           success: (jsonResponse) => {
             // Load data for the first option
-            loadChart(aucChart)
+            loadChart(aucChart,"Logloss")
           },
           error: () => console.log("Failed to fetch chart filter options!")
         });
       });
-    function loadChart(chart) {
-      $.ajax({
-          url: 'auc_chart',
-          type: "GET",
-          dataType: "json",
-          success: (jsonResponse) => {
-            // Extract data from the response
-            const title = jsonResponse.title;
-            const labels = jsonResponse.data.labels;
-            const datasets = jsonResponse.data.datasets;
+      function loadChart(chart) {
+        metric = document.getElementById("display_metric").innerText
+        url_map = {"Logloss":"LogLoss","AUC":"AUC","Gini Norm":"Gini_Norm","KS":"KS","Rate@Top10%":"Rate_Top10"}
+        console.log(url_map[metric])
+        console.log($('#start-date').val())
+        console.log($('#end-date').val())
+        $.ajax({
+            url: 'accuracy_chart',
+            data: {
+                'start_date': $('#start-date').val(),
+                'end_date': $('#end-date').val(),
+                'metric': url_map[metric]
+            },
+            type: "GET",
+            dataType: "json",
+            success: (jsonResponse) => {
+                // Extract data from the response
+                const title = jsonResponse.title;
+                const labels = jsonResponse.data.labels;
+                const datasets = jsonResponse.data.datasets;
 
-            // Reset the current chart
-            chart.data.datasets = [];
-            chart.data.labels = [];
+                // Reset the current chart
+                chart.data.datasets = [];
+                chart.data.labels = [];
 
-            // Load new data into the chart
-            chart.data.labels = labels;
-            datasets.forEach(dataset => {
-              chart.data.datasets.push(dataset);
-            });
-            chart.update();
-          },
-          error: () => console.log("Failed to fetch chart data from " + endpoint + "!")
+                // Load new data into the chart
+                chart.data.labels = labels;
+                datasets.forEach(dataset => {
+                    chart.data.datasets.push(dataset);
+                });
+                chart.update();
+            },
+            error: () => console.log("Failed to fetch chart data from " + endpoint + "!")
         });
+      } 
+      function displayValue(button) {
+        var val = button.querySelector("button h1").innerText;
+        document.getElementById("display_metric").innerText = val;
+        loadChart(aucChart)
       }
+
+      function selectloc(button) {
+        console.log(button.value)
+        var btn = document.getElementById("segment-dropdown");
+        btn.value = button.value; // will just add a hidden value
+        btn.innerHTML = button.value;
+      }
+
+      function selectres(button) {
+        console.log(button.value)
+        var btn = document.getElementById("resolution-dropdown");
+        btn.value = button.value; // will just add a hidden value
+        btn.innerHTML = button.value;
+      }
+      // Add event listener to start date input
+      $("#start-date").on("change", function() {
+          // Get new start and end dates
+          loadChart(aucChart)
+      });
+      // Add event listener to end date input
+      $("#end-date").on("change", function() {
+        loadChart(aucChart)
+      });
+
+      window.onload = function() {
+      // Get the start date button and input field
+      const startDateBtn = document.getElementById('start-date-dropdown');
+      const startDateInput = document.getElementById('start-date');
+
+      // Listen for the input change event
+      startDateInput.addEventListener('change', function() {
+        // Get the selected date value
+        const selectedDate = startDateInput.value;
+
+        // Update the button text with the selected date
+        startDateBtn.textContent = selectedDate;
+      });
+      const EndDateBtn = document.getElementById('end-date-dropdown');
+      const EndDateInput = document.getElementById('end-date');
+
+      // Listen for the input change event
+      EndDateInput.addEventListener('change', function() {
+        // Get the selected date value
+        const selectedDate = EndDateInput.value;
+
+        // Update the button text with the selected date
+        EndDateBtn.textContent = selectedDate;
+      });
+    }
   </script>
 </html>

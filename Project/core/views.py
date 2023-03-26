@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .models import *
 from django.db import connection
-
 # from models import Model_Accuracy
 
 # Create your views here.
@@ -40,23 +39,35 @@ def overview(request):
 def accuracy(request):
     return render(request, "accuracy.html")
 
-def auc_chart(request):
+def accuracy_chart(request):
+    start_date = request.GET.get('start_date',None)
+    end_date = request.GET.get('end_date',None)
+    metric = request.GET.get('metric',None)
+
     with connection.cursor() as cursor:
-        cursor.execute('SELECT "Date", "AUC" FROM core_model_accuracy')
+        if start_date and end_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s'.format(metric), [start_date,end_date])
+        elif start_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" > %s'.format(metric), [start_date])
+        elif end_date:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" < %s'.format(metric), [end_date])
+        else:
+            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy'.format(metric))
         data = cursor.fetchall()
-    auc_data = []
+
+    column_data = []
     date_labels = []
     for row in data:
         date_labels.append(row[0])
-        auc_data.append(row[1])
+        column_data.append(row[1])
     chart_data = {
-        'title': "AUC over time",
+        'title': "{} over time".format(metric),
         'data': {
             "labels": date_labels,
             "datasets": [
                 {
-                    "label": "AUC Over Time",
-                    "data": auc_data,
+                    "label": "{} over time".format(metric),
+                    "data": column_data,
                     "fill": False,
                     "borderColor": "rgb(75, 192, 192)",
                     "lineTension": 0.1
