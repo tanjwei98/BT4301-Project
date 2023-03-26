@@ -463,19 +463,6 @@
                 <div
                   class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400"
                 >
-                  <!-- Chart legend -->
-                  <div class="flex items-center">
-                    <span
-                      class="inline-block w-3 h-3 mr-1 bg-teal-500 rounded-full"
-                    ></span>
-                    <span>Requests</span>
-                  </div>
-                  <div class="flex items-center">
-                    <span
-                      class="inline-block w-3 h-3 mr-1 bg-purple-600 rounded-full"
-                    ></span>
-                  <span>Logloss</span>
-                </div>
               </div>
             </div>
           </div>
@@ -495,23 +482,27 @@
         $.ajax({
           success: (jsonResponse) => {
             // Load data for the first option
-            loadChart(aucChart,"Logloss")
+            loadChart(aucChart, null)
           },
           error: () => console.log("Failed to fetch chart filter options!")
         });
       });
-      function loadChart(chart) {
+      function loadChart(chart, location) {
         metric = document.getElementById("display_metric").innerText
+        resolution = document.getElementById("resolution-dropdown").innerHTML
+        //location = document.getElementById("segment-dropdown").innerHTML
         url_map = {"Logloss":"LogLoss","AUC":"AUC","Gini Norm":"Gini_Norm","KS":"KS","Rate@Top10%":"Rate_Top10"}
-        console.log(url_map[metric])
         console.log($('#start-date').val())
         console.log($('#end-date').val())
+        console.log("yooo",location)
         $.ajax({
             url: 'accuracy_chart',
             data: {
                 'start_date': $('#start-date').val(),
                 'end_date': $('#end-date').val(),
-                'metric': url_map[metric]
+                'metric': url_map[metric],
+                'resolution': resolution,
+                'location': location
             },
             type: "GET",
             dataType: "json",
@@ -538,7 +529,7 @@
       function displayValue(button) {
         var val = button.querySelector("button h1").innerText;
         document.getElementById("display_metric").innerText = val;
-        loadChart(aucChart)
+        loadChart(aucChart,null)
       }
 
       function selectloc(button) {
@@ -546,6 +537,7 @@
         var btn = document.getElementById("segment-dropdown");
         btn.value = button.value; // will just add a hidden value
         btn.innerHTML = button.value;
+        loadChart(aucChart, button.value)
       }
 
       function selectres(button) {
@@ -553,16 +545,18 @@
         var btn = document.getElementById("resolution-dropdown");
         btn.value = button.value; // will just add a hidden value
         btn.innerHTML = button.value;
+        loadChart(aucChart,null)
       }
       // Add event listener to start date input
       $("#start-date").on("change", function() {
           // Get new start and end dates
-          loadChart(aucChart)
+          loadChart(aucChart,null)
       });
       // Add event listener to end date input
       $("#end-date").on("change", function() {
-        loadChart(aucChart)
+        loadChart(aucChart,null)
       });
+
 
       window.onload = function() {
       // Get the start date button and input field

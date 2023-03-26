@@ -17,6 +17,7 @@ urlpatterns = [
     path('accuracy/', views.accuracy, name = 'accuracy'),
     path('accuracy/accuracy_chart/', views.accuracy_chart, name='accuracy_chart'),
     path('service_health/', views.service_health, name = 'service_health'),
+    path('service_health/service_chart', views.service_chart, name = 'service_chart'),
     path('drift/', views.datadrift, name = 'drift'),
     path('humility/', views.humility, name = 'humility'),
     path('humility/add', views.humility_add, name = 'humility_add'),

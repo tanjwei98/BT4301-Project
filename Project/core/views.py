@@ -65,17 +65,37 @@ def accuracy_chart(request):
     start_date = request.GET.get('start_date',None)
     end_date = request.GET.get('end_date',None)
     metric = request.GET.get('metric',None)
+    resolution = request.GET.get('resolution',None)
+    location = request.GET.get('location',None)
+    if resolution == 'Select':
+        resolution = None
+    if location == 'Select':
+        location = None
 
+    query_dict = {
+    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+    }
+
+    # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        if start_date and end_date:
-            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s'.format(metric), [start_date,end_date])
-        elif start_date:
-            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" > %s'.format(metric), [start_date])
-        elif end_date:
-            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" < %s'.format(metric), [end_date])
+        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
+        min_date, max_date = cursor.fetchone()
+
+        if not start_date:
+            start_date = min_date
+        if not end_date:
+            end_date = max_date
+        if resolution:
+            # Get the appropriate SQL query based on the selected resolution
+            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
         else:
-            cursor.execute('SELECT "Date", "{}" FROM core_model_accuracy'.format(metric))
-        data = cursor.fetchall()
+            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
 
     column_data = []
     date_labels = []
@@ -103,6 +123,63 @@ def accuracy_chart(request):
 def service_health(request):
     return render(request, "service_health.html")
 
+def service_chart(request):
+    start_date = request.GET.get('start_date',None)
+    end_date = request.GET.get('end_date',None)
+    metric = request.GET.get('metric',None)
+    resolution = request.GET.get('resolution',None)
+    location = request.GET.get('location',None)
+    if resolution == 'Select':
+        resolution = None
+    if location == 'Select':
+        location = None
+
+    query_dict = {
+    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+    }
+
+    # Get earliest and latest date from database
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_service_health')
+        min_date, max_date = cursor.fetchone()
+
+        if not start_date:
+            start_date = min_date
+        if not end_date:
+            end_date = max_date
+        if resolution:
+            # Get the appropriate SQL query based on the selected resolution
+            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
+        else:
+            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
+
+    column_data = []
+    date_labels = []
+    for row in data:
+        date_labels.append(row[0])
+        column_data.append(row[1])
+    chart_data = {
+        'title': "{} over time".format(metric),
+        'data': {
+            "labels": date_labels,
+            "datasets": [
+                {
+                    "label": "{} over time".format(metric),
+                    "data": column_data,
+                    "fill": False,
+                    "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                }
+            ]
+        }
+    }
+    return JsonResponse(chart_data)
 
 def datadrift(request):
     return render(request, "datadrift.html")
