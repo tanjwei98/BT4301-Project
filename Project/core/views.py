@@ -1,63 +1,86 @@
+import subprocess
+from pathlib import Path
+import pandas as pd
+import os
+from rest_framework.response import Response
+from rest_framework import permissions, status
+from rest_framework.decorators import api_view
+from os import path
+import pscript
+import sys
+from io import StringIO
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from .models import *
 
 # from models import Model_Accuracy
 
 # Create your views here.
 
+
 def index(request):
     return render(request, "index.html")
+
 
 def form(request):
     return render(request, "forms.html")
 
+
 def card(request):
     return render(request, "cards.html")
+
 
 def chart(request):
     return render(request, "charts.html")
 
+
 def button(request):
     return render(request, "buttons.html")
+
 
 def modal(request):
     return render(request, "modals.html")
 
+
 def table(request):
     return render(request, "tables.html")
+
 
 def deployment(request):
     return render(request, "deployments.html")
 
+
 def overview(request):
     return render(request, "overview.html")
+
 
 def accuracy(request):
     return render(request, "accuracy.html")
 
+
 def service_health(request):
     return render(request, "service_health.html")
 
+
 def datadrift(request):
     return render(request, "datadrift.html")
-    
+
+
 def challengers(request):
     return render(request, "challengers.html")
 
+
 def modelRegistry(request):
     dataset_list = Dataset_List.objects.all()
-    print(request.META.get('HTTP_ACCEPT'))
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
-        
+
         Dataset_id = request.GET.get('dataset_id')
-        print(Dataset_id)
         dataset = get_object_or_404(Dataset_List, pk=Dataset_id)
-        print('in here')
         print('in the rendering page')
         dataset_list = {
             'Dataset_name': dataset.Dataset_name,
@@ -70,10 +93,9 @@ def modelRegistry(request):
     return render(request, "modelRegistry.html", {'dataset_list': dataset_list})
 
 
-
-
 def humility(request):
     return render(request, "humility.html")
+
 
 def humility_add(request):
     return render(request, "humilityAdd.html")
@@ -81,11 +103,160 @@ def humility_add(request):
 # def mregistry(request):
 #     return render(request, "mregistry.html")
 
+
 def loginpage(request):
     return render(request, "loginpage.html")
 
+
+def codeEditor2(request):
+    return render(request, "codeEditor2.html")
+
+
+# def run_code(request):
+#     if request.method == "POST":
+#         print('iin here')
+#         code = request.POST.get("code")
+#         print(f'this is my code {code}')
+#         try:
+#             # Create an empty dictionary to serve as the local namespace for executing the code
+#             local_ns = {}
+#             print(f'in try now')
+#             # Execute the code in the local namespace
+#             exec(code, globals(), local_ns)
+#             print(local_ns)
+#             # Check if the code defined a variable named 'result'
+#             if 'result' in local_ns:
+#                 result = local_ns['result']
+#             else:
+#                 result = None
+
+#             response_data = {"success": True, "result": result}
+#         except Exception as e:
+#             print(f'exception')
+#             print(e)
+#             response_data = {"success": False, "result": str(e)}
+#         print(response_data)
+#         return JsonResponse(response_data)
+
+
+# def run_code(request):
+#     if request.method == "POST":
+#         print('iin here')
+#         # Get the selected programming language and code from the form data
+#         lang = request.POST.get("lang")
+#         code = request.POST.get("code")
+#         print(lang)
+#         print(code)
+#         print(lang)
+#         command = ''
+#         # Choose the appropriate interpreter or compiler based on the selected language
+#         if lang == "python":
+#             command = ["python", "-c", code]
+#         elif lang == "r":
+#             command = ["Rscript", "-e", code]
+#         elif lang == "javascript":
+#             command = ["node", "-e", code]
+#         elif lang == "c":
+#             filename = "program.c"
+#             with open(filename, "w") as f:
+#                 f.write(code)
+#             command = ["gcc", filename, "-o", "program"]
+#             subprocess.run(command)
+#             print(f"Compilation completed: {os.path.exists('program')}")
+#             command = ["./program"]
+#         elif lang == "cpp":
+#             filename = "program.cpp"
+#             with open(filename, "w") as f:
+#                 f.write(code)
+#             command = ["g++", filename, "-o", "program"]
+#             subprocess.run(command)
+#             print(f"Compilation completed: {os.path.exists('program')}")
+#             command = ["./program"]
+
+#         try:
+#             # Run the command using subprocess and capture the output
+#             result = subprocess.check_output(
+#                 command, stderr=subprocess.STDOUT, shell=False, timeout=10, universal_newlines=True)
+#             response_data = {"success": True, "result": result}
+#         except subprocess.CalledProcessError as e:
+#             print('in CalledProcessError')
+#             response_data = {"success": False, "error": str(e.output)}
+#         except subprocess.TimeoutExpired as e:
+#             print('in TimeoutExpired')
+#             response_data = {"success": False, "error": "Time limit exceeded"}
+#         except Exception as e:
+#             print('in other exception')
+#             response_data = {"success": False, "error": str(e)}
+#         print(response_data)
+#         return JsonResponse(response_data)
+
+
+
+
+import subprocess
+
+def run_code(request):
+    if request.method == "POST":
+        print('in post')
+        # Get the selected programming language and code from the form data
+        lang = request.POST.get("lang")
+        code = request.POST.get("code")
+        command = ''
+        # Choose the appropriate interpreter or compiler based on the selected language
+        if lang == "python":
+            command = ["python", "-c", code]
+        elif lang == "javascript":
+            command = ["node", "-e", code]
+            
+        elif lang == "c":
+            filename = "program.c"
+            with open(filename, "w") as f:
+                f.write(code)
+            print(f'f: {f}')
+            print(f'filename: {filename}')
+            command = ["gcc", filename, "-o", "program"]
+            try:
+                subprocess.run(command, check=True)
+                print("Compilation successful")
+                command = ["./program"]
+            except subprocess.CalledProcessError as e:
+                print("Compilation failed: ", e)
+                
+        elif lang == "cpp":
+            filename = "program.cpp"
+            with open(filename, "w") as f:
+                f.write(code)
+                
+            command = ["g++", filename, "-o", "program"]
+            try:
+                subprocess.run(command, check=True)
+                print("Compilation successful")
+                command = ["./program"]
+            except subprocess.CalledProcessError as e:
+                print("Compilation failed: ", e)
+
+
+        print('after  allocating')
+        try:
+            # Run the command using subprocess and capture the output
+            # result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=False, timeout=10, universal_newlines=True)
+            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            stdout, stderr = process.communicate(input='')
+            result = stdout + stderr
+            response_data = {"success": True, "result": result}
+        except subprocess.CalledProcessError as e:
+            response_data = {"success": False, "error": str(e.output)}
+        except subprocess.TimeoutExpired as e:
+            response_data = {"success": False, "error": "Time limit exceeded"}
+        except Exception as e:
+            response_data = {"success": False, "error": str(e)}
+        return JsonResponse(response_data)
+
+
+
 def homepage(request):
     return HttpResponse("Hello, world. The dashboard is under construction. Try ../app/main/")
+
 
 def handler404(request):
     response = render(request, 'index.html')
@@ -93,9 +264,9 @@ def handler404(request):
     return response
 
 
-# CODE PORTING 
-import pscript
+# CODE PORTING
 # import js2py
+
 
 def translate_code(request):
     if request.method == 'POST':
@@ -103,25 +274,21 @@ def translate_code(request):
         translate_to = request.POST['portToLanguage']
         code_translate_from = request.POST['codeTranslateFrom']
 
-        try: 
-            if translate_from == 'python' and translate_to == 'javascript':  # OK 
+        try:
+            if translate_from == 'python' and translate_to == 'javascript':  # OK
                 code_translate_to = pscript.py2js(code_translate_from)
             elif translate_from == 'javascript' and translate_to == 'python':  # WIP
                 # code_translate_to = js2py.translate_js(code_translate_from)
                 pass
-            else: 
-                return JsonResponse({'error':'Language combination still WIP.'})
+            else:
+                return JsonResponse({'error': 'Language combination still WIP.'})
 
             return JsonResponse({'translated_code': code_translate_to})
         except:
-            return JsonResponse({'error':'Translation error'})
+            return JsonResponse({'error': 'Translation error'})
 
     else:
         return render(request, 'modelRegistry.html')
-    
-from pathlib import Path
-from os import path
-from rest_framework.decorators import api_view
 
 
 # CODE EDITOR
@@ -140,8 +307,6 @@ def save_saved(request):
         return redirect('/app/challengers/modelRegistry')
 
 
-
-
 # retrieve data information from the database, when user select data to test model
 # def get_dataset_info(request):
 #   dataset_id = request.GET.get("dataset_id")
@@ -153,14 +318,7 @@ def save_saved(request):
 #   }
 #   return JsonResponse(data)
 
-
-
 # MODEL-RELATED.
-from rest_framework import permissions, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-import os
-import pandas as pd
 
 
 # from .serializers import *
@@ -179,8 +337,7 @@ import pandas as pd
 
 #     _ = update_database_records(df, models.ModelList)
 
-#     return Response(status=status.HTTP_200_OK)  
-
+#     return Response(status=status.HTTP_200_OK)
 
 
 # def update_database_records(df, db_class, *additional_composite_key_col):
@@ -205,7 +362,7 @@ import pandas as pd
 #             if len(query_obj) == 1:
 #                 obj = query_obj.values()[0]
 #                 model_instance = query_obj[0]
-                
+
 #                 del obj[pk_col]
 #                 for i in range(len(foreign_keys)):
 #                     obj[foreign_key_cols[i]] = getattr(model_instance, foreign_key_cols[i])
@@ -226,7 +383,7 @@ import pandas as pd
 #                 new_obj = db_class.objects.create(**row)
 #                 df_new_or_updated = df_new_or_updated.append(convert_object_to_df(new_obj))
 #         return df_new_or_updated
-    
+
 #     else:
 #         pk_col = db_class._meta.pk.name
 #         for row in df.to_dict("records"):
@@ -241,7 +398,7 @@ import pandas as pd
 #                     new_obj = db_class.objects.create(**row)
 #                     df_new_or_updated = df_new_or_updated.append(convert_object_to_df(new_obj, include_pk=True))
 #         return df_new_or_updated
-    
+
 
 # def convert_object_to_df(object, include_pk=False):
 #     '''
@@ -261,7 +418,7 @@ import pandas as pd
 #     #----------------------- Drop All Records, starting with Associative Tables -----------------------#
 #     # Derived Tables
 #     TransactionSchedule.objects.all().delete()
-    
+
 #     # Associative Tables
 #     Model_List.objects.all().delete()
 #     InvestmentLinkTransactionWorkflow.objects.all().delete()
@@ -357,7 +514,7 @@ import pandas as pd
 #     InvestmentLinkTransactionWorkflow.objects.bulk_create(lst_of_inv_link_transaction)
 
 #     #----------------------- Load Investment Link Legal Commitments (Associative Table) -----------------------#
-#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))    
+#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))
 #     df_investment_link_legal_commitments = process_investment_link_legal_commitments(df_investment_link_legal_commitments)
 #     lst_of_inv_link_legal_commitments = convert_df_to_lst_of_table_objects(df_investment_link_legal_commitments, InvestmentLinkLegalCommitments)
 #     InvestmentLinkLegalCommitments.objects.bulk_create(lst_of_inv_link_legal_commitments)

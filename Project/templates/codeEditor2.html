@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.css" />
+</head>
+
+<body>
+  <form method="post" id="runcode">
+    {% csrf_token %}
+    <select id="language">
+      <option value="python">Python</option>
+      <option value="c">C</option>
+      <option value="cpp">C++</option>
+      <option value="javascript">JavaScript</option>
+    </select>
+    <textarea id="editor"></textarea>
+    <button type="submit" onclick="runCode()">Run</button>
+    <div id="console"></div>
+    <div id="output"></div>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/python/python.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/javascript/javascript.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/addon/hint/show-hint.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/addon/hint/python-hint.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/addon/hint/javascript-hint.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/clike/clike.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/cmake/cmake.js"></script>
+
+
+
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+      mode: "text/x-python",
+      lineNumbers: true,
+      gutters: ["CodeMirror-lint-markers"],
+      extraKeys: { "Ctrl-Space": "autocomplete" }
+    });
+
+
+    // Get the language selector element
+    var langSelect = document.getElementById("language");
+
+    // Event listener for when the language is changed
+    langSelect.addEventListener("change", function (event) {
+      // Get the selected language
+      var lang = event.target.value;
+
+      // Set the CodeMirror mode based on the selected language
+      switch (lang) {
+        case "python":
+          editor.setOption("mode", "text/x-python");
+          break;
+        case "c":
+          editor.setOption("mode", "text/x-csrc");
+          break;
+        case "cpp":
+          editor.setOption("mode", "text/x-c++src");
+          break;
+        case "javascript":
+          editor.setOption("mode", "text/javascript");
+          break;
+        default:
+          editor.setOption("mode", "text/x-python");
+          break;
+      }
+    });
+
+
+    function runCode() {
+      event.preventDefault(); // prevent form submission
+      var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+      var language = $('#language').val();
+      var code = editor.getValue();
+      $.ajax({
+        url: "./run_code/",
+        type: "POST",
+        dataType: "json",
+        data: { code: code, lang: language, csrfmiddlewaretoken: csrf_token },
+        success: function (response) {
+          if (response.success) {
+            // Display the result in the #output div
+            console.log(response.result)
+            var result = response.result.replace(/\n/g, '<br>');
+            $("#output").html(result);
+          } else {
+            var errorLines = response.error.split('\n');
+            var errorHtml = errorLines.map(function (line) {
+              return '<div>' + line + '</div>';
+            }).join('');
+            $("#output").html(errorHtml);
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr.statusText);
+        }
+      });
+    }
+
+  </script>
+</body>
+
+</html>

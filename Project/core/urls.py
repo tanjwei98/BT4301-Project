@@ -21,10 +21,13 @@ urlpatterns = [
     path('humility/add', views.humility_add, name = 'humility_add'),
     path('challengers/', views.challengers, name = 'challengers'),
     path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
+    path('codeEditor2/', views.codeEditor2, name = 'codeEditor2'),
     # path('mregistry/', views.mregistry, name = 'mregistry'),
     path('loginpage/', views.loginpage, name='loginpage'),
     path('challengers/modelRegistry/translate/', views.translate_code, name='translate_code'), # Code porting
     # path('saveas/<str:filename>',views.save_saved, name='save_saved'),
     path('challengers/saveas/',views.save_saved, name='save_saved'),
     # path('save',views.save),
+
+    path("codeEditor2/run_code/", views.run_code, name="run_code")
     ]
