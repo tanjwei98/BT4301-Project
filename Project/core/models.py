@@ -20,7 +20,7 @@ class Users(models.Model):
     Supervisor = models.CharField(max_length=255,null=False)
  
 class Model_List(models.Model):
-    Model_ID = models.CharField(max_length=255)
+    Model_ID = models.CharField(max_length=255,primary_key=True)
     Model_name = models.CharField(max_length=255,null=False)
     Model_version = models.CharField(max_length=255,null=False)
     Language = models.CharField(max_length=255,null=False)
