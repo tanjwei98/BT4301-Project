@@ -14,6 +14,7 @@ urlpatterns = [
     path('table/', views.table, name='table'),
     path('deployment/', views.deployment, name = 'deployment'),
     path('overview/', views.overview, name = 'overview'),
+    path('overview/approve-model/', views.approveModel, name = 'approveModel'),
     path('accuracy/', views.accuracy, name = 'accuracy'),
     path('accuracy/accuracy_chart/', views.accuracy_chart, name='accuracy_chart'),
     path('service_health/', views.service_health, name = 'service_health'),
