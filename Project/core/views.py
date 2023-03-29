@@ -17,7 +17,10 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from django.db import connection
+from .functions import *
 # from models import Model_Accuracy
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -51,7 +54,14 @@ def table(request):
 
 
 def deployment(request):
-    return render(request, "deployments.html")
+    context = {}
+    user_id = request.session["userID"]
+    context.update(get_deployments(user_id))
+    context.update(get_service_health(user_id))
+    context.update(get_data_drift(user_id))
+    context.update(get_accuracy(user_id))
+    context.update(deployed_models(user_id))
+    return render(request, "deployments.html", context)
 
 
 def overview(request):
@@ -533,11 +543,13 @@ def save_saved(request):
 # LOGIN Functions
 def userlogin(request):
     msg = ''
-    if request.method=='POST':
+    context = {}
+    if request.method=='POST':  
         username = request.POST.get("email")
         pwd = request.POST.get("password")
         user = Users.objects.filter(User_ID = username, Password = pwd).count()
         if user == 1:
+            print(username)
             user = Users.objects.filter(User_ID = username, Password = pwd).first()
             request.session["userLogin"]= True
             request.session["userID"] = user.User_ID
@@ -545,7 +557,15 @@ def userlogin(request):
                 request.session["role"] = 'MLOps Engineer'
             else:
                 request.session["role"] = "Data Scientist"
-            return redirect('/app/deployment')
+            # return redirect('/app/deployment')
+            context.update(get_deployments(user.User_ID))
+            context.update(get_service_health(user.User_ID))
+            context.update(get_data_drift(user.User_ID))
+            context.update(get_accuracy(user.User_ID))
+            context.update(deployed_models(user.User_ID))
+            # return redirect('/app/deployment')
+            return redirect(reverse("deployment"))           
+            #return render(request, 'deployments.html', context = context)
             # msg = 'Success'
         else:
             msg = 'Invalid Email/Password'
@@ -553,8 +573,13 @@ def userlogin(request):
     return render(request, 'loginpage.html',{'msg':msg})
 
 def userlogout(request):
-    del request.session["userLogin"]
-    redirect('/app/login')
+    if request.method == "GET":
+        request.session.flush()
+    #return redirect('/app/logout')
+    #if (request.GET.get("logoutbtn")):
+        #del request.session["userLogin"]
+        return render(request, 'logoutpage.html')
+       
 
 
 # def convert_object_to_df(object, include_pk=False):
