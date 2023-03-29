@@ -31,3 +31,12 @@ def deployed_models(userID):
     models = Model_List.objects.filter(User_ID = userID)
     return {"Deployed_Models": models}
 
+# Overview page
+def get_model(modelName):
+    model = Model_List.objects.filter(Model_name = modelName).first()
+    return {"Model": model}
+
+def get_dataset(modelName):
+    dataset_id = Model_List.objects.filter(Model_name = modelName).first().Dataset_ID_id
+    dataset = Dataset_List.objects.filter(Dataset_ID = dataset_id).first()
+    return {"Dataset": dataset}

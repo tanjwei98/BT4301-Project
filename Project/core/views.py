@@ -64,8 +64,16 @@ def deployment(request):
     return render(request, "deployments.html", context)
 
 
-def overview(request):
-    return render(request, "overview.html")
+def overview(request, model_Name):
+    #if request.session["userID"] == model_id:
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'model_Name': model_Name})
+    context.update(get_model(model_Name))
+    context.update(get_dataset(model_Name))
+
+    return render(request, "overview.html", context)
+    #return HttpResponseRedirect(reverse('overview', args=(model_id,)))
 
 import json
 

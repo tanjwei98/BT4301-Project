@@ -248,26 +248,162 @@
                     <td class="px-4 py-3 text-sm">
                       High
                     </td>
+                    {% if Model.Service_Health_Status == "Passing" %}
                     <td class="px-4 py-3 text-xs">
-                      <svg fill="none" stroke="green" stroke-width="1.5" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                        <svg 
+                          fill="none"
+                          stroke="green"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          width = "50"
+                          height = "50"
+                        >
+                          <path
+                            stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                          ></path>
+                        </svg>
+                    </td>
+                    {% elif Model.Service_Health_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
                       </svg>
                     </td>
-                    <td class="px-4 py-3 text-sm">
-                      <svg fill="black" stroke="yellow" stroke-width="1.5" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z">
-                        </path>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
                       </svg>
                     </td>
-                    <td class="px-4 py-3 text-sm">
-                      <svg fill="none" stroke="red" stroke-width="1.5" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    {% endif %}
+                    {% if Model.Data_Drift_Status == "Passing" %}
+                    <td class="px-4 py-3 text-xs">
+                      <svg 
+                        fill="none"
+                        stroke="green"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width = "50"
+                        height = "50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                        ></path>
                       </svg>
                     </td>
+                    {% elif Model.Data_Drift_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
+                      <svg
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% endif %}
+                    {% if Model.Accuracy_Status == "Passing" %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                          fill="none"
+                          stroke="green"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          width = "50"
+                          height = "50"
+                        >
+                        <path
+                            stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                          ></path>
+                        </svg>
+                    </td>
+                    {% elif Model.Accuracy_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% endif %}
                     <td class="px-4 py-3 text-sm">
                       1 day ago
                     </td>
@@ -307,6 +443,7 @@
           </div>
           <!--Content for your page-->
           <div class="container mx-auto grid">
+            {% if Model.Approve_Status == "1" %}
             <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
               <div>
                 <p> This deployment has pending changes</p>
@@ -318,45 +455,73 @@
                 </button>
               </div>
             </div>
-            <div class="grid gap-6 xl:grid-cols-3">
+            {% else %}
+            <div class="flex flex-col justify-between p-4  text-sm font-semibold text-purple-100">
+            </div>
+            {% endif %}
+            <div class="my-3 grid gap-6 xl:grid-cols-3">
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
                   Summary
                 </h4>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Name:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Description:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Importance:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Name: <!--Should input deployed model name -->
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Description: <!--Should input deployed model description-->
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Importance: 
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  High
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
                   Approval Status:
-                </h5>
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  Approved
+                </span>
               </div>
 
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
                   Content
                 </h4>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Dataset:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Target:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Model:
-                </h5>
-                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                  Built Environment:
-                </h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Dataset: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Dataset.Dataset_name }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Target: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Dataset.Target}}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Model: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Model.Model_name }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Built Environment: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Model.Language }}
+                </span>
               </div>
 
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
                   Governance Logs
                 </h4>
                 <h5 class="mb-4 text-gray-600 dark:text-gray-300">
