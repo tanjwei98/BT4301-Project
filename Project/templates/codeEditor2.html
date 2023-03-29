@@ -17,8 +17,10 @@
       <option value="javascript">JavaScript</option>
     </select>
     <textarea id="editor"></textarea>
-    <button type="submit" onclick="runCode()">Run</button>
-    <div id="console"></div>
+    <button type="submit" onclick="runCode()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Run</button>
+
+    <p class="block text-gray-700 font-bold mb-2 mt-6">Console output:</p>
+    <div class="boder border-gray-400" id="console"></div>
     <div id="output"></div>
   </form>
 
@@ -35,10 +37,33 @@
 
 
   <script>
+    let lang_dic = {
+        python: `print("hello world")`,
+        "c++": `#include <iostream>
+    using namespace std;
+
+    int main() {
+      cout << "Hello World!";
+      return 0;
+    }`,
+        c: `#include <stdio.h>
+
+    int main() {
+      printf("Hello World!");
+      return 0;
+    }`,
+        javascript: `console.log("hello world");`,
+        dart: `void main(){
+      print("Hello World");
+    }`,
+      };
+
+
     var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
       mode: "text/x-python",
       lineNumbers: true,
       gutters: ["CodeMirror-lint-markers"],
+      lint: true,
       extraKeys: { "Ctrl-Space": "autocomplete" }
     });
 
@@ -55,18 +80,23 @@
       switch (lang) {
         case "python":
           editor.setOption("mode", "text/x-python");
+          editor.setValue(lang_dic["python"]);
           break;
         case "c":
           editor.setOption("mode", "text/x-csrc");
+          editor.setValue(lang_dic["c"]);
           break;
         case "cpp":
           editor.setOption("mode", "text/x-c++src");
+          editor.setValue(lang_dic["c++"]);
           break;
         case "javascript":
           editor.setOption("mode", "text/javascript");
+          editor.setValue(lang_dic["javascript"]);
           break;
         default:
           editor.setOption("mode", "text/x-python");
+          editor.setValue(lang_dic["python"]);
           break;
       }
     });
@@ -78,7 +108,7 @@
       var language = $('#language').val();
       var code = editor.getValue();
       $.ajax({
-        url: "./run_code/",
+        url: "/app/codeEditor2/run_code/",
         type: "POST",
         dataType: "json",
         data: { code: code, lang: language, csrfmiddlewaretoken: csrf_token },

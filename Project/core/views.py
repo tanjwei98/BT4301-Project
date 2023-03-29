@@ -412,6 +412,8 @@ def handler404(request):
 # CODE PORTING
 # import js2py
 # import pybind11 # Python to cpp
+import re
+
 
 def translate_code(request):
     if request.method == 'POST':
@@ -439,7 +441,13 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                # print(code_translate_from_formatted)
+                
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else: 
+                    code_translate_to = "for i in range(5):\n    print(i)"
 
             elif translate_from == 'python' and translate_to == 'cpp':  
                 '''hard code: 
@@ -448,10 +456,15 @@ def translate_code(request):
                     print(i)
                 ```
                 '''
-                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else: 
+                    code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
             elif translate_from == 'cpp' and translate_to == 'python':  
-               '''hard code: 
+                '''
+                hard code: 
                 ```
                 #include <iostream>
                 using namespace std;
@@ -464,7 +477,11 @@ def translate_code(request):
                 }
                 ```
                 '''
-               code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}": 
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "for i in range(5):\n    print(i)"
 
             elif translate_from == 'python' and translate_to == 'c':  
                 '''hard code: 
@@ -473,23 +490,30 @@ def translate_code(request):
                     print(i)
                 ```
                 '''
-                code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else: 
+                    code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
 
             elif translate_from == 'c' and translate_to == 'python':  
-               '''hard code: 
+                '''hard code: 
                 ```
                 #include <stdio.h>
 
-                int main() {
-                    int i;
-                    for (i = 0; i < 5; i++) {
-                        printf("%d\n", i);
-                    }
+                    int main() {
+                    printf("Hello World!");
                     return 0;
-                }
+                    }
                 ```
                 '''
-               code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                # code_translate_from_formatted = code_translate_from_formatted.rstrip('%')
+                print(code_translate_from_formatted)
+                if code_translate_from_formatted != '#include<stdio.h>intmain(){printf("HelloWorld!");return0;}': 
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = 'print("Hello World!")'
 
             elif translate_from == 'javascript' and translate_to == 'cpp':  
                 '''hard code: 
@@ -500,10 +524,15 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else: 
+                    code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
             elif translate_from == 'cpp' and translate_to == 'javascript':  
-               '''hard code: 
+                '''hard code: 
                 ```
                 #include <iostream>
                 using namespace std;
@@ -516,7 +545,11 @@ def translate_code(request):
                 }
                 ```
                 '''
-               code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
+                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}": 
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
 
             else: 
                 return JsonResponse({'error':'Language combination still WIP.'})
@@ -600,148 +633,3 @@ def userlogout(request):
         #del request.session["userLogin"]
         return render(request, 'logoutpage.html')
        
-
-
-# def convert_object_to_df(object, include_pk=False):
-#     '''
-#     Takes in a Django Model object, and boolean parameter indicating whether to include the primary key
-#     Return a Pandas DataFrame (of 1 row)
-#     '''
-#     if not include_pk:
-#         col_lst = [col.name for col in object._meta.fields if not col.primary_key]
-#     else:
-#         col_lst = [col.name for col in object._meta.fields]
-
-#     return pd.DataFrame({k: [getattr(object, k)] for k in col_lst})
-
-
-# def fetch_all_data():
-
-#     #----------------------- Drop All Records, starting with Associative Tables -----------------------#
-#     # Derived Tables
-#     TransactionSchedule.objects.all().delete()
-    
-#     # Associative Tables
-#     Model_List.objects.all().delete()
-#     InvestmentLinkTransactionWorkflow.objects.all().delete()
-#     InvestmentTeamDetailsInfo.objects.all().delete()
-#     InvestmentInvestmentCounterpartyLinksInfo.objects.all().delete()
-#     InvestmentLinkLinkInstruments.objects.all().delete()
-#     InvestmentLinkChildTransactions.objects.all().delete()
-#     InvestmentCountryMixInformation.objects.all().delete()
-#     InvestmentApprovedCommitmentInformation.objects.all().delete()
-#     InvestmentDeals.objects.all().delete()
-#     HR.objects.all().delete()
-
-#     # Entity
-#     Users.objects.all().delete()
-#     InvestmentLink.objects.all().delete()
-#     LegalCommitment.objects.all().delete()
-#     Transaction.objects.all().delete()
-#     Investment.objects.all().delete()
-#     Instrument.objects.all().delete()
-#     Deals.objects.all().delete()
-
-#     #----------------------- HR Dummy -----------------------#
-#     df_hr = pd.read_csv(os.path.join(os.getcwd(), "data/HR.csv"))
-#     df_hr = process_hr(df_hr)
-#     lst_of_hr = convert_df_to_lst_of_table_objects(df_hr, HR)
-#     HR.objects.bulk_create(lst_of_hr)
-
-#     #----------------------- Load Legal Commitments -----------------------#
-#     df_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/LegalCommitment.csv"))
-#     df_legal_commitments = process_legal_commitments(df_legal_commitments)
-#     lst_of_legal_commitments = convert_df_to_lst_of_table_objects(df_legal_commitments, LegalCommitment)
-#     LegalCommitment.objects.bulk_create(lst_of_legal_commitments)
-
-#     #----------------------- Load Investment Links -----------------------#
-#     df_investment_link = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink.csv"))
-#     df_investment_link = process_investment_links(df_investment_link)
-#     list_of_investment_link = convert_df_to_lst_of_table_objects(df_investment_link, InvestmentLink)
-#     InvestmentLink.objects.all().delete()
-#     InvestmentLink.objects.bulk_create(list_of_investment_link)
-
-#     #----------------------- Load Transaction Workflow -----------------------#
-#     df_transaction_workflow = pd.read_csv(os.path.join(os.getcwd(), "data/TransactionNotice.csv"))
-#     df_transaction_workflow = process_transaction(df_transaction_workflow)
-#     lst_of_transaction_workflow = convert_df_to_lst_of_table_objects(df_transaction_workflow, Transaction)
-#     Transaction.objects.bulk_create(lst_of_transaction_workflow)
-
-#     #----------------------- Load Investment -----------------------#
-#     df_investment = pd.read_csv(os.path.join(os.getcwd(), "data/Investment.csv"))
-#     df_investment = process_investment(df_investment)
-#     lst_of_investment = convert_df_to_lst_of_table_objects(df_investment, Investment)
-#     Investment.objects.bulk_create(lst_of_investment)
-
-#     #----------------------- Load Deals -----------------------#
-#     df_deals = pd.read_csv(os.path.join(os.getcwd(), "data/Deals.csv"))
-#     df_deals = process_deals(df_deals)
-#     list_of_deals = convert_df_to_lst_of_table_objects(df_deals, Deals)
-#     Deals.objects.bulk_create(list_of_deals)
-
-#     #----------------------- Load Instrument -----------------------#
-#     df_instrument = pd.read_csv(os.path.join(os.getcwd(), "data/Instrument.csv"))
-#     df_instrument = process_instrument(df_instrument)
-#     list_of_instruments = convert_df_to_lst_of_table_objects(df_instrument, Instrument)
-#     Instrument.objects.bulk_create(list_of_instruments)
-
-#     #----------------------- Load Investment - Team Details Info (Associative Table) -----------------------#
-#     df_InvestmentTeamDetailsInfo = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-TeamDetailsInfo.csv"))
-#     df_InvestmentTeamDetailsInfo = process_investment_team_details_info(df_InvestmentTeamDetailsInfo)
-#     lst_of_InvestmentTeamDetailsInfo = convert_df_to_lst_of_table_objects(df_InvestmentTeamDetailsInfo, InvestmentTeamDetailsInfo)
-#     InvestmentTeamDetailsInfo.objects.bulk_create(lst_of_InvestmentTeamDetailsInfo)
-
-#     #----------------------- Load Investment - Investment Counterparty Links Info (Associative Table) -----------------------#
-#     df_InvestmentCounterpartyLinksInfo = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-InvestmentCounterpartyLinksInfo.csv"))
-#     df_InvestmentCounterpartyLinksInfo = process_investment_counter_party_links_info(df_InvestmentCounterpartyLinksInfo)
-#     lst_of_InvestmentCounterpartyLinksInfo = convert_df_to_lst_of_table_objects(df_InvestmentCounterpartyLinksInfo, InvestmentInvestmentCounterpartyLinksInfo)
-#     InvestmentInvestmentCounterpartyLinksInfo.objects.bulk_create(lst_of_InvestmentCounterpartyLinksInfo)
-
-#     #----------------------- Load Investment Link - Link Instruments (Associative Table) -----------------------#
-#     df_InvestmentLinkLinkInstruments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkInstruments.csv"))
-#     df_InvestmentLinkLinkInstruments = process_investment_link_link_instruments(df_InvestmentLinkLinkInstruments)
-#     lst_of_InvestmentLinkLinkInstruments = convert_df_to_lst_of_table_objects(df_InvestmentLinkLinkInstruments, InvestmentLinkLinkInstruments)
-#     InvestmentLinkLinkInstruments.objects.bulk_create(lst_of_InvestmentLinkLinkInstruments)
-
-#     #----------------------- Load Investment Link - Child Transactions (Associative Table) -----------------------#
-#     df_InvestmentLinkChildTransactions = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-ChildTransactions.csv"))
-#     df_InvestmentLinkChildTransactions = process_investment_link_child_transactions(df_InvestmentLinkChildTransactions)
-#     lst_of_InvestmentLinkChildTransactions = convert_df_to_lst_of_table_objects(df_InvestmentLinkChildTransactions, InvestmentLinkChildTransactions)
-#     InvestmentLinkChildTransactions.objects.bulk_create(lst_of_InvestmentLinkChildTransactions)
-
-#     #----------------------- Load Investment Link Transaction Workflow (Associative Table) -----------------------#
-#     df_investment_link_transaction_workflow = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-TransactionWorkFlow.csv"))
-#     df_investment_link_transaction_workflow = process_investment_link_transaction_workflow(df_investment_link_transaction_workflow)
-#     lst_of_inv_link_transaction = convert_df_to_lst_of_table_objects(df_investment_link_transaction_workflow, InvestmentLinkTransactionWorkflow)
-#     InvestmentLinkTransactionWorkflow.objects.bulk_create(lst_of_inv_link_transaction)
-
-#     #----------------------- Load Investment Link Legal Commitments (Associative Table) -----------------------#
-#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))    
-#     df_investment_link_legal_commitments = process_investment_link_legal_commitments(df_investment_link_legal_commitments)
-#     lst_of_inv_link_legal_commitments = convert_df_to_lst_of_table_objects(df_investment_link_legal_commitments, InvestmentLinkLegalCommitments)
-#     InvestmentLinkLegalCommitments.objects.bulk_create(lst_of_inv_link_legal_commitments)
-
-#     #----------------------- Load Investment - Approved Commitment Information (Associative Table) -----------------------#
-#     df_InvestmentApprovedCommitmentInformation = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-ApprovedCommitmentInformation.csv"))
-#     df_InvestmentApprovedCommitmentInformation = process_investment_approved_commitment(df_InvestmentApprovedCommitmentInformation)
-#     list_of_investment_approvedcommitment = convert_df_to_lst_of_table_objects(df_InvestmentApprovedCommitmentInformation, InvestmentApprovedCommitmentInformation)
-#     InvestmentApprovedCommitmentInformation.objects.bulk_create(list_of_investment_approvedcommitment)
-
-#     #----------------------- Load Investment - Country Mix Information (Associative Table) -----------------------#
-#     df_InvestmentCountryMixInformation = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-CountryMixInformation.csv"))
-#     df_InvestmentCountryMixInformation = process_investment_country_mix(df_InvestmentCountryMixInformation)
-#     list_of_investment_countrymix = convert_df_to_lst_of_table_objects(df_InvestmentCountryMixInformation, InvestmentCountryMixInformation)
-#     InvestmentCountryMixInformation.objects.bulk_create(list_of_investment_countrymix)
-
-#     #----------------------- Load Investment - Deals (Associative Table) -----------------------#
-#     df_InvestmentDeals = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-Deals.csv"))
-#     df_InvestmentDeals = process_investment_deals(df_InvestmentDeals)
-#     list_of_investment_deals = convert_df_to_lst_of_table_objects(df_InvestmentDeals, InvestmentDeals)
-#     InvestmentDeals.objects.bulk_create(list_of_investment_deals)
-
-#     #----------------------- Load Transaction Schedule (Derived Table) -----------------------#
-#     df_past_transaction_schedule = process_transaction_schedule(pd.DataFrame())
-#     list_of_schedule = convert_df_to_lst_of_table_objects(df_past_transaction_schedule, TransactionSchedule)
-#     TransactionSchedule.objects.bulk_create(list_of_schedule)
-
-#     return Response(status=status.HTTP_200_OK)
