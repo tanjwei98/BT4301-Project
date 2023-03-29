@@ -837,7 +837,7 @@
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option value='default' selected>Choose Dataset</option>
                       {% for ds in dataset_list %}
-                      <option value="{{ ds.Dataset_id }}">{{ ds.Dataset_name }}</option>
+                      <option value="{{ ds.Dataset_ID }}">{{ ds.Dataset_name }}</option>
                       {% endfor %}
                     </select>
 
@@ -851,6 +851,7 @@
                         <p style = 'padding: 5px'>Name: <span id="dataset-name"></span></p>
                         <p style = 'padding: 5px'>Number of rows: <span id="num-rows"></span></p>
                         <p style = 'padding: 5px'>Number of features: <span id="num-features"></span></p>
+                        <p style = 'padding: 5px'>Target Variable: <span id="target-variable"></span></p>
                       </div>
                     </div>
                   </div>
@@ -1133,6 +1134,8 @@
     const datasetName = document.getElementById('dataset-name');
     const numRows = document.getElementById('num-rows');
     const numFeatures = document.getElementById('num-features');
+    const targetVariable = document.getElementById('target-variable');
+    
 
     datasetSelect.addEventListener('change', () => {
       const datasetId = datasetSelect.value;
@@ -1145,6 +1148,7 @@
         datasetName.textContent = dataset.Dataset_name;
         numRows.textContent = dataset.num_of_rows;
         numFeatures.textContent = dataset.num_of_features;
+        targetVariable.textContent = dataset.Target;
       };
       xhr.send();
     });

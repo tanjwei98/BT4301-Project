@@ -67,6 +67,27 @@ def deployment(request):
 def overview(request):
     return render(request, "overview.html")
 
+import json
+
+def approveModel(request):
+    # data = json.loads(request.body.decode('utf-8'))
+    # model_id = data.get('model_id')
+    # model_status = data.get('status')
+    
+    model_id = request.POST.get('model_id')
+    model_status = request.POST.get('status')
+    comments = request.POST.get('comments')
+    print(model_id)
+    print(model_status)
+    Model_List.objects.filter(Model_ID=model_id).update(Approve_Status=model_status)
+    Model_List.objects.filter(Model_ID=model_id).update(Change_Comments=comments)
+    updated_model = Model_List.objects.get(Model_ID=model_id)
+    # print the updated fields to the console
+    print(f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
+    print(f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
+    return JsonResponse({'success': True})
+
+
 
 def accuracy(request):
     return render(request, "accuracy.html")
@@ -203,14 +224,13 @@ def modelRegistry(request):
     dataset_list = Dataset_List.objects.all()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
-
         Dataset_id = request.GET.get('dataset_id')
         dataset = get_object_or_404(Dataset_List, pk=Dataset_id)
-        print('in the rendering page')
         dataset_list = {
             'Dataset_name': dataset.Dataset_name,
             'num_of_rows': dataset.num_of_rows,
             'num_of_features': dataset.num_of_features,
+            'Target': dataset.Target,
         }
         return JsonResponse(dataset_list)
 
