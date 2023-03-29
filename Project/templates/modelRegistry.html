@@ -645,10 +645,27 @@
                   </div> -->
 
                   <!-- CODE EDITOR API GOES HERE. -->
+                  
+                  <!-- <div>
+                    <label class="block text-purple-600 dark:text-purple-300 font-bold mt-2" for="fileName">
+                      File name (with extension)
+                    </label>
+                    <input
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="fileName" type="text" name="fileName" placeholder="" required>
+                    </input>
+              
+                    <button type = 'submit' class="circular-btn mx-4 w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mb-4" id="save-btn">
+                      <i class="fa fa-floppy-o fa-lg">  Save file</i>
+                    </button>
+                  </div> -->
+                  
+                  
                   <div
                     class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black">
 
-                    {% include 'codeEditor.html' %}
+
+                    {% include 'codeEditor2.html' %}
 
                   </div>
                   <!-- <div class="grid m:grid-cols-3 w-full shadow-xs mx-6"> -->
@@ -1019,6 +1036,7 @@
 
       var portFromLanguage = document.getElementById('portFromLanguage').value;
       var portToLanguage = document.getElementById('portToLanguage').value;
+      const formData = new FormData(translateForm);
 
       if (portFromLanguage == "Port from..." || portToLanguage == "Port to...") {
         alert("Please select port language.");
@@ -1030,10 +1048,10 @@
         (portFromLanguage === "python" && portToLanguage === "c") ||
         (portFromLanguage === "python" && portToLanguage === "javascript") ||
         (portFromLanguage === "javascript" && portToLanguage === "cpp") ||
+        (portFromLanguage === "javascript" && portToLanguage === "python") ||
         (portFromLanguage === "cpp" && portToLanguage === "python") ||
         (portFromLanguage === "cpp" && portToLanguage === "javascript") ||
-        (portFromLanguage === "c" && portToLanguage === "python") ||
-        (portFromLanguage === "c" && portToLanguage === "javascript")
+        (portFromLanguage === "c" && portToLanguage === "python") 
       )) {
         alert("Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++");
       } else {
@@ -1158,7 +1176,7 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
 
-
+  <script src="/static/js/popup.js"></script>
 
 
 
