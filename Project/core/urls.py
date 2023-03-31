@@ -18,6 +18,7 @@ urlpatterns = [
     path('overview/approve-model/', views.approveModel, name = 'approveModel'),
     path('accuracy/', views.accuracy, name = 'accuracy'),
     path('accuracy/accuracy_chart/', views.accuracy_chart, name='accuracy_chart'),
+    path('accuracy/predicted_actual_chart/', views.predicted_actual_chart, name='predicted_actual_chart'),
     path('service_health/', views.service_health, name = 'service_health'),
     path('service_health/service_chart', views.service_chart, name = 'service_chart'),
     path('drift/', views.datadrift, name = 'drift'),
