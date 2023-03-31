@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 
@@ -6,6 +8,31 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.css" />
 </head>
+
+<style>
+  .underlined {
+    position: relative;
+    text-decoration: none;
+  }
+
+  .underlined::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: red;
+    z-index: 1;
+    text-decoration: none;
+    pointer-events: none;
+  }
+
+  /* .colored {
+    color: red;
+  } */
+
+</style>
 
 <body>
   <form method="post" id="runcode">
@@ -34,6 +61,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/clike/clike.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/cmake/cmake.js"></script>
 
+
+  <!-- LINT https://github.com/codemirror/codemirror5/blob/master/demo/lint.html
+  <script src={% static '/addon/lint/lint.js' %} defer></script>
+  <script src={% static '/addon/lint/javascript-lint.js' %} defer></script>
+  <script src="https://unpkg.com/jshint@2.13.2/dist/jshint.js"></script>
+  <link rel="stylesheet" href= {% static '/addon/lint/lint.css' %} />
+  <link rel="stylesheet" href= {% static '/lib/codemirror.css' %} /> -->
 
 
   <script>
@@ -64,9 +98,79 @@
       lineNumbers: true,
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
-      extraKeys: { "Ctrl-Space": "autocomplete" }
+      extraKeys: { "Ctrl-Space": "autocomplete" },
     });
 
+
+    // track when the text of the CodeMirror editor changes. For linting. 
+    editor.on("change", function() {
+      // console.log('Text changed:', editor.getValue());
+
+      var langSelect = document.getElementById("language").value;
+
+      let regex;
+      switch (langSelect) {
+        case "python":
+          regex = /deff|forr|printt/gi;
+          break;
+        case "c":
+          regex = /intt|returnn/gi;
+          break;
+        case "cpp":
+          regex = /intt|usingg/gi;
+          break;
+        case "javascript":
+          regex = /logg|consolee/gi;
+          break;
+        default: // python
+          regex = /deff|forr|printt/gi;
+          break;
+      }
+
+      // const regexColor = /((|))|;;/gi; // Tried but the app just hangs.
+      
+      const text = editor.getValue();
+      regex.global = true; // this enables ALL instance of regex to be flagged. 
+      
+      const underlinedText = text.replace(regex, "<u>$&</u>");
+      // console.log('underlinedText:', underlinedText);
+
+      // Clear existing marks
+      editor.getAllMarks().forEach(function(mark) {
+        mark.clear();
+      });
+      
+      // Add new marks for underlined text
+      editor.getDoc().eachLine(function(line) {
+        const lineText = line.text;
+        
+        // syntax errors
+        let match; 
+        while (match = regex.exec(lineText)) { // Loop through all matches
+          const start = match.index;
+          const end = start + match[0].length;
+          const mark = editor.getDoc().markText(
+            { line: line.lineNo(), ch: start },
+            { line: line.lineNo(), ch: end },
+            { className: "underlined" }
+          );
+        }
+
+        // // brackets matching
+        // let matchColor;
+        // while (matchColor = regexColor.exec(lineText)) { // Loop through all matches
+        //   const start = matchColor.index;
+        //   const end = start + matchColor[0].length;
+        //   const mark = editor.getDoc().markText(
+        //     { line: line.lineNo(), ch: start },
+        //     { line: line.lineNo(), ch: end },
+        //     { className: "colored" }
+        //   );
+        // }
+
+      });
+
+    });
 
     // Get the language selector element
     var langSelect = document.getElementById("language");
