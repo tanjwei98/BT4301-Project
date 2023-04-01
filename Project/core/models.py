@@ -25,18 +25,18 @@ class Model_List(models.Model):
     Model_name = models.CharField(max_length=255,null=False)
     Model_version = models.CharField(max_length=255,null=False)
     Language = models.CharField(max_length=255,null=False)
-    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='user_ID')
+    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHIN,related_name='user_ID')
     Dataset_ID=models.ForeignKey(Dataset_List, on_delete=models.DO_NOTHING)
     Model_description=models.TextField()
     Approve_Status=models.CharField(max_length=255,null=False)
     Approve_User_ID=models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='Approve_User_ID')
     Change_Comments=models.TextField()
     Approve_Comments=models.TextField()
+    Created_Date=models.DateTimeField(max_length=255,null=False)
     Approved_Date= models.DateTimeField(max_length=255,null=False)
     Service_Health_Status=models.CharField(max_length=255,null=False)
     Data_Drift_Status=models.CharField(max_length=255,null=False)
     Accuracy_Status=models.CharField(max_length=255,null=False)
-    Feature_values=models.CharField(max_length=255,null=False)
     Challenger_Status=models.CharField(max_length=255,null=False)
 
 class Service_Health(models.Model):
@@ -68,6 +68,7 @@ class Feature_Distribution(models.Model):
     actual_distribution= models.FloatField(max_length=255,null=False)
     Date= models.DateTimeField(max_length=255,null=False)
     Feature= models.CharField(max_length=255,null=False)
+    Feature_values=models.CharField(max_length=255,null=False)
     Model_ID = models.ForeignKey(Model_List, on_delete=models.DO_NOTHING)
     Dataset_ID=models.ForeignKey(Dataset_List, on_delete=models.DO_NOTHING)
 
