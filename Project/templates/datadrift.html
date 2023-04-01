@@ -22,14 +22,17 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
     />
-    <script
+    <!-- <script
       src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
       defer
-    ></script>
+    ></script> -->
+    <!-- <script src= "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js">
+    </script> -->
+    <script src= {% static '/js/plotly-2.18.0.min.js/' %}></script>
     <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
-    <script src={% static '/js/charts-lines.js' %} defer></script>
+    <!-- <script src={% static '/js/charts-lines.js' %} defer></script> -->
     <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
-    <script src={% static '/js/charts-pie.js' %} defer></script>
+    <!-- <script src={% static '/js/charts-pie.js' %} defer></script> -->
   </head>
   <body>
     <div
@@ -408,30 +411,105 @@
             <!--Content for your page-->
             <div class="container mx-auto grid">
               <div class="flex flex-row justify-start p-4 my-8 text-sm font-semibold text-purple-100 bg-gray-600">
-                <label class="block mt-4 text-sm" for="startdate">
-                  <span class="text-gray-700 dark:text-gray-400">
-                    Starting Date:
-                  </span>
-                  <input type="date" id="startdate" name="startdate" class = "text-gray-700">
-                </label>
-                <label class="block mt-4 ml-4 text-sm" for="enddate">
-                  <span class="text-gray-700 dark:text-gray-400">
-                    End Date:
-                  </span>
-                  <input type="date" id="enddate" name="enddate" class = "text-gray-700">
-                </label>
+                <form action="." method = "post" enctype="multipart/form-data" id = "drift_form">
+                  {% csrf_token %}
+                  <label class="block mt-4 text-sm" for="startdate">
+                    <span class="text-gray-700 dark:text-gray-400">
+                      Starting Date:
+                    </span>
+                    <input type="date" id="startdate" name="startdate" class = "rounded text-gray-700">
+                  </label>
+                  <label class="block mt-4 ml-4 text-sm" for="enddate">
+                    <span class="text-gray-700 dark:text-gray-400">
+                      End Date:
+                    </span>
+                    <input type="date" id="enddate" name="enddate" class = "rounded text-gray-700">
+                  </label>
+                </form>
+
                 <!-- <input type="submit"> -->
               </div>
               <div class="grid gap-6 mb-8 md:grid-cols-2" >
+              <!-- <div class ="flex flex-row justify-between"> -->
                 <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                   <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
                     Feature Drift vs Feature Importance
                   </h4>
+                  <div id="driftimpt_chart">
+                    <script>
+                      var drift = "{{ Drift }}".slice(1, -1).split(", ")
+                      var impt = "{{ Importance }}".slice(1, -1).split(", ")
+                      var feature = "{{ Feature }}".slice(1, -1).split(", ").map((x) => x.slice(6, -6))
+                      console.log(feature)
+
+                      var trace1 = {
+                        x: impt,
+                        y: drift,
+                        mode: 'markers',
+                        type: 'scatter'
+                      };
+                      var layout_1 = {
+                          xaxis: {
+                              title: "Feature Importance",
+                          },
+                          yaxis: {
+                              title: "Feature Drift",
+                          },
+                          modebar: {orientation: 'v'}
+                      }
+
+                      var data = [trace1]
+                      Plotly.newPlot('driftimpt_chart', data, layout_1, {displaylogo:false})
+                    </script>
+                    <!-- <canvas id="myChart" width="550" height="400" class = 'bg-white dark:bg-gray-200'></canvas>
+                    <script>
+                      ctx = document.getElementById('myChart');
+                      var drift = "{{ Drift }}".slice(1, -1).split(", ")
+                      var impt = "{{ Importance }}".slice(1, -1).split(", ")
+                      console.log(drift)
+                      var scatterChart = new Chart(ctx, {
+                        type: 'scatter',
+                        data: {
+                            datasets: [{
+                                label: 'Feature Drift/Importance',
+                                data: [{
+                                    x: drift[0],
+                                    y: impt[0]
+                                }, {
+                                    x: drift[1],
+                                    y: impt[1]
+                                }, {
+                                    x: drift[2],
+                                    y: impt[2]
+                                },{
+                                    x: drift[3],
+                                    y: impt[3]
+                                },{
+                                    x: drift[4],
+                                    y: impt[4]
+                                }],
+                                backgroundColor: "rgb(125,60,122)",
+                                borderColor:"rgb(125,60,122)"
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: 'linear',
+                                    position: 'bottom'
+                                }]
+                            }
+                        }
+                    });
+                    </script> -->
+                  </div>
+                  
                 </div>
 
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                <div class="p-4 w-fit bg-white rounded-lg shadow-xs dark:bg-gray-800">
                   <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
                     Difference in Data Distribution
+                    <!-- <canvas id="myChart" width="550" height="400"></canvas> -->
                   </h4>
                 </div>
               </div>

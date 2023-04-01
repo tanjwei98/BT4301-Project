@@ -220,8 +220,12 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
-def datadrift(request):
-    return render(request, "datadrift.html")
+def datadrift(request, model_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'model_Name': model_Name})
+    context.update(drift_importance(model_Name))
+    return render(request, "datadrift.html", context)
 
 
 def challengers(request):
