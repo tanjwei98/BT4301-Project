@@ -32,7 +32,7 @@ class Model_List(models.Model):
     Approve_User_ID=models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='Approve_User_ID')
     Change_Comments=models.TextField()
     Approve_Comments=models.TextField()
-    Date= models.DateTimeField(max_length=255,null=False)
+    Approved_Date= models.DateTimeField(max_length=255,null=False)
     Service_Health_Status=models.CharField(max_length=255,null=False)
     Data_Drift_Status=models.CharField(max_length=255,null=False)
     Accuracy_Status=models.CharField(max_length=255,null=False)
