@@ -25,7 +25,7 @@ class Model_List(models.Model):
     Model_name = models.CharField(max_length=255,null=False)
     Model_version = models.CharField(max_length=255,null=False)
     Language = models.CharField(max_length=255,null=False)
-    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHIN,related_name='user_ID')
+    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='user_ID')
     Dataset_ID=models.ForeignKey(Dataset_List, on_delete=models.DO_NOTHING)
     Model_description=models.TextField()
     Approve_Status=models.CharField(max_length=255,null=False)
