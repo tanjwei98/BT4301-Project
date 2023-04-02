@@ -124,7 +124,8 @@
       cursor: pointer;
     }
 
-    .dropbtn:hover, .dropbtn:focus {
+    .dropbtn:hover,
+    .dropbtn:focus {
       background-color: #2980B9;
     }
 
@@ -139,7 +140,7 @@
       background-color: #f1f1f1;
       min-width: 160px;
       overflow: auto;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
     }
 
@@ -150,9 +151,13 @@
       display: block;
     }
 
-.dropdown a:hover {background-color: #ddd;}
+    .dropdown a:hover {
+      background-color: #ddd;
+    }
 
-.show {display: block;}
+    .show {
+      display: block;
+    }
   </style>
 
 </head>
@@ -454,13 +459,27 @@
                     <!-- Your form code goes here -->
                     <form class="bg-gray-100">
                       <div class="mb-4 mx-6">
-                        <label class="block text-gray-700 font-bold mb-2" for="username">
+                        <label class="block text-gray-700 font-bold mb-2" for="modelname_file">
                           Name
                         </label>
                         <input
                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
+                          id="modelname_file" type="text" placeholder="">
                         </input>
+                      </div>
+
+                      <div class="mb-4 mx-6">
+                        <label class="block text-gray-700 font-bold mb-2" for="projectname_select_file">
+                          Project Name
+                        </label>
+                        <select id="projectname_select_file"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <option value='default' selected>Select Project</option>
+                          {% for pn in project_name %}
+                          <option value="{{ pn }}">{{ pn }}</option>
+                          {% endfor %}
+                        </select>
+
                       </div>
 
                       <div class="mb-4">
@@ -469,7 +488,7 @@
                         </label>
                         <select
                           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                          id="dropdown" name="dropdown">
+                          id="modellanguage_file" name="dropdown">
                           <option value="python">Python</option>
                           <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
@@ -482,7 +501,7 @@
                         </label>
                         <input
                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
+                          id="modelversion_file" type="text" placeholder="">
                         </input>
                       </div>
 
@@ -492,149 +511,168 @@
                         </label>
                         <input
                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
+                          id="modeldescription_file" type="text" placeholder="">
                         </input>
                       </div>
 
                     </form>
 
-                      <div class="flex gap-4">              
-                        <div>
-                          <button id="open-form" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mr-1" 
+                    <div class="flex gap-4">
+                      <div>
+                        <button id="open-form"
+                          class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mr-1"
                           type="button">+Add new files</button>
-                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2" id="gitlab-button">Access GitLab</button>                      
-                          <form id="upload-form" class="hidden" enctype="multipart/form-data">
+                        <button
+                          class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2"
+                          id="gitlab-button">Access GitLab</button>
+                        <form id="upload-form" class="hidden" enctype="multipart/form-data">
                           <div class="flex items-center justify-between mr-1">
                             <input type="file" name="file" id="file-input" />
-                            <button type="submit" class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                            <button type="submit"
+                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
                               Upload
                             </button>
-                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2" type="close" id="close">Close</button>
-                          </form>
-                        </div>
-                          <script>
-                            var gitlabButton = document.getElementById("gitlab-button");
-                            gitlabButton.addEventListener("click", openGitLab);
-                            const form = document.getElementById("upload-form");
-                            const button = document.getElementById("open-form");
-                            const fileInput = document.getElementById("file-input");
-                            const gitUrlInput = document.getElementById("git-url-input");
+                            <button
+                              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
+                              type="close" id="close">Close</button>
+                        </form>
+                      </div>
+                      <script>
+                        var gitlabButton = document.getElementById("gitlab-button");
+                        gitlabButton.addEventListener("click", openGitLab);
+                        const form = document.getElementById("upload-form");
+                        const button = document.getElementById("open-form");
+                        const fileInput = document.getElementById("file-input");
+                        const gitUrlInput = document.getElementById("git-url-input");
 
-                            button.addEventListener("click", () => {
-                              form.classList.remove("hidden");
-                            });
+                        button.addEventListener("click", () => {
+                          form.classList.remove("hidden");
+                        });
 
-                            var gitlabButton = document.getElementById("gitlab-button");
-                            gitlabButton.addEventListener("click", openGitLab);
+                        var gitlabButton = document.getElementById("gitlab-button");
+                        gitlabButton.addEventListener("click", openGitLab);
 
-                            function openGitLab() {
-                              window.open("http://192.168.1.109:80", "_blank");
-                            }
+                        function openGitLab() {
+                          window.open("http://192.168.1.109:80", "_blank");
+                        }
 
-                            fileInput.addEventListener("change", () => {
-                              gitUrlInput.classList.add("hidden");
-                            });
+                        fileInput.addEventListener("change", () => {
+                          gitUrlInput.classList.add("hidden");
+                        });
 
-                            gitUrlInput.addEventListener("input", () => {
-                              fileInput.classList.add("hidden");
-                              const url = gitUrlInput.value;
-                              window.open(url, "_blank");
-                            });
+                        gitUrlInput.addEventListener("input", () => {
+                          fileInput.classList.add("hidden");
+                          const url = gitUrlInput.value;
+                          window.open(url, "_blank");
+                        });
 
-                            form.addEventListener("submit", (event) => {
-                              event.preventDefault();
-                              if (fileInput.files.length > 0) {
-                                const file = fileInput.files[0];
-                                // Upload file to local folder or remote Git repository using a fetch request or a library like Axios
-                              } else if (gitUrlInput.value) {
-                                const gitUrl = gitUrlInput.value;
-                                // Upload files from remote Git repository using a fetch request or a library like Axios
-                              }
-                              form.reset();
-                              form.classList.add("hidden");
-                            });
-                          </script>
+                        form.addEventListener("submit", (event) => {
+                          event.preventDefault();
+                          if (fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            // Upload file to local folder or remote Git repository using a fetch request or a library like Axios
+                          } else if (gitUrlInput.value) {
+                            const gitUrl = gitUrlInput.value;
+                            // Upload files from remote Git repository using a fetch request or a library like Axios
+                          }
+                          form.reset();
+                          form.classList.add("hidden");
+                        });
+                      </script>
 
-                        </div>
+                    </div>
 
-                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
-                            Create new version
+                    <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
+                      Create new version
+                    </button>
+
+                  </div>
+
+                  <div id="myModal" tabindex="-1" aria-hidden="true"
+                    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+                    <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+
+                    <div
+                      class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+
+                      <div
+                        class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
+                        <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                          viewBox="0 0 18 18">
+                          <path d="M1 1l16 16m-16 0L1 17"></path>
+                        </svg>
+                        <span class="text-sm">(Esc)</span>
+                      </div>
+
+                      <div class="modal-content py-4 text-left px-6">
+                        <h1 class="modal-header font-bold text-2xl mb-2">Modal Title</h1>
+                        <p class="modal-text text-gray-700 mb-4">Modal content goes here.</p>
+
+                        <div class="modal-buttons flex justify-end pt-2">
+                          <button id="modalCloseButton"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                            Close
                           </button>
-
-                      </div>
-
-                      <div id="myModal" tabindex="-1" aria-hidden="true"
-                        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-                        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-                      
-                        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
-                      
-                          <div class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
-                            <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                              <path d="M1 1l16 16m-16 0L1 17"></path>
-                            </svg>
-                            <span class="text-sm">(Esc)</span>
-                          </div>
-                      
-                          <div class="modal-content py-4 text-left px-6">
-                            <h1 class="modal-header font-bold text-2xl mb-2">Modal Title</h1>
-                            <p class="modal-text text-gray-700 mb-4">Modal content goes here.</p>
-                      
-                            <div class="modal-buttons flex justify-end pt-2">
-                              <button id="modalCloseButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-                                Close
-                              </button>
-                              <button id="modalConfirmButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Confirm
-                              </button>
-                            </div>
-                          </div>
+                          <button id="modalConfirmButton"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            Confirm
+                          </button>
                         </div>
                       </div>
-                        
-
-   
+                    </div>
                   </div>
 
 
-                  <!-- Your table code goes here -->
-                  <div class="flex-1">
 
-                    <table class="table-auto w-full h-full">
-                      <tr>
-                        <td class="border border-black px-4 py-2 text-center"> 
-                          <button data-modal-target="testmodel"
-                            data-modal-toggle="testmodel"
-                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                            type="button">
-                            Test Model
-                          </button>
-                        </td>
-                        <td class="border border-black px-4 py-2 text-center"> <button
-                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                            type="submit" data-modal-target="modreg" data-modal-toggle="modreg">
-                            Add to Model Registry
-                          </button></td>
-                      </tr>
-                    </table>
-                  </div>
+                </div>
+
+
+                <!-- Your table code goes here -->
+                <div class="flex-1">
+
+                  <table class="table-auto w-full h-full">
+                    <tr>
+                      <td class="border border-black px-4 py-2 text-center">
+                        <button data-modal-target="testmodel" data-modal-toggle="testmodel"
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn"
+                          type="button">
+                          Test Model
+                        </button>
+                      </td>
+                      <!-- <td class="border border-black px-4 py-2 text-center"> <button
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          type="submit" 
+                          data-modal-target="modreg" 
+                          data-modal-toggle="modreg"
+                          >
+                          Add to Model Registry
+                        </button></td> -->
+
+                      <td class="border border-black px-4 py-2 text-center"> <button
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          type="submit" id='add_mr_btn_file'>
+                          Add to Model Registry
+                        </button></td>
+                    </tr>
+                  </table>
                 </div>
               </div>
+            </div>
 
 
-              <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
-                <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
+            <div id="createNewModel" class="tabcontent grid gap-6 m:grid-cols-2">
+              <!-- <div id="createNewModel" class="tabcontent w-full overflow-hidden shadow-xs"> -->
 
-                <div class="tab" style="font-size:10px">
-                  <button class="tablinksinner bg-purple-600 text-xs font-semibold"
-                    onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
-                  <button class="tablinksinner bg-purple-600 text-xs font-semibold"
-                    onclick="openTabInner(event, 'codePorting')">Code porting</button>
-                </div>
+              <div class="tab" style="font-size:10px">
+                <button class="tablinksinner bg-purple-600 text-xs font-semibold"
+                  onclick="openTabInner(event, 'writeNewCode')" id="defaultOpenInner">Write new code</button>
+                <button class="tablinksinner bg-purple-600 text-xs font-semibold"
+                  onclick="openTabInner(event, 'codePorting')">Code porting</button>
+              </div>
 
-                <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
+              <div id="writeNewCode" class="tabcontentinner w-full overflow-hidden shadow-xs ">
 
-                  <!-- <div class="mt-8">
+                <!-- <div class="mt-8">
                     <select id="codeLanguage"
                       class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Choose your code language</option>
@@ -644,9 +682,9 @@
                     </select>
                   </div> -->
 
-                  <!-- CODE EDITOR API GOES HERE. -->
-                  
-                  <!-- <div>
+                <!-- CODE EDITOR API GOES HERE. -->
+
+                <!-- <div>
                     <label class="block text-purple-600 dark:text-purple-300 font-bold mt-2" for="fileName">
                       File name (with extension)
                     </label>
@@ -659,76 +697,89 @@
                       <i class="fa fa-floppy-o fa-lg">  Save file</i>
                     </button>
                   </div> -->
-                  
-                  
-                  <div
-                    class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black">
 
 
-                    {% include 'codeEditor2.html' %}
+                <div
+                  class="my-8 p-4 bg-gray-100 rounded-lg shadow-xs dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black">
 
-                  </div>
-                  <!-- <div class="grid m:grid-cols-3 w-full shadow-xs mx-6"> -->
-                  <div class="flex mx-4">
-                    <!-- Form to write model details -->
-                    <form class="bg-gray-100">
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="username">
-                          Name
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                        </input>
-                      </div>
 
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="version">
-                          Version
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                        </input>
-                      </div>
+                  {% include 'codeEditor2.html' %}
 
-                      <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="username">
-                          Description
-                        </label>
-                        <input
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          id="username" type="text" placeholder="">
-                        </input>
-                      </div>
-
-                    </form>
-
-                    <!-- Your table code goes here -->
-                    <div class="flex-1">
-
-                      <table class="table-auto w-full h-full">
-                        <tr>
-                          <td class="border border-black px-4 py-2 text-center"> <button
-                              class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                              type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel">
-                              Test Model
-                            </button>
-                          </td>
-                          <td class="border border-black px-4 py-2 text-center"> <button
-                              class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                              type="submit">
-                              Add to Model Registry
-                            </button></td>
-                        </tr>
-                      </table>
+                </div>
+                <!-- <div class="grid m:grid-cols-3 w-full shadow-xs mx-6"> -->
+                <div class="flex mx-4">
+                  <!-- Form to write model details -->
+                  <form class="bg-gray-100">
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2" for="modelname_code">
+                        Name
+                      </label>
+                      <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="modelname_code" type="text" placeholder="">
+                      </input>
                     </div>
+
+                    <div class="mb-4 mx-6">
+                      <label class="block text-gray-700 font-bold mb-2" for="projectname_select_code">
+                        Project Name
+                      </label>
+                      <select id="projectname_select_code"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value='default' selected>Select Project</option>
+                        {% for pn in project_name %}
+                        <option value="{{ pn }}">{{ pn }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2" for="modelversion_code">
+                        Version
+                      </label>
+                      <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="modelversion_code" type="text" placeholder="">
+                      </input>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2" for="modeldescription_code">
+                        Description
+                      </label>
+                      <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="modeldescription_code" type="text" placeholder="">
+                      </input>
+                    </div>
+
+                  </form>
+
+                  <!-- Your table code goes here -->
+                  <div class="flex-1">
+
+                    <table class="table-auto w-full h-full">
+                      <tr>
+                        <td class="border border-black px-4 py-2 text-center"> <button
+                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn">
+                            Test Model
+                          </button>
+                        </td>
+                        <td class="border border-black px-4 py-2 text-center"> <button
+                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                            type="submit" id='add_mr_btn_code'>
+                            Add to Model Registry
+                          </button></td>
+                      </tr>
+                    </table>
                   </div>
                 </div>
+              </div>
 
-                <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
+              <div id="codePorting" class="tabcontentinner w-full overflow-hidden shadow-xs">
 
-                  <!-- <div class="mt-8 flex gap-6">
+                <!-- <div class="mt-8 flex gap-6">
                     <select id="portFromLanguage"
                       class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
                       <option selected>Port from...</option>
@@ -749,240 +800,234 @@
                   </div>  -->
 
 
-                  <!-- <div class="mt-2 flex gap-6">
+                <!-- <div class="mt-2 flex gap-6">
                     <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                       type="submit">
                       +Upload code
                     </button>
                   </div> -->
 
-                  <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
-                  <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
-                    <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
-                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left">Code to translate</div>
+                <!-- <div class="flex flex-row flex-nowrap items-center gap-5 justify-center py-12"> -->
+                <div class="flex flex-nowrap items-center gap-5 justify-top py-12">
+                  <div class="just-a-border h-full p-6 text-left flex-1 bg-gray-100 mr-6">
+                    <div class="mb-2 text-lg font-medium font-bold uppercase text-left">Code to translate</div>
 
-                      <form method="post" id="translateForm">
-                        <p class="font-semibold">Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++ </p>
+                    <form method="post" id="translateForm">
+                      <p class="font-semibold">Currently supported conversions: (1) Python <-> Javascript (2) Python <->
+                            C++ (3) Python <-> C (4) Javascript <-> C++ </p>
 
-                        {% csrf_token %}
+                      {% csrf_token %}
 
-                        <label for="portFromLanguage">Translate from:</label>
-                        <select name="portFromLanguage" id="portFromLanguage">
-                          <option value="python">Python</option>
-                          <option value="javascript">Javascript</option>
-                          <option value="c">C</option>
-                          <option value="cpp">C++</option>
-                          <!-- <option value="r">R</option> -->
-                          <!-- Add options for other languages as needed -->
-                        </select><br>
+                      <label for="portFromLanguage">Translate from:</label>
+                      <select name="portFromLanguage" id="portFromLanguage">
+                        <option value="python">Python</option>
+                        <option value="javascript">Javascript</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <!-- <option value="r">R</option> -->
+                        <!-- Add options for other languages as needed -->
+                      </select><br>
 
-                        <label for="portToLanguage" class="mb-4">Translate to:</label>
-                        <select name="portToLanguage" id="portToLanguage">
-                          <option value="python">Python</option>
-                          <option value="javascript">Javascript</option>
-                          <option value="c">C</option>
-                          <option value="cpp">C++</option>
-                          <!-- <option value="r">R</option> -->
-                          <!-- Add options for other languages as needed -->
-                        </select><br>
+                      <label for="portToLanguage" class="mb-4">Translate to:</label>
+                      <select name="portToLanguage" id="portToLanguage">
+                        <option value="python">Python</option>
+                        <option value="javascript">Javascript</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <!-- <option value="r">R</option> -->
+                        <!-- Add options for other languages as needed -->
+                      </select><br>
 
-                        <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
+                      <textarea name="codeTranslateFrom" rows="10" cols="80"></textarea><br>
 
-                        <button type="submit" id="translateButton"
-                          class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
-                        <!-- <pre id="translatedCode"></pre> -->
+                      <button type="submit" id="translateButton"
+                        class="p-1 w-1/2 text-s font-semibold border border-gray-300">Translate</button>
+                      <!-- <pre id="translatedCode"></pre> -->
 
-                      </form>
+                    </form>
 
 
-                    </div>
-                    <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
-                      <div class="mb-2 text-lg font-medium font-bold uppercase text-left flex-wrap">Translated code</div>
-                      <pre id="translatedCode"></pre>
-
-                    </div>
                   </div>
+                  <div class="just-a-border v-full p-6 text-left flex-nowrap flex-1 bg-gray-100">
+                    <div class="mb-2 text-lg font-medium font-bold uppercase text-left flex-wrap">Translated code</div>
+                    <pre id="translatedCode"></pre>
 
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+  <div>
+    <!-- CHART - to adapt from Accuracy page. -->
+
+
+  </div>
+
+
+  <div>
+    <!-- popup forms -->
+
+
+    <!-- popup form to select data to test the models -->
+    <div id="testmodel" tabindex="-1" aria-hidden="true"
+      class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+      <div class="relative" style='width: 50%; height: 50%;'>
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+          <form id='testmodel_submit'>
+            {% csrf_token %}
+            <div id='m1header' style='color: white; padding: 10px;'>
+              <p>Data Catalog</p>
+            </div>
+            <div>
+              <form id="dataset-form" method="GET">
+                <div style='float: left; width: 50%;'>
+                  <select id="dataset-select"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value='default' selected>Choose Dataset</option>
+                    {% for ds in dataset_list %}
+                    <option value="{{ ds.Dataset_ID }}">{{ ds.Dataset_name }}</option>
+                    {% endfor %}
+                  </select>
 
                 </div>
-              </div>
+
+                <div style='float: left; width: 50%;'>
+                  <div style='margin: 10px; color: white;'>
+                    <div id='dataset_info'>
+
+                      <h2 style='font-size: 20px; align-content: middle; text-align: center; padding: 5px'>Selected
+                        dataset information</h2>
+                      <p style='padding: 5px'>Name: <span id="dataset-name"></span></p>
+                      <p style='padding: 5px'>Number of rows: <span id="num-rows"></span></p>
+                      <p style='padding: 5px'>Number of features: <span id="num-features"></span></p>
+                      <p style='padding: 5px'>Target Variable: <span id="target-variable"></span></p>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+
+            <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+              <button type="button" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+                class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                Choose this Dataset</button>
+
+              <button id='close-testmodel' data-modal-hide="testmodel" data-dismiss="modal"
+                style="padding: 2px 10px 2px 10px" type="button"
+                class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                cancel</button>
 
             </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- popup form to show console log -->
+    <div id="consolelog" tabindex="-1" aria-hidden="true"
+      class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+      <div class="relative" style='width: 50%; height: 50%;'>
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+
+
+          <p class="modal-title" id="consolelog-title" style="color: white; margin: 20px; padding-top: 10px;">Console
+            Log
+          </p>
+
+          <div class="modal-body" style='height: 70%; padding: 20px;'>
+
+            <!-- {% csrf_token %} -->
+
+            <div id="consolelog-output"></div>
+
+            <div style='right:0; bottom: 0; position: absolute; padding: 20px;'>
+              <button id='close-consolelog' data-dismiss="modal" style="padding: 2px 10px 2px 10px"
+                data-modal-hide="consolelog" type="button"
+                class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                cancel</button>
+            </div>
+
+
           </div>
 
         </div>
-    </div>
-
-    <div>
-      <!-- CHART - to adapt from Accuracy page. -->
-
-
+      </div>
     </div>
 
 
-    <div>
-      <!-- popup forms -->
 
-
-      <!-- popup form to select data to test the models -->
-      <div id="testmodel" tabindex="-1" aria-hidden="true"
-        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-        <div class="relative" style='width: 50%; height: 50%;'>
-          <!-- Modal content -->
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
-            <form id='testmodel_submit'>
-              {% csrf_token %}
-              <div id='m1header' style='color: white; padding: 10px;'>
-                <p>Data Catalog</p>
-              </div>
-
-
-
-              <!-- <select id="select_dataset"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected>Choose Dataset</option>
-                    <option value="Data1">Data1</option>
-                    <option value="Data2">Data2</option>
-                    <option value="Data3">Data3</option>
-                  </select> -->
-
-
-              <div>
-                <form id="dataset-form" method="GET">
-                  <div style='float: left; width: 50%;'>
-                    <select id="dataset-select"
+    <!-- popup form to add model to registry   -->
+    <div id="modreg" tabindex="-1" aria-hidden="true"
+      class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+      <div class="relative" style='width: 50%; height: 50%;'>
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+          <form id='modreg_submit' style='height: 100%;'>
+            {% csrf_token %}
+            <div id='m1header' style='color: white; padding: 10px;'>
+              <p>Data Catalog</p>
+            </div>
+            <div style='margin: 40px; background-color: white; height: 50%; padding: 50px;'>
+              <ul id="myUL">
+                <li>
+                  <a href="#" style="display: inline">Model Name: </a>
+                </li>
+                <li>
+                  <a href="#" style="display: inline">Replace with: </a>
+                </li>
+                <li>
+                  <a href="#" style="display: inline">Reason for Change: </a>
+                  <div class="dropdown-mr">
+                    <select id="select_reason" aria-placeholder="Select Reason"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <option value='default' selected>Choose Dataset</option>
-                      {% for ds in dataset_list %}
-                      <option value="{{ ds.Dataset_ID }}">{{ ds.Dataset_name }}</option>
-                      {% endfor %}
+                      <option value="Accuracy" selected>Bug fixes</option>
+                      <option value="Accuracy">Accuracy</option>
+                      <option value="Outdated">Outdated</option>
                     </select>
-
                   </div>
-
-                  <div style='float: left; width: 50%;'>
-                    <div style='margin: 10px; color: white;'>
-                      <div id='dataset_info'>
-
-                        <h2 style = 'font-size: 20px; align-content: middle; text-align: center; padding: 5px'>Selected dataset information</h2>
-                        <p style = 'padding: 5px'>Name: <span id="dataset-name"></span></p>
-                        <p style = 'padding: 5px'>Number of rows: <span id="num-rows"></span></p>
-                        <p style = 'padding: 5px'>Number of features: <span id="num-features"></span></p>
-                        <p style = 'padding: 5px'>Target Variable: <span id="target-variable"></span></p>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
+                </li>
+              </ul>
+            </div>
 
 
-              <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+            <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
 
-                <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
-                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                  Choose this Dataset</button>
+              <button type="submit" id='add_registry_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+                class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                Accept and Replace</button>
 
-                <button id='close-testmodel' data-modal-hide="testmodel" data-dismiss="modal"
-                  style="padding: 2px 10px 2px 10px" type="button"
-                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                  cancel</button>
-
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-
-
-
-      <!-- popup form to show console log -->
-      <div id="consolelog" tabindex="-1" aria-hidden="true"
-        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-        <div class="relative" style='width: 50%; height: 50%;'>
-          <!-- Modal content -->
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
-
-
-            <p class="modal-title" id="consolelog-title" style="color: white; margin: 20px; padding-top: 10px;">Console
-              Log
-            </p>
-
-            <div class="modal-body" style='height: 70%; padding: 20px;'>
-
-              <!-- {% csrf_token %} -->
-
-              <div id="consolelog-output"></div>
-
-              <div style='right:0; bottom: 0; position: absolute; padding: 20px;'>
-                <button id='close-consolelog' data-dismiss="modal" style="padding: 2px 10px 2px 10px"
-                  data-modal-hide="consolelog" type="button"
-                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                  cancel</button>
-              </div>
-
+              <button id='close-modreg' data-modal-hide="modreg" data-dismiss="modal" style="padding: 2px 10px 2px 10px"
+                type="button"
+                class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                cancel</button>
 
             </div>
 
-          </div>
+          </form>
         </div>
       </div>
-
-
-
-      <!-- popup form to add model to registry   -->
-      <div id="modreg" tabindex="-1" aria-hidden="true"
-        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-        <div class="relative" style='width: 50%; height: 50%;'>
-          <!-- Modal content -->
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
-            <form id='modreg_submit' style='height: 100%;'>
-              {% csrf_token %}
-              <div id='m1header' style='color: white; padding: 10px;'>
-                <p>Data Catalog</p>
-              </div>
-              <div style='margin: 40px; background-color: white; height: 50%; padding: 50px;'>
-                <ul id="myUL">
-                  <li>
-                    <a href="#" style="display: inline">Model Name: </a>
-                  </li>
-                  <li>
-                    <a href="#" style="display: inline">Replace with: </a>
-                  </li>
-                  <li>
-                    <a href="#" style="display: inline">Reason for Change: </a>
-                    <div class="dropdown-mr">
-                      <select id="select_reason" aria-placeholder="Select Reason"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="Accuracy" selected>Bug fixes</option>
-                        <option value="Accuracy">Accuracy</option>
-                        <option value="Outdated">Outdated</option>
-                      </select>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-
-              <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
-
-                <button type="submit" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
-                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                  Accept and Replace</button>
-
-                <button id='close-modreg' data-modal-hide="modreg" data-dismiss="modal"
-                  style="padding: 2px 10px 2px 10px" type="button"
-                  class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                  cancel</button>
-
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-
     </div>
+
+
+
+
+
+  </div>
 
   </div>
   </div>
@@ -1051,7 +1096,7 @@
         (portFromLanguage === "javascript" && portToLanguage === "python") ||
         (portFromLanguage === "cpp" && portToLanguage === "python") ||
         (portFromLanguage === "cpp" && portToLanguage === "javascript") ||
-        (portFromLanguage === "c" && portToLanguage === "python") 
+        (portFromLanguage === "c" && portToLanguage === "python")
       )) {
         alert("Currently supported conversions: (1) Python <-> Javascript (2) Python <-> C++ (3) Python <-> C (4) Javascript <-> C++");
       } else {
@@ -1153,27 +1198,159 @@
     const numRows = document.getElementById('num-rows');
     const numFeatures = document.getElementById('num-features');
     const targetVariable = document.getElementById('target-variable');
-    
+
 
     datasetSelect.addEventListener('change', () => {
       const datasetId = datasetSelect.value;
       const xhr = new XMLHttpRequest();
       // xhr.open('GET', `/challengers/modelRegistry/?dataset_id=${datasetId}`);
-      xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
-      xhr.setRequestHeader('Accept', 'application/json'); // add this line
-      xhr.onload = () => {
-        const dataset = JSON.parse(xhr.responseText);
-        datasetName.textContent = dataset.Dataset_name;
-        numRows.textContent = dataset.num_of_rows;
-        numFeatures.textContent = dataset.num_of_features;
-        targetVariable.textContent = dataset.Target;
-      };
-      xhr.send();
+      if (datasetId === 'default') {
+        datasetName.textContent = '';
+        numRows.textContent = '';
+        numFeatures.textContent = '';
+        targetVariable.textContent = '';
+      } else {
+        xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
+        xhr.setRequestHeader('Accept', 'application/json'); // add this line
+        xhr.onload = () => {
+          const dataset = JSON.parse(xhr.responseText);
+          datasetName.textContent = dataset.Dataset_name;
+          numRows.textContent = dataset.num_of_rows;
+          numFeatures.textContent = dataset.num_of_features;
+          targetVariable.textContent = dataset.Target;
+        };
+        xhr.send();
+      }
+
     });
-  </script>
+
+    var language_from_code;
+
+    // check if the code is successful
+    $(document).ready(function () {
+      window.addEventListener('message', event => {
+        // var testbtn = document.getElementById('testbtn');
+        var testbtn = $('#testbtn');
+        console.log(testbtn.text())
+
+        if (event.origin !== window.location.origin) return;
+
+        // const { result } = event.data;
+        language_from_code = event.data.language;
+        const result = event.data.result;
+
+        if (result === 'failed') {
+          console.log('Code failed to run');
+          testbtn.prop('disabled', true);
+          console.log(testbtn.prop('disabled')); // currently not working. have to look into it again
+
+        } else {
+          console.log('Code ran successfully');
+          testbtn.prop('disabled', false);
+          console.log(testbtn.prop('disabled'));
+
+        }
+      });
+    });
 
 
+    // when click on choose this dataset button. run the code and show the accuracy rate. 
+    var testdata_submit_btn = $('#testdata_submit_btn');
+    testdata_submit_btn.click(function () {
+      console.log('clicked on submit')
+      var dataset_rows = parseInt(document.getElementById('num-rows').textContent);
+      if (dataset_rows >= 800) {
+        window.alert('Huge dataset detected. Spinning up RAM for better efficiency')
+      }
+      // check with the team on whether we should show accuracy? get random data? or how does it work?
+    });
+
+
+    // Add to Model Registry Button
+    // for files
+    var add_mr_btn_file = $('#add_mr_btn_file');
+    add_mr_btn_file.click(function (event) {
+        event.preventDefault();
+        const modelname_file = document.getElementsById('modelname_file').value;
+        const modellanguage_file = document.getElementsById('modellanguage_file').value;
+        const version_file = document.getElementsById('modelversion_file').value;
+        const description_file = document.getElementsById('modeldescription_file').value;
+        const project_name = document.getElementsById('projectname_select_file').value;
+        const datasetId = datasetSelect.value;
+
+        const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+          url: './add-model/',
+          type: 'POST',
+          beforeSend: function (xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+          },
+          // contentType: 'application/json',
+          // data: JSON.stringify({ model_id: model_id, status: model_status }),
+          contentType: 'application/x-www-form-urlencoded',
+          data: { 
+              'model_name': modelname_file, 
+              'language': modellanguage_file, 
+              'version': version_file, 
+              'description': description_file, 
+              'project_name': project_name, 
+              'datasetId': datasetId,
+              'csrfmiddlewaretoken': csrf_token 
+            },
+          success: function (response) {
+            console.log(response);
+            location.reload(); // important! change to load challengers page instead
+          },
+          error: function (xhr, status, error) {
+            console.error('Error:', xhr.status, status, error);
+          }
+        });
+      });
+
+
+    // Add to Model Registry Button
+    // for new Code
+    var add_mr_btn_file = $('#add_mr_btn_file');
+    add_mr_btn_file.click(function (event) {
+        event.preventDefault();
+        const modelname_file = document.getElementsById('modelname_code').value;
+        const modellanguage_file = language_from_code;
+        const version_file = document.getElementsById('modelversion_code').value;
+        const description_file = document.getElementsById('modeldescription_code').value;
+        const project_name = document.getElementsById('projectname_select_code').value;
+        const datasetId = datasetSelect.value;
+
+        const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+          url: './add-model/',
+          type: 'POST',
+          beforeSend: function (xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+          },
+          // contentType: 'application/json',
+          // data: JSON.stringify({ model_id: model_id, status: model_status }),
+          contentType: 'application/x-www-form-urlencoded',
+          data: { 
+              'model_name': modelname_file, 
+              'language': modellanguage_file, 
+              'version': version_file, 
+              'description': description_file, 
+              'project_name': project_name, 
+              'datasetId': datasetId,
+              'csrfmiddlewaretoken': csrf_token 
+            },
+          success: function (response) {
+            console.log(response);
+            location.reload(); // important! change to load challengers page instead
+          },
+          error: function (xhr, status, error) {
+            console.error('Error:', xhr.status, status, error);
+          }
+        });
+      });
+
   </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
 
   <script src="/static/js/popup.js"></script>

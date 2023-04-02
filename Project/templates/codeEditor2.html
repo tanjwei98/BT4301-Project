@@ -17,7 +17,8 @@
       <option value="javascript">JavaScript</option>
     </select>
     <textarea id="editor"></textarea>
-    <button type="submit" onclick="runCode()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Run</button>
+    <button type="submit" onclick="runCode()"
+      class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">Run</button>
 
     <p class="block text-gray-700 font-bold mb-2 mt-6">Console output:</p>
     <div class="boder border-gray-400" id="console"></div>
@@ -38,25 +39,25 @@
 
   <script>
     let lang_dic = {
-        python: `print("hello world")`,
-        "c++": `#include <iostream>
+      python: `print("hello world")`,
+      "c++": `#include <iostream>
     using namespace std;
 
     int main() {
       cout << "Hello World!";
       return 0;
     }`,
-        c: `#include <stdio.h>
+      c: `#include <stdio.h>
 
     int main() {
       printf("Hello World!");
       return 0;
     }`,
-        javascript: `console.log("hello world");`,
-        dart: `void main(){
+      javascript: `console.log("hello world");`,
+      dart: `void main(){
       print("Hello World");
     }`,
-      };
+    };
 
 
     var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
@@ -114,16 +115,24 @@
         data: { code: code, lang: language, csrfmiddlewaretoken: csrf_token },
         success: function (response) {
           if (response.success) {
-            // Display the result in the #output div
-            console.log(response.result)
             var result = response.result.replace(/\n/g, '<br>');
+            if (result.includes('SyntaxError') || result.includes('NameError') || result.includes('TypeError')) {
+              // Display the result in the #output div
+              console.log('failed');
+              window.parent.postMessage({ result: 'failed', language: data}, '*');
+            } else {
+              console.log('pass');
+              window.parent.postMessage({ result: 'success' , language: data}, '*');
+            }
             $("#output").html(result);
+              
           } else {
             var errorLines = response.error.split('\n');
             var errorHtml = errorLines.map(function (line) {
               return '<div>' + line + '</div>';
             }).join('');
             $("#output").html(errorHtml);
+            window.parent.postMessage({ result: 'failed' }, '*');
           }
         },
         error: function (xhr) {
@@ -131,6 +140,7 @@
         }
       });
     }
+
 
   </script>
 </body>

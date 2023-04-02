@@ -31,6 +31,7 @@ urlpatterns = [
     path('login/', views.userlogin, name='login'),
     path('logout/', views.userlogout, name = 'logout'),
     path('challengers/modelRegistry/translate/', views.translate_code, name='translate_code'), # Code porting
+    path('challengers/modelRegistry/add-model/', views.addModel, name='addModel'), # Add model into database
     # path('saveas/<str:filename>',views.save_saved, name='save_saved'),
     path('challengers/saveas/',views.save_saved, name='save_saved'),
     # path('save',views.save),

@@ -1,3 +1,5 @@
+import json
+import re
 import subprocess
 from pathlib import Path
 import pandas as pd
@@ -18,6 +20,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from django.db import connection
 from .functions import *
+from django.utils import timezone
+from datetime import datetime
 # from models import Model_Accuracy
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -65,7 +69,7 @@ def deployment(request):
 
 
 def overview(request, model_Name):
-    #if request.session["userID"] == model_id:
+    # if request.session["userID"] == model_id:
     context = {}
     user_id = request.session["userID"]
     context.update({'model_Name': model_Name})
@@ -73,53 +77,98 @@ def overview(request, model_Name):
     context.update(get_dataset(model_Name))
 
     return render(request, "overview.html", context)
-    #return HttpResponseRedirect(reverse('overview', args=(model_id,)))
+    # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
 
-import json
 
 def approveModel(request):
     # data = json.loads(request.body.decode('utf-8'))
     # model_id = data.get('model_id')
     # model_status = data.get('status')
-    
+
     model_id = request.POST.get('model_id')
     model_status = request.POST.get('status')
     comments = request.POST.get('comments')
     print(model_id)
     print(model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(Approve_Status=model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(Change_Comments=comments)
+    Model_List.objects.filter(Model_ID=model_id).update(
+        Approve_Status=model_status)
+    Model_List.objects.filter(Model_ID=model_id).update(
+        Change_Comments=comments)
     updated_model = Model_List.objects.get(Model_ID=model_id)
     # print the updated fields to the console
-    print(f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
-    print(f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
+    print(
+        f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
+    print(
+        f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
     return JsonResponse({'success': True})
 
+
+def addModel(request):
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT MAX(Model_ID::integer) FROM Model_List")
+        max_id = cursor.fetchone()[0]
+        
+    new_id = int(max_id) + 1
+    model_name = request.POST.get('model_name')
+    project_name = request.POST.get('project_name')
+    description = request.POST.get('description')
+    language = request.POST.get('language')
+    version = request.POST.get('version')
+    datasetId = request.POST.get('datasetId')
+    current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
+
+    try:
+        new_model = Model_List(
+            Model_ID = new_id,
+            Model_name=model_name,
+            Model_version=version,
+            Project_name=project_name,
+            Language=language,
+            User_ID=1,  # hardcoded for now
+            Dataset_ID=datasetId,
+            Model_description=description,
+            Approve_Status=1,
+            Change_Comments='',
+            Approve_Comments='',
+            Date=current_datetime,  # datetime field
+            Service_Health_Status='Passing',
+            Data_Drift_Status='Passing',
+            Accuracy_Status='Passing'
+        )
+        new_model.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
 
 
 def accuracy(request):
     return render(request, "accuracy.html")
 
+
 def accuracy_chart(request):
-    start_date = request.GET.get('start_date',None)
-    end_date = request.GET.get('end_date',None)
-    metric = request.GET.get('metric',None)
-    resolution = request.GET.get('resolution',None)
-    location = request.GET.get('location',None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    metric = request.GET.get('metric', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
     if resolution == 'Select':
         resolution = None
     if location == 'Select':
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
         if not start_date:
@@ -128,11 +177,13 @@ def accuracy_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format(
+                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
+                metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
@@ -158,30 +209,32 @@ def accuracy_chart(request):
     }
     return JsonResponse(chart_data)
 
-        
+
 def service_health(request):
     return render(request, "service_health.html")
 
+
 def service_chart(request):
-    start_date = request.GET.get('start_date',None)
-    end_date = request.GET.get('end_date',None)
-    metric = request.GET.get('metric',None)
-    resolution = request.GET.get('resolution',None)
-    location = request.GET.get('location',None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    metric = request.GET.get('metric', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
     if resolution == 'Select':
         resolution = None
     if location == 'Select':
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_service_health')
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_service_health')
         min_date, max_date = cursor.fetchone()
 
         if not start_date:
@@ -190,11 +243,13 @@ def service_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format(
+                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(
+                metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
@@ -219,6 +274,7 @@ def service_chart(request):
         }
     }
     return JsonResponse(chart_data)
+
 
 def datadrift(request):
     return render(request, "datadrift.html")
@@ -230,6 +286,7 @@ def challengers(request):
 
 def modelRegistry(request):
     dataset_list = Dataset_List.objects.all()
+    project_name = Model_List.objects.values('Project_name').distinct()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
         Dataset_id = request.GET.get('dataset_id')
@@ -243,7 +300,7 @@ def modelRegistry(request):
         return JsonResponse(dataset_list)
 
     # Otherwise, return the HTML page
-    return render(request, "modelRegistry.html", {'dataset_list': dataset_list})
+    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'project_name': project_name})
 
 
 def humility(request):
@@ -344,10 +401,6 @@ def codeEditor2(request):
 #         return JsonResponse(response_data)
 
 
-
-
-import subprocess
-
 def run_code(request):
     if request.method == "POST":
         print('in post')
@@ -360,7 +413,7 @@ def run_code(request):
             command = ["python", "-c", code]
         elif lang == "javascript":
             command = ["node", "-e", code]
-            
+
         elif lang == "c":
             filename = "program.c"
             with open(filename, "w") as f:
@@ -374,12 +427,12 @@ def run_code(request):
                 command = ["./program"]
             except subprocess.CalledProcessError as e:
                 print("Compilation failed: ", e)
-                
+
         elif lang == "cpp":
             filename = "program.cpp"
             with open(filename, "w") as f:
                 f.write(code)
-                
+
             command = ["g++", filename, "-o", "program"]
             try:
                 subprocess.run(command, check=True)
@@ -388,12 +441,12 @@ def run_code(request):
             except subprocess.CalledProcessError as e:
                 print("Compilation failed: ", e)
 
-
         print('after  allocating')
         try:
             # Run the command using subprocess and capture the output
             # result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=False, timeout=10, universal_newlines=True)
-            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            process = subprocess.Popen(
+                command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             stdout, stderr = process.communicate(input='')
             result = stdout + stderr
             response_data = {"success": True, "result": result}
@@ -404,7 +457,6 @@ def run_code(request):
         except Exception as e:
             response_data = {"success": False, "error": str(e)}
         return JsonResponse(response_data)
-
 
 
 def homepage(request):
@@ -420,7 +472,6 @@ def handler404(request):
 # CODE PORTING
 # import js2py
 # import pybind11 # Python to cpp
-import re
 
 
 def translate_code(request):
@@ -429,7 +480,7 @@ def translate_code(request):
         translate_to = request.POST['portToLanguage']
         code_translate_from = request.POST['codeTranslateFrom']
 
-        try: 
+        try:
             if translate_from == 'python' and translate_to == 'javascript':  # NOT HARD CODED
                 '''Test case: 
                 ```
@@ -439,7 +490,7 @@ def translate_code(request):
                 '''
                 code_translate_to = pscript.py2js(code_translate_from)
 
-            elif translate_from == 'javascript' and translate_to == 'python': 
+            elif translate_from == 'javascript' and translate_to == 'python':
                 # code_translate_to = js2py.translate_js(code_translate_from)
                 '''hard code: 
                 ```
@@ -449,28 +500,30 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
                 # print(code_translate_from_formatted)
-                
+
                 if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
-                else: 
+                else:
                     code_translate_to = "for i in range(5):\n    print(i)"
 
-            elif translate_from == 'python' and translate_to == 'cpp':  
+            elif translate_from == 'python' and translate_to == 'cpp':
                 '''hard code: 
                 ```
                 for i in range(5): 
                     print(i)
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
                 if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
-                else: 
+                else:
                     code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
-            elif translate_from == 'cpp' and translate_to == 'python':  
+            elif translate_from == 'cpp' and translate_to == 'python':
                 '''
                 hard code: 
                 ```
@@ -485,26 +538,28 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
-                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}": 
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "for i in range(5):\n    print(i)"
 
-            elif translate_from == 'python' and translate_to == 'c':  
+            elif translate_from == 'python' and translate_to == 'c':
                 '''hard code: 
                 ```
                 for i in range(5): 
                     print(i)
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
                 if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
-                else: 
+                else:
                     code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
 
-            elif translate_from == 'c' and translate_to == 'python':  
+            elif translate_from == 'c' and translate_to == 'python':
                 '''hard code: 
                 ```
                 #include <stdio.h>
@@ -515,15 +570,16 @@ def translate_code(request):
                     }
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
                 # code_translate_from_formatted = code_translate_from_formatted.rstrip('%')
                 print(code_translate_from_formatted)
-                if code_translate_from_formatted != '#include<stdio.h>intmain(){printf("HelloWorld!");return0;}': 
+                if code_translate_from_formatted != '#include<stdio.h>intmain(){printf("HelloWorld!");return0;}':
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = 'print("Hello World!")'
 
-            elif translate_from == 'javascript' and translate_to == 'cpp':  
+            elif translate_from == 'javascript' and translate_to == 'cpp':
                 '''hard code: 
                 ```
                 var i;
@@ -532,14 +588,15 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
-                
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+
                 if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
-                else: 
+                else:
                     code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
-            elif translate_from == 'cpp' and translate_to == 'javascript':  
+            elif translate_from == 'cpp' and translate_to == 'javascript':
                 '''hard code: 
                 ```
                 #include <iostream>
@@ -553,14 +610,15 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_from_formatted = re.sub(r"[\n\t\s]*", "", code_translate_from)
-                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}": 
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
 
-            else: 
-                return JsonResponse({'error':'Language combination still WIP.'})
+            else:
+                return JsonResponse({'error': 'Language combination still WIP.'})
 
             return JsonResponse({'translated_code': code_translate_to})
         except:
@@ -568,10 +626,6 @@ def translate_code(request):
 
     else:
         return render(request, 'modelRegistry.html')
-    
-from pathlib import Path  
-from os import path
-from rest_framework.decorators import api_view
 
 
 # CODE EDITOR
@@ -605,14 +659,14 @@ def save_saved(request):
 def userlogin(request):
     msg = ''
     context = {}
-    if request.method=='POST':  
+    if request.method == 'POST':
         username = request.POST.get("email")
         pwd = request.POST.get("password")
-        user = Users.objects.filter(User_ID = username, Password = pwd).count()
+        user = Users.objects.filter(User_ID=username, Password=pwd).count()
         if user == 1:
             print(username)
-            user = Users.objects.filter(User_ID = username, Password = pwd).first()
-            request.session["userLogin"]= True
+            user = Users.objects.filter(User_ID=username, Password=pwd).first()
+            request.session["userLogin"] = True
             request.session["userID"] = user.User_ID
             if user.Role == "MLOps Engineer":
                 request.session["role"] = 'MLOps Engineer'
@@ -625,19 +679,19 @@ def userlogin(request):
             context.update(get_accuracy(user.User_ID))
             context.update(deployed_models(user.User_ID))
             # return redirect('/app/deployment')
-            return redirect(reverse("deployment"))           
-            #return render(request, 'deployments.html', context = context)
+            return redirect(reverse("deployment"))
+            # return render(request, 'deployments.html', context = context)
             # msg = 'Success'
         else:
             msg = 'Invalid Email/Password'
-    #form = forms.UserLoginForm
-    return render(request, 'loginpage.html',{'msg':msg})
+    # form = forms.UserLoginForm
+    return render(request, 'loginpage.html', {'msg': msg})
+
 
 def userlogout(request):
     if request.method == "GET":
         request.session.flush()
-    #return redirect('/app/logout')
-    #if (request.GET.get("logoutbtn")):
-        #del request.session["userLogin"]
+    # return redirect('/app/logout')
+    # if (request.GET.get("logoutbtn")):
+        # del request.session["userLogin"]
         return render(request, 'logoutpage.html')
-       
