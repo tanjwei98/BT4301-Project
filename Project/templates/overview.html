@@ -238,14 +238,14 @@
                     <td class="px-4 py-3">
                       <div class="flex items-center text-sm">
                         <div>
-                          <p class="font-semibold">HDB Pricing Prediction</p>
+                          <p class="font-semibold">{{ Model.Model_name }}</p>
                           <p class="text-xs text-gray-600 dark:text-gray-400">
                             <!--Can include pending status here-->
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td class="px-4 py-3 text-sm">
+                    <td class="px-4 py-3 items-center text-sm">
                       High
                     </td>
                     {% if Model.Service_Health_Status == "Passing" %}
@@ -425,20 +425,34 @@
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/drift">Data Drift</a>
+                  href="{% url 'drift' model_Name %}">Data Drift</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
                   href="/app/accuracy">Accuracy</a>
               </li>
+              {% if request.session.role == 'MLOps Engineer' %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 cursor-not-allowed hover:text-gray-800 py-2 px-4"
+                  href=".">Humility</a>
+              </li>
+              {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
                   href="/app/humility">Humility</a>
               </li>
+              {% endif %}
+              {% if request.session.role == 'MLOps Engineer' %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 cursor-not-allowed dark:text-gray-400 hover:text-gray-800 py-2 px-4"
+                  href=".">Challengers</a>
+              </li>
+              {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
                   href="/app/challengers">Challengers</a>
               </li>
+              {% endif %}
             </ul>
           </div>
           <!--Content for your page-->

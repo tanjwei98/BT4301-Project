@@ -1,4 +1,10 @@
 from .models import *
+import datetime as dt
+from datetime import date, datetime
+import pandas as pd
+import warnings
+warnings.filterwarnings("ignore")
+
 
 # Deployment page
 def get_deployments(userID):
@@ -40,3 +46,21 @@ def get_dataset(modelName):
     dataset_id = Model_List.objects.filter(Model_name = modelName).first().Dataset_ID_id
     dataset = Dataset_List.objects.filter(Dataset_ID = dataset_id).first()
     return {"Dataset": dataset}
+
+# Data Drift page
+def drift_importance(modelName, start_date = date(2023,4,5), end_date = date(2023,4,7)):
+    model_id = Model_List.objects.filter(Model_name = modelName).first().Model_ID
+    drift_data = pd.DataFrame(list(Model_drift.objects.filter(Model_ID_id = model_id).values()))
+    drift_data["Date"] = pd.to_datetime(drift_data['Date']).dt.date
+    drift_data["Date"] = pd.to_datetime(drift_data['Date'])
+    start_date = datetime(2023,4,5)
+    end_date = datetime(2023,4,7)
+    after_start_date = drift_data["Date"] >= (start_date - dt.timedelta(days=1))
+    before_end_date = drift_data["Date"] <= end_date
+    filtered_dataset = drift_data[after_start_date & before_end_date]
+    grouped = filtered_dataset.groupby("Feature").mean().reset_index()
+    drift = list(grouped["Drift"])
+    importance = list(grouped["Importance"])
+    features = list(grouped["Feature"])
+
+    return {"Drift": drift, "Importance": importance, "Feature": features}
