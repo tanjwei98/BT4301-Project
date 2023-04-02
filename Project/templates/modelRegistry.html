@@ -476,7 +476,7 @@
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                           <option value='default' selected>Select Project</option>
                           {% for pn in project_name %}
-                          <option value="{{ pn }}">{{ pn }}</option>
+                          <option value="{{ pn.Project_Name }}">{{ pn.Project_Name }}</option>
                           {% endfor %}
                         </select>
 
@@ -728,7 +728,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value='default' selected>Select Project</option>
                         {% for pn in project_name %}
-                        <option value="{{ pn }}">{{ pn }}</option>
+                        <option value="{{ pn.Project_Name }}">{{ pn.Project_Name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -919,7 +919,7 @@
 
             <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
 
-              <button type="button" id='testdata_submit_btn' style="padding: 2px 10px 2px 10px; margin: 20px;"
+              <button type="button" id='testdata_submit_btn' data-modal-hide="testmodel" data-dismiss="modal" style="padding: 2px 10px 2px 10px; margin: 20px;"
                 class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                 Choose this Dataset</button>
 
@@ -1270,17 +1270,26 @@
     // for files
     var add_mr_btn_file = $('#add_mr_btn_file');
     add_mr_btn_file.click(function (event) {
-        event.preventDefault();
-        const modelname_file = document.getElementsById('modelname_file').value;
-        const modellanguage_file = document.getElementsById('modellanguage_file').value;
-        const version_file = document.getElementsById('modelversion_file').value;
-        const description_file = document.getElementsById('modeldescription_file').value;
-        const project_name = document.getElementsById('projectname_select_file').value;
-        const datasetId = datasetSelect.value;
+      event.preventDefault();
+      const modelname_file = document.getElementById('modelname_file').value;
+      const modellanguage_file = document.getElementById('modellanguage_file').value;
+      const version_file = document.getElementById('modelversion_file').value;
+      const description_file = document.getElementById('modeldescription_file').value;
+      const project_name_file = document.getElementById('projectname_select_file').value;
+      const datasetId_file = datasetSelect.value;
 
+
+      if (modelname_file === '' || modellanguage_file === '' || version_file === '' || description_file === '' || project_name_file === 'default' || datasetId_file === 'default') {
+        window.alert('Please fill up all information before adding to model registry')
+        return;
+      }
+      else {
+
+        console.log('in the ajax')
+        console.log(datasetId_file)
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
-          url: './add-model/',
+          url: './modelRegistry/add-model/',
           type: 'POST',
           beforeSend: function (xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", csrf_token);
@@ -1288,38 +1297,50 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 
-              'model_name': modelname_file, 
-              'language': modellanguage_file, 
-              'version': version_file, 
-              'description': description_file, 
-              'project_name': project_name, 
-              'datasetId': datasetId,
-              'csrfmiddlewaretoken': csrf_token 
-            },
+          data: {
+            'model_name': modelname_file,
+            'language': modellanguage_file,
+            'version': version_file,
+            'description': description_file,
+            'project_name': project_name_file,
+            'datasetId': datasetId_file,
+            'csrfmiddlewaretoken': csrf_token
+          },
           success: function (response) {
+            console.log('this is the response')
             console.log(response);
-            location.reload(); // important! change to load challengers page instead
+
+            // location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);
           }
         });
-      });
+      }
+    });
 
 
     // Add to Model Registry Button
     // for new Code
-    var add_mr_btn_file = $('#add_mr_btn_file');
-    add_mr_btn_file.click(function (event) {
-        event.preventDefault();
-        const modelname_file = document.getElementsById('modelname_code').value;
-        const modellanguage_file = language_from_code;
-        const version_file = document.getElementsById('modelversion_code').value;
-        const description_file = document.getElementsById('modeldescription_code').value;
-        const project_name = document.getElementsById('projectname_select_code').value;
-        const datasetId = datasetSelect.value;
+    var add_mr_btn_code = $('#add_mr_btn_code');
+    add_mr_btn_code.click(function (event) {
 
+      event.preventDefault();
+      const modelname_code = document.getElementById('modelname_code').value;
+      const modellanguage_code = language_from_code;
+      const version_code = document.getElementById('modelversion_code').value;
+      const description_code = document.getElementById('modeldescription_code').value;
+      const project_name_code = document.getElementById('projectname_select_code').value;
+      const datasetId_code = datasetSelect.value;
+
+
+      if (modelname_code === '' || modellanguage_code === '' || version_code === '' || description_code === '' || project_name_code === 'default' || datasetId_code === 'default') {
+        window.alert('Please fill up all information before adding to model registry')
+        return;
+      }
+      else {
+
+        console.log('still run leh')
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
           url: './add-model/',
@@ -1330,15 +1351,15 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 
-              'model_name': modelname_file, 
-              'language': modellanguage_file, 
-              'version': version_file, 
-              'description': description_file, 
-              'project_name': project_name, 
-              'datasetId': datasetId,
-              'csrfmiddlewaretoken': csrf_token 
-            },
+          data: {
+            'model_name': modelname_code,
+            'language': modellanguage_code,
+            'version': version_code,
+            'description': description_code,
+            'project_name': project_name_code,
+            'datasetId': datasetId_code,
+            'csrfmiddlewaretoken': csrf_token
+          },
           success: function (response) {
             console.log(response);
             location.reload(); // important! change to load challengers page instead
@@ -1347,7 +1368,9 @@
             console.error('Error:', xhr.status, status, error);
           }
         });
-      });
+      }
+
+    });
 
   </script>
 

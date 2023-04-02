@@ -106,7 +106,7 @@ def approveModel(request):
 def addModel(request):
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT MAX(Model_ID::integer) FROM Model_List")
+        cursor.execute('SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
         max_id = cursor.fetchone()[0]
         
     new_id = int(max_id) + 1
@@ -118,23 +118,29 @@ def addModel(request):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
+    user = Users.objects.get(pk='hannah@mlops.com') # for now, hardcode this. have to change to actual user id when login page is done. 
+    print(f'THIS IS THE DATASEET ID: {datasetId}')
+    datasetlist_ID = Dataset_List.objects.get(pk=datasetId) # for now, hardcode this. have to change to actual user id when login page is done. 
     try:
         new_model = Model_List(
             Model_ID = new_id,
             Model_name=model_name,
             Model_version=version,
-            Project_name=project_name,
+            Project_Name=project_name,
             Language=language,
-            User_ID=1,  # hardcoded for now
-            Dataset_ID=datasetId,
+            User_ID=user,  # hardcoded for now
+            Dataset_ID=datasetlist_ID,
             Model_description=description,
             Approve_Status=1,
+            Approve_User_ID=None,
             Change_Comments='',
             Approve_Comments='',
-            Date=current_datetime,  # datetime field
+            Created_Date=current_datetime,  # datetime field
+            Approved_Date= None, #might want to change it to allow null instead
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
-            Accuracy_Status='Passing'
+            Accuracy_Status='Passing',
+            Challenger_Status='Challengers'
         )
         new_model.save()
         
@@ -357,7 +363,7 @@ def challengers(request):
 
 def modelRegistry(request):
     dataset_list = Dataset_List.objects.all()
-    project_name = Model_List.objects.values('Project_name').distinct()
+    project_name = Model_List.objects.values('Project_Name').distinct()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
         Dataset_id = request.GET.get('dataset_id')
