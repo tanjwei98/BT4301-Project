@@ -503,6 +503,9 @@
                           <button id="open-form" class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mr-1" 
                           type="button">+Add new files</button>
                           <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2" id="gitlab-button">Access GitLab</button>                      
+                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
+                            Create new version
+                          </button>
                           <form id="upload-form" class="hidden" enctype="multipart/form-data">
                           <div class="flex items-center justify-between mr-1">
                             <input type="file" name="file" id="file-input" />
@@ -511,7 +514,13 @@
                             </button>
                             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2" type="close" id="close">Close</button>
                           </form>
+                          
                         </div>
+                        
+                          <div id="output-div" class="hidden">
+                            <ul id="output-list" class="list-disc ml-5"></ul>
+                          </div>
+                          
                           <script>
                             var gitlabButton = document.getElementById("gitlab-button");
                             gitlabButton.addEventListener("click", openGitLab);
@@ -519,6 +528,8 @@
                             const button = document.getElementById("open-form");
                             const fileInput = document.getElementById("file-input");
                             const gitUrlInput = document.getElementById("git-url-input");
+                            const outputDiv = document.getElementById('output-div');
+                            const outputList = document.getElementById('output-list');
 
                             button.addEventListener("click", () => {
                               form.classList.remove("hidden");
@@ -528,8 +539,45 @@
                             gitlabButton.addEventListener("click", openGitLab);
 
                             function openGitLab() {
-                              window.open("http://192.168.1.109:80", "_blank");
-                            }
+                              //window.open("http://192.168.1.109:80/gitlab-instance-07999c85", "_blank");
+                              window.open("http://192.168.1.109/", "_blank");
+                              //window.open("http://192.168.1.109/gitlab-instance-07999c85/first-gitlab-project/-/blob/main/IT5005_AI_Assignment_3-3.ipynb", "_blank");
+
+                              const projectName = 'second gitlab project'; // replace with your project ID
+                              //const apiEndpoint = `http://192.168.1.109/gitlab-instance-07999c85/`;
+                              const apiUrl = 'http://localhost/api/v4/projects/';
+                              const token = 'glpat-nxsPeUx-Tvnca3SWfKyB';
+                              fetch(`${apiUrl}?search=${projectName}`, {
+                                  headers: { "PRIVATE-TOKEN": token },
+                                })
+                                  .then((response) => response.json())
+                                  .then((data) => {
+                                    const projectId = data[0].id;
+
+                                    // Fetch files in project
+                                    //fetch(`${apiUrl}${projectId}/repository/tree`, {
+                                    fetch(`${apiUrl}${projectId}/repository/tree?path=src`, {
+                                      headers: { "PRIVATE-TOKEN": token },
+                                    })
+                                      .then((response) => response.json())
+                                      //.then((data) => console.log(data))
+                                      .then((data) => {
+                                        const fileNames = data.map(file => file.name);
+                                        console.log(fileNames);
+                                        outputList.innerHTML = '';
+                                        fileNames.forEach(name => {
+                                          const li = document.createElement('li');
+                                          li.textContent = name;
+                                          outputList.appendChild(li);
+                                        });
+                                        outputDiv.classList.remove('hidden');
+                                        console.log("Success");
+                                      })
+                                      .catch((error) => console.error(error));
+                                  })
+                                  .catch((error) => console.error(error));
+
+                              }
 
                             fileInput.addEventListener("change", () => {
                               gitUrlInput.classList.add("hidden");
@@ -557,9 +605,6 @@
 
                         </div>
 
-                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
-                            Create new version
-                          </button>
 
                       </div>
 
