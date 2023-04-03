@@ -595,7 +595,8 @@ def translate_code(request):
                 '''
                 code_translate_from_formatted = re.sub(
                     r"[\n\t\s]*", "", code_translate_from)
-                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
@@ -631,7 +632,8 @@ def translate_code(request):
                 '''
                 code_translate_from_formatted = re.sub(
                     r"[\n\t\s]*", "", code_translate_from)
-                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)}":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
@@ -641,10 +643,10 @@ def translate_code(request):
                 ```
                 #include <stdio.h>
 
-                    int main() {
+                int main() {
                     printf("Hello World!");
                     return 0;
-                    }
+                }
                 ```
                 '''
                 code_translate_from_formatted = re.sub(
