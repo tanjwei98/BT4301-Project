@@ -238,7 +238,7 @@
                     <td class="px-4 py-3">
                       <div class="flex items-center text-sm">
                         <div>
-                          <p class="font-semibold">{{ Model.Model_name }}</p>
+                          <p class="font-semibold">{{ Model.Project_Name }}</p>
                           <p class="text-xs text-gray-600 dark:text-gray-400">
                             <!--Can include pending status here-->
                           </p>
@@ -425,7 +425,7 @@
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="{% url 'drift' model_Name %}">Data Drift</a>
+                  href="{% url 'drift' Project_Name %}">Data Drift</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
@@ -457,7 +457,7 @@
           </div>
           <!--Content for your page-->
           <div class="container mx-auto grid">
-            {% if Model.Approve_Status == "1" %}
+            {% if Model.Approve_Status == "Pending" %}
             <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
               <div>
                 <p> This deployment has pending changes</p>
@@ -475,15 +475,21 @@
             {% endif %}
             <div class="my-3 grid gap-6 xl:grid-cols-3">
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
                   Summary
                 </h4>
                 <span class="font-semibold text-gray-600 dark:text-gray-300">
-                  Name: <!--Should input deployed model name -->
+                  Name: 
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  {{ Model.Project_Name }}
                 </span>
                 <h5 class="mb-4"></h5>
                 <span class="font-semibold text-gray-600 dark:text-gray-300">
-                  Description: <!--Should input deployed model description-->
+                  Description:
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  {{ Model.Model_description }}
                 </span>
                 <h5 class="mb-4"></h5>
                 <span class="font-semibold text-gray-600 dark:text-gray-300">
@@ -497,12 +503,12 @@
                   Approval Status:
                 </span>
                 <span class = "text-gray-600 dark:text-gray-300">
-                  Approved
+                  {{ Model.Approve_Status }}
                 </span>
               </div>
 
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
                   Content
                 </h4>
                 <span class="font-semibold text-gray-600 dark:text-gray-300">
@@ -535,7 +541,7 @@
               </div>
 
               <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                <h4 class="mb-4 font-bold text-gray-600 dark:text-gray-300">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
                   Governance Logs
                 </h4>
                 <h5 class="mb-4 text-gray-600 dark:text-gray-300">

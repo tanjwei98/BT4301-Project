@@ -451,11 +451,11 @@
                   >
                     {% for model in Deployed_Models %}
                     <tr class="cursor-pointer text-gray-700 dark:text-gray-400 transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800" 
-                    onclick="window.location.href='{% url 'overview' model.Model_name %}'">
+                    onclick="window.location.href='{% url 'overview' model.Project_Name %}'">
                       <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                           <div>
-                            <p class="font-semibold"> {{ model.Model_name }} </p>
+                            <p class="font-semibold"> {{ model.Project_Name }} </p>
                             <p class="text-xs text-gray-600 dark:text-gray-400">
                               <!--Can include pending status here-->
                             </p>
@@ -642,7 +642,7 @@
                 class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
               >
                 <span class="flex items-center col-span-3">
-                  Showing {{ no_of_deployments }}-1 of {{ no_of_deployments }}
+                  Showing {{ no_of_deployments }}-{{ no_of_deployments }} of {{ no_of_deployments }}
                 </span>
                 <span class="col-span-2"></span>
                 <!-- Pagination -->

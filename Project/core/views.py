@@ -60,21 +60,22 @@ def table(request):
 def deployment(request):
     context = {}
     user_id = request.session["userID"]
-    context.update(get_deployments(user_id))
-    context.update(get_service_health(user_id))
-    context.update(get_data_drift(user_id))
-    context.update(get_accuracy(user_id))
-    context.update(deployed_models(user_id))
+    user_role = request.session["role"]
+    context.update(get_deployments(user_id, user_role))
+    context.update(get_service_health(user_id, user_role))
+    context.update(get_data_drift(user_id, user_role))
+    context.update(get_accuracy(user_id, user_role))
+    context.update(deployed_models(user_id, user_role))
     return render(request, "deployments.html", context)
 
 
-def overview(request, model_Name):
+def overview(request, Project_Name):
     # if request.session["userID"] == model_id:
     context = {}
     user_id = request.session["userID"]
-    context.update({'model_Name': model_Name})
-    context.update(get_model(model_Name))
-    context.update(get_dataset(model_Name))
+    context.update({'Project_Name': Project_Name})
+    context.update(get_model(Project_Name))
+    context.update(get_dataset(Project_Name))
 
     return render(request, "overview.html", context)
     # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
@@ -349,11 +350,11 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
-def datadrift(request, model_Name):
+def datadrift(request, Project_Name):
     context = {}
     user_id = request.session["userID"]
-    context.update({'model_Name': model_Name})
-    context.update(drift_importance(model_Name))
+    context.update({'Project_Name': Project_Name})
+    context.update(drift_importance(Project_Name))
     return render(request, "datadrift.html", context)
 
 
@@ -752,11 +753,11 @@ def userlogin(request):
             else:
                 request.session["role"] = "Data Scientist"
             # return redirect('/app/deployment')
-            context.update(get_deployments(user.User_ID))
-            context.update(get_service_health(user.User_ID))
-            context.update(get_data_drift(user.User_ID))
-            context.update(get_accuracy(user.User_ID))
-            context.update(deployed_models(user.User_ID))
+            context.update(get_deployments(user.User_ID, user.Role))
+            context.update(get_service_health(user.User_ID, user.Role))
+            context.update(get_data_drift(user.User_ID, user.Role))
+            context.update(get_accuracy(user.User_ID, user.Role))
+            context.update(deployed_models(user.User_ID, user.Role))
             # return redirect('/app/deployment')
             return redirect(reverse("deployment"))
             # return render(request, 'deployments.html', context = context)
