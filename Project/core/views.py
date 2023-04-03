@@ -77,7 +77,7 @@ def overview(request, model_Name):
 
 import json
 
-def approveModel(request):
+def approveModel(request, model_name):
     # data = json.loads(request.body.decode('utf-8'))
     # model_id = data.get('model_id')
     # model_status = data.get('status')
