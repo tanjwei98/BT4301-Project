@@ -355,6 +355,16 @@ def datadrift(request, Project_Name):
     user_id = request.session["userID"]
     context.update({'Project_Name': Project_Name})
     context.update(drift_importance(Project_Name))
+    context.update(feature_distribution(Project_Name))
+
+    if request.method == 'POST':
+        if request.POST['form_id'] == 'chart_change':
+            start_date = request.POST['start_time_option']
+            end_date = request.POST['end_time_option']
+            context.update(drift_importance(Project_Name, start_date, end_date))
+            context.update(feature_distribution(Project_Name, start_date, end_date))
+            return JsonResponse(context)
+
     return render(request, "datadrift.html", context)
 
 

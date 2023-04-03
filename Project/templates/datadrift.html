@@ -33,6 +33,7 @@
     <!-- <script src={% static '/js/charts-lines.js' %} defer></script> -->
     <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
     <!-- <script src={% static '/js/charts-pie.js' %} defer></script> -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div
@@ -417,15 +418,121 @@
                     <span class="text-gray-700 dark:text-gray-400">
                       Starting Date:
                     </span>
-                    <input type="date" id="startdate" name="startdate" class = "rounded text-gray-700">
+                    <input type="date" id="startdate" name="startdate" class = "rounded text-gray-700", value="2023-04-05">
                   </label>
-                  <label class="block mt-4 ml-4 text-sm" for="enddate">
+                  <label class="block mt-4 text-sm" for="enddate">
                     <span class="text-gray-700 dark:text-gray-400">
                       End Date:
                     </span>
-                    <input type="date" id="enddate" name="enddate" class = "rounded text-gray-700">
+                    <input type="date" id="enddate" name="enddate" class = "rounded text-gray-700", value = "2023-04-07">
                   </label>
+                  <button type="button" class = "px-4 py-2 rounded text-white mt-6 bg-purple-600" onclick="update_charts()">Submit</button>
                 </form>
+                <script>
+                  function update_charts(){
+                    var start_time = document.getElementById('startdate').value;
+                    var end_time = document.getElementById('enddate').value;
+                    charts_ajax(start_time, end_time)
+                  }
+                  function charts_ajax(start_time, end_time) {
+                    $.ajax({
+                      data: {
+                          csrfmiddlewaretoken: '{{ csrf_token }}',
+                          form_id: 'chart_change',
+                          start_time_option: start_time,
+                          end_time_option: end_time
+                      },
+                      type: "POST",
+                      url: "{% url 'drift' Project_Name %}",
+                      success: function(json) {
+                        // Drift chart
+                        var passing_drift = json["passing_drift"]
+                        var passing_impt = json["passing_importance"]
+                        var passing_feature = json["passing_feature"]
+
+                        var at_risk_drift = json["at_risk_drift"]
+                        var at_risk_impt = json["at_risk_importance"]
+                        var at_risk_feature = json["at_risk_feature"]
+                        //console.log(feature)
+
+                        var passing = {
+                          x: passing_impt,
+                          y: passing_drift,
+                          name: 'Passing',
+                          mode: 'markers',
+                          type: 'scatter',
+                          text: passing_feature,
+                          marker:{
+                              color: '#00FF00',
+                              size: 10  
+                          },
+                        };
+
+                        var at_risk = {
+                          x: at_risk_impt,
+                          y: at_risk_drift,
+                          name: 'At Risk',
+                          mode: 'markers',
+                          type: 'scatter',
+                          text: at_risk_feature,
+                          marker:{
+                              color: '#FFD300',
+                              size: 10
+                          },
+                        }
+
+
+                        var layout_1 = {
+                            xaxis: {
+                                title: "Feature Importance",
+                            },
+                            yaxis: {
+                                title: "Feature Drift",
+                                range: [0.0, 1.0]
+                            },
+                            modebar: {orientation: 'v'},
+                            legend: { orientation: 'h', xanchor : "center", x: 0.5, y:-0.5},
+                        }
+
+                        var data = [passing, at_risk]
+                        Plotly.newPlot('driftimpt_chart', data, layout_1, {displaylogo:false})
+
+                        // Distribution Chart
+                        var train_dist = json["train_dist"]
+                        var scoring_dist = json["scoring_dist"]
+                        var feature_values = json["feature_values"]
+                        //console.log(feature_values)
+
+                        var trace1 = {
+                          x: feature_values,
+                          y: train_dist,
+                          name: 'Training',
+                          type: 'bar'
+                        };
+
+                        var trace2 = {
+                          x: feature_values,
+                          y: scoring_dist,
+                          name: 'Scoring',
+                          type: 'bar'
+                        };
+
+                        var data = [trace1, trace2];
+
+                        var layout = {
+                          barmode: 'group',
+                          modebar: {orientation: 'v'},
+                          legend: { orientation: 'h', xanchor : "center", x: 0.5, y:-0.5},
+                        };
+
+                        Plotly.newPlot('feature_dist_chart', data, layout, {displaylogo:false});
+                        },
+                        error : function(xhr,errmsg,err) {
+                            console.log(xhr)
+                        }
+                    })
+                  }
+                </script>
 
                 <!-- <input type="submit"> -->
               </div>
@@ -437,80 +544,116 @@
                   </h4>
                   <div id="driftimpt_chart">
                     <script>
-                      var drift = "{{ Drift }}".slice(1, -1).split(", ")
-                      var impt = "{{ Importance }}".slice(1, -1).split(", ")
-                      var feature = "{{ Feature }}".slice(1, -1).split(", ").map((x) => x.slice(6, -6))
-                      console.log(feature)
+                      var passing_drift = "{{ passing_drift }}".slice(1, -1).split(", ")
+                      var passing_impt = "{{ passing_importance }}".slice(1, -1).split(", ")
+                      var passing_feature = "{{ passing_feature }}".slice(1, -1).split(", ").map((x) => x.slice(6, -6))
 
-                      var trace1 = {
-                        x: impt,
-                        y: drift,
+                      var at_risk_drift = "{{ at_risk_drift }}".slice(1, -1).split(", ")
+                      var at_risk_impt = "{{ at_risk_importance }}".slice(1, -1).split(", ")
+                      var at_risk_feature = "{{ at_risk_feature }}".slice(1, -1).split(", ").map((x) => x.slice(6, -6))
+                      //console.log(feature)
+
+                      var passing = {
+                        x: passing_impt,
+                        y: passing_drift,
+                        name: 'Passing',
                         mode: 'markers',
-                        type: 'scatter'
+                        type: 'scatter',
+                        text: passing_feature,
+                        marker:{
+                            color: '#00FF00',
+                            size: 10  
+                        },
                       };
+
+                      var at_risk = {
+                        x: at_risk_impt,
+                        y: at_risk_drift,
+                        name: 'At Risk',
+                        mode: 'markers',
+                        type: 'scatter',
+                        text: at_risk_feature,
+                        marker:{
+                            color: '#FFD300',
+                            size: 10
+                        },
+                      }
+
+
                       var layout_1 = {
                           xaxis: {
                               title: "Feature Importance",
                           },
                           yaxis: {
                               title: "Feature Drift",
+                              range: [0.0, 1.0]
                           },
-                          modebar: {orientation: 'v'}
+                          modebar: {orientation: 'v'},
+                          legend: { orientation: 'h', xanchor : "center", x: 0.5, y:-0.5},
                       }
 
-                      var data = [trace1]
+                      var data = [passing, at_risk]
                       Plotly.newPlot('driftimpt_chart', data, layout_1, {displaylogo:false})
                     </script>
-                    <!-- <canvas id="myChart" width="550" height="400" class = 'bg-white dark:bg-gray-200'></canvas>
-                    <script>
-                      ctx = document.getElementById('myChart');
-                      var drift = "{{ Drift }}".slice(1, -1).split(", ")
-                      var impt = "{{ Importance }}".slice(1, -1).split(", ")
-                      console.log(drift)
-                      var scatterChart = new Chart(ctx, {
-                        type: 'scatter',
-                        data: {
-                            datasets: [{
-                                label: 'Feature Drift/Importance',
-                                data: [{
-                                    x: drift[0],
-                                    y: impt[0]
-                                }, {
-                                    x: drift[1],
-                                    y: impt[1]
-                                }, {
-                                    x: drift[2],
-                                    y: impt[2]
-                                },{
-                                    x: drift[3],
-                                    y: impt[3]
-                                },{
-                                    x: drift[4],
-                                    y: impt[4]
-                                }],
-                                backgroundColor: "rgb(125,60,122)",
-                                borderColor:"rgb(125,60,122)"
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                xAxes: [{
-                                    type: 'linear',
-                                    position: 'bottom'
-                                }]
-                            }
-                        }
-                    });
-                    </script> -->
                   </div>
-                  
                 </div>
 
                 <div class="p-4 w-fit bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Difference in Data Distribution
-                    <!-- <canvas id="myChart" width="550" height="400"></canvas> -->
-                  </h4>
+                  <div class="flex flex col justify-between">
+                    <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
+                      Difference in Data Distribution
+                    </h4>
+                    <form action="." method = "post" enctype="multipart/form-data" id = "feature_name_form">
+                      {% csrf_token %}
+                      <label for = 'feature_name' class = "font-bold text-sm px-2">
+                          Feature:
+                      </label>
+                      <select id = 'feature_name' class = 'rounded-full h-5 text-black text-sm px-2' name = 'feature_name'>
+                        {% for feature in all_feature %}
+                          {% if feature == 'flat_type' %}
+                          <option select="selected" value= feature> {{ feature }}</option>
+                          {% else %}
+                          <option value = feature>{{ feature }}</option>
+                          {% endif %}
+                        {% endfor %}
+                          <!-- <option select="selected" value="0">Show All</option>
+                          <option value = "1">Approved</option>
+                          <option value = "2">Pipeline</option> -->
+                      </select>
+                    </form>
+                  </div>
+                  <div id="feature_dist_chart">
+                    <script>
+                      var train_dist = "{{ train_dist }}".slice(1, -1).split(", ")
+                      var scoring_dist = "{{ scoring_dist }}".slice(1, -1).split(", ")
+                      var feature_values = "{{ feature_values }}".slice(1, -1).split(", ").map((x) => x.slice(6, -6))
+                      console.log(feature_values)
+
+                      var trace1 = {
+                        x: feature_values,
+                        y: train_dist,
+                        name: 'Training',
+                        type: 'bar'
+                      };
+
+                      var trace2 = {
+                        x: feature_values,
+                        y: scoring_dist,
+                        name: 'Scoring',
+                        type: 'bar'
+                      };
+
+                      var data = [trace1, trace2];
+
+                      var layout = {
+                        barmode: 'group',
+                        modebar: {orientation: 'v'},
+                        legend: { orientation: 'h', xanchor : "center", x: 0.5, y:-0.5},
+                      };
+
+                      Plotly.newPlot('feature_dist_chart', data, layout, {displaylogo:false});
+                    </script>
+                  </div>
                 </div>
               </div>
             </div>
