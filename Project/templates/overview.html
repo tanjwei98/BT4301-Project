@@ -2,42 +2,30 @@
 
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Model Overview</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
-    <link rel="stylesheet" href= {% static '/css/tailwind.output.css' %} />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/init-alpine.js"></script> -->
-    <script src={% static '/js/init-alpine.js' %}></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
-    <script src={% static '/js/charts-lines.js' %} defer></script>
-    <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
-    <script src={% static '/js/charts-pie.js' %} defer></script>
-  </head>
-  <body>
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
-      :class="{ 'overflow-hidden': isSideMenuOpen }"
-    >
-      <!-- Desktop sidebar -->
-      <!-- <aside
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
+  <link rel="stylesheet" href={% static '/css/tailwind.output.css' %} />
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <!-- <script src="./assets/js/init-alpine.js"></script> -->
+  <script src={% static '/js/init-alpine.js' %}></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+  <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
+  <script src={% static '/js/charts-lines.js' %} defer></script>
+  <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
+  <script src={% static '/js/charts-pie.js' %} defer></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+  <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
+    <!-- Desktop sidebar -->
+    <!-- <aside
         class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
       >
         <div class="py-4 text-gray-500 dark:text-gray-400">
@@ -77,20 +65,15 @@
           </ul>
         </div>
       </aside> -->
-      <div class="flex flex-col flex-1 w-full">
-        <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
-          <div
-            class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300"
-          >
-            <a
-              class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-              href="/app/deployment/"
-            >
-              MLOps Suite
-            </a> 
-            <!-- Search input -->
-            <div class="flex justify-center flex-1 mx-30 lg:mr-32">
-              <!-- <div
+    <div class="flex flex-col flex-1 w-full">
+      <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+        <div class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300">
+          <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="/app/deployment/">
+            MLOps Suite
+          </a>
+          <!-- Search input -->
+          <div class="flex justify-center flex-1 mx-30 lg:mr-32">
+            <!-- <div
                 class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
               >
                 <div class="absolute inset-y-0 flex items-center pl-2">
@@ -114,91 +97,56 @@
                   aria-label="Search"
                 />
               </div> -->
-            </div>
-            <ul class="flex items-center flex-shrink-0 space-x-6">
-              <!-- Theme toggler -->
-              <li class="flex">
-                <button
-                  class="rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleTheme"
-                  aria-label="Toggle color mode"
-                >
-                  <template x-if="!dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-                      ></path>
-                    </svg>
-                  </template>
-                  <template x-if="dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </template>
-                </button>
-              </li>
-              <!-- Notifications menu -->
-              <li class="relative">
-                <button
-                  class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleNotificationsMenu"
-                  @keydown.escape="closeNotificationsMenu"
-                  aria-label="Notifications"
-                  aria-haspopup="true"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                    ></path>
+          </div>
+          <ul class="flex items-center flex-shrink-0 space-x-6">
+            <!-- Theme toggler -->
+            <li class="flex">
+              <button class="rounded-md focus:outline-none focus:shadow-outline-purple" @click="toggleTheme"
+                aria-label="Toggle color mode">
+                <template x-if="!dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                   </svg>
-                  <!-- Notification badge -->
-                  <span
-                    aria-hidden="true"
-                    class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-                  ></span>
-                </button>
-                <template x-if="isNotificationsMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeNotificationsMenu"
-                    @keydown.escape="closeNotificationsMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Messages</span>
-                        <span
-                          class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600"
-                        >
-                          13
-                        </span>
-                      </a>
-                    </li>
-                    <!-- <li class="flex">
+                </template>
+                <template x-if="dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </template>
+              </button>
+            </li>
+            <!-- Notifications menu -->
+            <li class="relative">
+              <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+                @click="toggleNotificationsMenu" @keydown.escape="closeNotificationsMenu" aria-label="Notifications"
+                aria-haspopup="true">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                  </path>
+                </svg>
+                <!-- Notification badge -->
+                <span aria-hidden="true"
+                  class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
+              </button>
+              <template x-if="isNotificationsMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeNotificationsMenu"
+                  @keydown.escape="closeNotificationsMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700">
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Messages</span>
+                      <span
+                        class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">
+                        13
+                      </span>
+                    </a>
+                  </li>
+                  <!-- <li class="flex">
                       <a
                         class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="#"
@@ -211,92 +159,68 @@
                         </span>
                       </a>
                     </li> -->
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Alerts</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
-              </li>
-              <!-- Profile menu -->
-              <li class="relative">
-                <button
-                  class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
-                  @click="toggleProfileMenu"
-                  @keydown.escape="closeProfileMenu"
-                  aria-label="Account"
-                  aria-haspopup="true"
-                >
-                  <!-- <img
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Alerts</span>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+            <!-- Profile menu -->
+            <li class="relative">
+              <button class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
+                @click="toggleProfileMenu" @keydown.escape="closeProfileMenu" aria-label="Account" aria-haspopup="true">
+                <!-- <img
                     class="object-cover w-8 h-8 rounded-full"
                     src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
                     alt=""
                     aria-hidden="true"
                   /> -->
-                  <svg
-                    class="w-5 h-5"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                      <path
-                        stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      ></path>
-                  </svg>
-                </button>
-                <template x-if="isProfileMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeProfileMenu"
-                    @keydown.escape="closeProfileMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                    aria-label="submenu"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Profile</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Settings</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Log out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
-              </li>
-            </ul>
-          </div>
-        </header>
-        <main class="h-full overflow-y-auto">
-          <div class="container px-6 my-6 mx-auto grid">
-            <!-- New Table -->
-            <div class="w-full overflow-hidden shadow-xs">
-              <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                  <!-- <thead>
+                <svg class="w-5 h-5" fill="currentColor" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
+                  </path>
+                </svg>
+              </button>
+              <template x-if="isProfileMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeProfileMenu" @keydown.escape="closeProfileMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                  aria-label="submenu">
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Profile</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Settings</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Log out</span>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+          </ul>
+        </div>
+      </header>
+      <main class="h-full overflow-y-auto">
+        <div class="container px-6 my-6 mx-auto grid">
+          <!-- New Table -->
+          <div class="w-full overflow-hidden shadow-xs">
+            <div class="w-full overflow-x-auto">
+              <table class="w-full whitespace-no-wrap">
+                <!-- <thead>
                     <tr
                       class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                     >
@@ -309,24 +233,23 @@
                       <th class="px-4 py-3">Pending Requests</th>
                     </tr>
                   </thead> -->
-                  <tbody
-                    class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-                  >
-                    <tr class="text-gray-700 dark:text-gray-400">
-                      <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                          <div>
-                            <p class="font-semibold">HDB Pricing Prediction</p>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">
-                              <!--Can include pending status here-->
-                            </p>
-                          </div>
+                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                  <tr class="text-gray-700 dark:text-gray-400">
+                    <td class="px-4 py-3">
+                      <div class="flex items-center text-sm">
+                        <div>
+                          <p class="font-semibold">{{ Model.Project_Name }}</p>
+                          <p class="text-xs text-gray-600 dark:text-gray-400">
+                            <!--Can include pending status here-->
+                          </p>
                         </div>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        High
-                      </td>
-                      <td class="px-4 py-3 text-xs">
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 items-center text-sm">
+                      High
+                    </td>
+                    {% if Model.Service_Health_Status == "Passing" %}
+                    <td class="px-4 py-3 text-xs">
                         <svg 
                           fill="none"
                           stroke="green"
@@ -341,134 +264,297 @@
                             stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
                           ></path>
                         </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
+                    </td>
+                    {% elif Model.Service_Health_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
                         <svg
-                          fill="black"
-                          stroke="yellow"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width="50"
-                          height="50"
-                        >
-                          <path 
-                            stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% endif %}
+                    {% if Model.Data_Drift_Status == "Passing" %}
+                    <td class="px-4 py-3 text-xs">
+                      <svg 
+                        fill="none"
+                        stroke="green"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width = "50"
+                        height = "50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% elif Model.Data_Drift_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
+                      <svg
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% endif %}
+                    {% if Model.Accuracy_Status == "Passing" %}
+                    <td class="px-4 py-3 text-xs">
                         <svg 
                           fill="none"
-                          stroke="red"
+                          stroke="green"
                           stroke-width="1.5"
                           viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
                           aria-hidden="true"
-                          width="50"
-                          height="50"
+                          width = "50"
+                          height = "50"
                         >
-                          <path
-                            stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        <path
+                            stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
                           ></path>
                         </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        1 day ago
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    </td>
+                    {% elif Model.Accuracy_Status == "At Risk" %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg
+                        fill="black"
+                        stroke="yellow"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                      <path 
+                          stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% else %}
+                    <td class="px-4 py-3 text-xs">
+                        <svg 
+                        fill="none"
+                        stroke="red"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        width="50"
+                        height="50"
+                      >
+                        <path
+                          stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </td>
+                    {% endif %}
+                    <td class="px-4 py-3 text-sm">
+                      1 day ago
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--Navigation tabs to other pages-->
+          <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
+            <ul class="flex">
+              <li class="text-center flex-1">
+                <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="#">Overview</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/service_health">Service Health</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="{% url 'drift' Project_Name %}">Data Drift</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/accuracy">Accuracy</a>
+              </li>
+              {% if request.session.role == 'MLOps Engineer' %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 cursor-not-allowed hover:text-gray-800 py-2 px-4"
+                  href=".">Humility</a>
+              </li>
+              {% else %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/humility">Humility</a>
+              </li>
+              {% endif %}
+              {% if request.session.role == 'MLOps Engineer' %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 cursor-not-allowed dark:text-gray-400 hover:text-gray-800 py-2 px-4"
+                  href=".">Challengers</a>
+              </li>
+              {% else %}
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/challengers">Challengers</a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+          <!--Content for your page-->
+          <div class="container mx-auto grid">
+            {% if Model.Approve_Status == "Pending" %}
+            <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
+              <div>
+                <p> This deployment has pending changes</p>
+              </div>
+              <div>
+                <button @click="openModal"
+                  class="mt-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                  Add Review
+                </button>
               </div>
             </div>
-            <!--Navigation tabs to other pages-->
-            <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
-              <ul class="flex">
-                <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Overview</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/service_health">Service Health</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/accuracy">Accuracy</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
-                </li>
-              </ul>
+            {% else %}
+            <div class="flex flex-col justify-between p-4  text-sm font-semibold text-purple-100">
             </div>
-            <!--Content for your page-->
-            <div class="container mx-auto grid">
-              <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
-                  <div>
-                    <p> This deployment has pending changes</p>
-                  </div>
-                  <div>
-                    <button @click="openModal" class="mt-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                      Add Review
-                    </button>
-                  </div>
+            {% endif %}
+            <div class="my-3 grid gap-6 xl:grid-cols-3">
+              <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
+                  Summary
+                </h4>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Name: 
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  {{ Model.Project_Name }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Description:
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  {{ Model.Model_description }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Importance: 
+                </span>
+                <span class="text-gray-600 dark:text-gray-300">
+                  High
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Approval Status:
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Model.Approve_Status }}
+                </span>
               </div>
-              <div class="grid gap-6 xl:grid-cols-3" >
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Summary
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Name:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Description:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Importance:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Approval Status:
-                  </h5>
-                </div>
 
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Content
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Dataset:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Target:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Model:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Built Environment:
-                  </h5>
-                </div>
+              <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
+                  Content
+                </h4>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Dataset: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Dataset.Dataset_name }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Target: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Dataset.Target}}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Model: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Model.Model_name }}
+                </span>
+                <h5 class="mb-4"></h5>
+                <span class="font-semibold text-gray-600 dark:text-gray-300">
+                  Built Environment: 
+                </span>
+                <span class = "text-gray-600 dark:text-gray-300">
+                  {{ Model.Language }}
+                </span>
+              </div>
 
-                <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                  <h4 class="mb-4 font-semibold text-gray-600 dark:text-gray-300">
-                    Governance Logs
-                  </h4>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Deployment Created:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Updates:
-                  </h5>
-                  <h5 class="mb-4 text-gray-600 dark:text-gray-300">
-                    Reviewed:
-                  </h5>
-                </div>
-                <!--<div>
+              <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
+                  Governance Logs
+                </h4>
+                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
+                  Deployment Created:
+                </h5>
+                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
+                  Updates:
+                </h5>
+                <h5 class="mb-4 text-gray-600 dark:text-gray-300">
+                  Reviewed:
+                </h5>
+              </div>
+              <!--<div>
                   <label class="block text-gray-700 font-bold mb-2" for="dropdown">
                     Version
                   </label>
@@ -482,98 +568,156 @@
                     <a href="/app/challengers/modelRegistry" target="_self">+New version</a>
                   </button>
                 </div>-->
-              </div>
             </div>
-
           </div>
-        </main>
-      </div>
-    </div>
-    <div
-      x-show="isModalOpen"
-      x-transition:enter="transition ease-out duration-150"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-150"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-      class="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
-    >
-      <!-- Modal -->
-      <div
-        x-show="isModalOpen"
-        x-transition:enter="transition ease-out duration-150"
-        x-transition:enter-start="opacity-0 transform translate-y-1/2"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0  transform translate-y-1/2"
-        @click.away="closeModal"
-        @keydown.escape="closeModal"
-        class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
-        role="dialog"
-        id="modal"
-      >
-        <!-- Remove header if you don't want a close icon. Use modal body to place modal tile. -->
-        <header class="flex justify-end">
-          <button
-            class="inline-flex items-center justify-center w-6 h-6 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-gray-700"
-            aria-label="close"
-            @click="closeModal"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              role="img"
-              aria-hidden="true"
-            >
-              <path
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-                fill-rule="evenodd"
-              ></path>
-            </svg>
-          </button>
-        </header>
-        <!-- Modal body -->
-        <div class="mt-4 mb-6">
-          <!-- Modal title -->
-          <p
-            class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300"
-          >
-            Submit Review
-          </p>
-          <!-- Modal description -->
-          <p class="text-sm text-gray-700 dark:text-gray-400">
-            Change Summary: 
-          </p>
 
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400 mb-2">Comments:</span>
-            <textarea
-              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-              rows="3"
-              placeholder="Enter Comments"
-            ></textarea>
-          </label>
         </div>
-        <footer
-          class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800"
-        >
-          <button
-            @click="closeModal"
-            class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
-          >
-            Cancel
-          </button>
-          <button
-            class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-          >
-            Accept
-          </button>
-        </footer>
-      </div>
+      </main>
     </div>
-  </body>
+  </div>
+  <div x-show="isModalOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center">
+    <!-- Modal -->
+
+    <div x-show="isModalOpen" x-transition:enter="transition ease-out duration-150"
+      x-transition:enter-start="opacity-0 transform translate-y-1/2" x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0  transform translate-y-1/2" @click.away="closeModal"
+      @keydown.escape="closeModal"
+      class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
+      role="dialog" id="modal">
+      <!-- Remove header if you don't want a close icon. Use modal body to place modal tile. -->
+      <header class="flex justify-end">
+        <button
+          class="inline-flex items-center justify-center w-6 h-6 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-gray-700"
+          aria-label="close" @click="closeModal">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" role="img" aria-hidden="true">
+            <path
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd" fill-rule="evenodd"></path>
+          </svg>
+        </button>
+      </header>
+      <!-- Modal body -->
+      <div class="mt-4 mb-6">
+        <!-- Modal title -->
+        <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
+          Submit Review
+        </p>
+        <!-- Modal description -->
+        <p class="text-sm text-gray-700 dark:text-gray-400">
+          Change Summary:
+        </p>
+
+
+
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400 mb-2">Comments:</span>
+          <textarea id='comments'
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+            rows="3" placeholder="Enter Comments"></textarea>
+        </label>
+      </div>
+      <footer
+        class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800">
+        <button @click="closeModal"
+          class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray">
+          Cancel
+        </button>
+        {% csrf_token %}
+        <button id='approve_btn' type='button'
+          class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+          Approve
+        </button>
+      </footer>
+    </div>
+
+  </div>
+
+  <script>
+
+    // function getCookie(name) {
+    //   // split the cookie string into individual cookies
+    //   const cookies = document.cookie.split(';');
+
+    //   // loop through each cookie to find the one with the specified name
+    //   for (let i = 0; i < cookies.length; i++) {
+    //     const cookie = cookies[i].trim();
+
+    //     // check if the cookie name matches the specified name
+    //     if (cookie.startsWith(`${name}=`)) {
+    //       // return the cookie value
+    //       return cookie.substring(name.length + 1);
+    //     }
+    //   }
+
+    //   // return null if the cookie is not found
+    //   return null;
+    // }
+
+
+    // const approve_btn = document.getElementById('approve_btn');
+    // approve_btn.addEventListener('click', () => {
+    //   const model_id = 1001; // need to update this to get the model_id from database
+    //   const model_status = 'rejected';
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.open('POST', './approve-model/');
+    //   console.log(1);
+    //   xhr.setRequestHeader('Content-Type', 'application/json');
+    //   console.log(2);
+    //   const data = { model_id: model_id, status: model_status };
+    //   xhr.onload = () => {
+    //     if (xhr.status === 200) { // check if the response status is OK
+    //       const response = JSON.parse(xhr.response); // parse the response JSON
+    //       print(response)
+    //     } else {
+    //       console.error('Error:', xhr.status);
+    //     }
+    //   };
+    //   xhr.send(JSON.stringify(data));
+    //   console.log(3);
+    // });
+
+
+
+    $(document).ready(function () {
+      $('#approve_btn').click(function (event) {
+        event.preventDefault();
+        const model_id = 1001; // need to update this to get the model_id from database
+        const model_status = 'Approved';
+        const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+        const comments = document.querySelector('#comments').value;
+        if (comments === '') {
+          alert('Please enter comments before approving.');
+          return;
+        }
+        
+        $.ajax({
+          url: './approve-model/',
+          type: 'POST',
+          beforeSend: function (xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+          },
+          // contentType: 'application/json',
+          // data: JSON.stringify({ model_id: model_id, status: model_status }),
+          contentType: 'application/x-www-form-urlencoded',
+          data: { 'model_id': model_id, 'status': model_status, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
+
+          success: function (response) {
+            console.log(response);
+            location.reload(); // reload the page
+          },
+          error: function (xhr, status, error) {
+            console.error('Error:', xhr.status, status, error);
+          }
+        });
+      });
+    });
+
+
+  </script>
+</body>
+
 </html>

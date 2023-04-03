@@ -30,6 +30,12 @@
     <script src={% static '/js/charts-lines.js' %} defer></script>
     <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
     <script src={% static '/js/charts-pie.js' %} defer></script>
+
+  <style>
+    .sortable tr {
+      cursor: pointer;
+    }
+  </style>
   </head>
   <body>
     <div
@@ -277,7 +283,7 @@
                     class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
                     aria-label="submenu"
                   >
-                    <li class="flex">
+                    <!-- <li class="flex">
                       <a
                         class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="#"
@@ -292,14 +298,21 @@
                       >
                         <span>Settings</span>
                       </a>
-                    </li>
+                    </li> -->
                     <li class="flex">
                       <a
                         class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="{% url 'logout' %}"
                       >
+
                         <span>Log out</span>
                       </a>
+                      <!-- <form action="#" method = "get" id = "logout_form">
+                        <button class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        name="logoutbtn" type="submit" value = "Click">
+                          Log out
+                        </button>
+                      </form> -->
                     </li>
                   </ul>
                 </template>
@@ -329,7 +342,7 @@
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    3
+                    {{ no_of_deployments }}
                   </p>
                 </div>
               </div>
@@ -346,13 +359,18 @@
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    2 Passing
+                    {{ SH_Pass }} Passing
                   </p>
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                  1 At Risk
+                    {{ SH_At_Risk }} At Risk
                   </p>
+                  <p
+                  class="text-lg font-semibold text-gray-700 dark:text-gray-200"
+                  >
+                    {{ SH_Fail }} Failing
+                </p>
                 </div>
               </div>
               <!-- Card -->
@@ -368,12 +386,17 @@
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    2 Passing
+                    {{ DD_Pass }} Passing
                   </p>
                   <p
                   class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    1 At Risk
+                    {{ DD_At_Risk }} At Risk
+                  </p>
+                  <p
+                  class="text-lg font-semibold text-gray-700 dark:text-gray-200"
+                  >
+                    {{ DD_Fail }} Failing
                   </p>
                 </div>
               </div>
@@ -390,12 +413,17 @@
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    2 Passing
+                    {{ A_Pass }} Passing
                   </p>
                   <p
                     class="text-lg font-semibold text-gray-700 dark:text-gray-200"
                   >
-                    1 Failing
+                    {{ A_At_Risk }} At Risk
+                  </p>
+                  <p
+                  class="text-lg font-semibold text-gray-700 dark:text-gray-200"
+                  >
+                    {{ A_Fail }} Failing
                   </p>
                 </div>
               </div>
@@ -421,11 +449,13 @@
                   <tbody
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
-                    <tr class="text-gray-700 dark:text-gray-400" onclick="window.location.href='/app/overview'">
+                    {% for model in Deployed_Models %}
+                    <tr class="cursor-pointer text-gray-700 dark:text-gray-400 transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800" 
+                    onclick="window.location.href='{% url 'overview' model.Project_Name %}'">
                       <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                           <div>
-                            <p class="font-semibold">HDB Pricing Prediction</p>
+                            <p class="font-semibold"> {{ model.Project_Name }} </p>
                             <p class="text-xs text-gray-600 dark:text-gray-400">
                               <!--Can include pending status here-->
                             </p>
@@ -435,21 +465,60 @@
                       <td class="px-4 py-3 text-sm">
                         High
                       </td>
+                      {% if model.Service_Health_Status == "Passing" %}
                       <td class="px-4 py-3 text-xs">
-                        <!-- <svg 
-                          fill="green"
-                          stroke="white"
-                          stroke-width="1"
+                          <svg 
+                            fill="none"
+                            stroke="green"
+                            stroke-width="1.5"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            width = "50"
+                            height = "50"
+                          >
+                            <path
+                              stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                            ></path>
+                          </svg>
+                      </td>
+                      {% elif model.Service_Health_Status == "At Risk" %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg
+                          fill="black"
+                          stroke="yellow"
+                          stroke-width="1.5"
                           viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
                           aria-hidden="true"
-                          width = "50"
-                          height = "50"
+                          width="50"
+                          height="50"
                         >
                           <path 
-                          stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
                           ></path>
-                        </svg> -->
+                        </svg>
+                      </td>
+                      {% else %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg 
+                          fill="none"
+                          stroke="red"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          width="50"
+                          height="50"
+                        >
+                          <path
+                            stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </td>
+                      {% endif %}
+                      {% if model.Data_Drift_Status == "Passing" %}
+                      <td class="px-4 py-3 text-xs">
                         <svg 
                           fill="none"
                           stroke="green"
@@ -465,7 +534,8 @@
                           ></path>
                         </svg>
                       </td>
-                      <td class="px-4 py-3 text-sm">
+                      {% elif model.Data_Drift_Status == "At Risk" %}
+                      <td class="px-4 py-3 text-xs">
                         <svg
                           fill="black"
                           stroke="yellow"
@@ -476,13 +546,66 @@
                           width="50"
                           height="50"
                         >
-                          <path 
+                        <path 
                             stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
                           ></path>
                         </svg>
                       </td>
-                      <td class="px-4 py-3 text-sm">
-                        <svg 
+                      {% else %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg 
+                          fill="none"
+                          stroke="red"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          width="50"
+                          height="50"
+                        >
+                        <path
+                            stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </td>
+                      {% endif %}
+                      {% if model.Accuracy_Status == "Passing" %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg 
+                            fill="none"
+                            stroke="green"
+                            stroke-width="1.5"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            width = "50"
+                            height = "50"
+                          >
+                          <path
+                              stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
+                            ></path>
+                          </svg>
+                      </td>
+                      {% elif model.Accuracy_Status == "At Risk" %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg
+                          fill="black"
+                          stroke="yellow"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          width="50"
+                          height="50"
+                        >
+                        <path 
+                            stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                          ></path>
+                        </svg>
+                      </td>
+                      {% else %}
+                      <td class="px-4 py-3 text-xs">
+                          <svg 
                           fill="none"
                           stroke="red"
                           stroke-width="1.5"
@@ -497,31 +620,21 @@
                           ></path>
                         </svg>
                       </td>
+                      {% endif %}
                       <td class="px-4 py-3 text-sm">
                         1 day ago
                       </td>
+                      {% if model.Approve_Status == "0" %}
+                      <td class="px-4 py-3 text-sm">
+                        No
+                      </td>
+                      {% else %}
                       <td class="px-4 py-3 text-sm">
                         Yes
                       </td>
+                      {% endif %}
                     </tr>
-                    <tr class="text-gray-700 dark:text-gray-400" onclick="window.location.href='#'">
-                      <td class = "px-4 py-3 text-sm">Deployment 2</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr class="text-gray-700 dark:text-gray-400" onclick="window.location.href='#'">
-                      <td class = "px-4 py-3 text-sm">Deployment 3</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>
@@ -529,7 +642,7 @@
                 class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
               >
                 <span class="flex items-center col-span-3">
-                  Showing 3-3 of 3
+                  Showing {{ no_of_deployments }}-{{ no_of_deployments }} of {{ no_of_deployments }}
                 </span>
                 <span class="col-span-2"></span>
                 <!-- Pagination -->
@@ -559,44 +672,6 @@
                         class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple"
                         >
                           1
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                        >
-                          2
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                        >
-                          3
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                        >
-                          4
-                        </button>
-                      </li>
-                      <li>
-                        <span class="px-3 py-1">...</span>
-                      </li>
-                      <li>
-                        <button
-                          class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                        >
-                          8
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                        >
-                          9
                         </button>
                       </li>
                       <li>

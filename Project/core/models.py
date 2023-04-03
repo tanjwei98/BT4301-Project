@@ -20,20 +20,24 @@ class Users(models.Model):
     Supervisor = models.CharField(max_length=255,null=False)
  
 class Model_List(models.Model):
+    Project_Name=models.CharField(max_length=255,null=False)
     Model_ID = models.CharField(max_length=255,primary_key=True)
     Model_name = models.CharField(max_length=255,null=False)
     Model_version = models.CharField(max_length=255,null=False)
     Language = models.CharField(max_length=255,null=False)
-    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHING)
+    User_ID = models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='user_ID')
     Dataset_ID=models.ForeignKey(Dataset_List, on_delete=models.DO_NOTHING)
     Model_description=models.TextField()
     Approve_Status=models.CharField(max_length=255,null=False)
+    Approve_User_ID=models.ForeignKey(Users, on_delete=models.DO_NOTHING,related_name='Approve_User_ID', null = True)
     Change_Comments=models.TextField()
     Approve_Comments=models.TextField()
-    Date= models.DateTimeField(max_length=255,null=False)
+    Created_Date=models.DateTimeField(max_length=255,null=False)
+    Approved_Date= models.DateTimeField(max_length=255,null=True)
     Service_Health_Status=models.CharField(max_length=255,null=False)
     Data_Drift_Status=models.CharField(max_length=255,null=False)
     Accuracy_Status=models.CharField(max_length=255,null=False)
+    Challenger_Status=models.CharField(max_length=255,null=False)
 
 class Service_Health(models.Model):
     Response_time = models.FloatField(max_length=255,null=False)
@@ -61,9 +65,10 @@ class Model_Accuracy(models.Model):
 
 class Feature_Distribution(models.Model):
     train_distribution= models.FloatField(max_length=255,null=False)
-    actual_distribution= models.CharField(max_length=255,null=False)
+    actual_distribution= models.FloatField(max_length=255,null=False)
     Date= models.DateTimeField(max_length=255,null=False)
     Feature= models.CharField(max_length=255,null=False)
+    Feature_values=models.CharField(max_length=255,null=False)
     Model_ID = models.ForeignKey(Model_List, on_delete=models.DO_NOTHING)
     Dataset_ID=models.ForeignKey(Dataset_List, on_delete=models.DO_NOTHING)
 

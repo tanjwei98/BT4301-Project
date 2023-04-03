@@ -1,3 +1,5 @@
+import json
+import re
 import subprocess
 from pathlib import Path
 import pandas as pd
@@ -17,7 +19,12 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from django.db import connection
+from .functions import *
+from django.utils import timezone
+from datetime import datetime
 # from models import Model_Accuracy
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -51,20 +58,167 @@ def table(request):
 
 
 def deployment(request):
-    return render(request, "deployments.html")
+    context = {}
+    user_id = request.session["userID"]
+    user_role = request.session["role"]
+    context.update(get_deployments(user_id, user_role))
+    context.update(get_service_health(user_id, user_role))
+    context.update(get_data_drift(user_id, user_role))
+    context.update(get_accuracy(user_id, user_role))
+    context.update(deployed_models(user_id, user_role))
+    return render(request, "deployments.html", context)
 
 
-def overview(request):
-    return render(request, "overview.html")
+def overview(request, Project_Name):
+    # if request.session["userID"] == model_id:
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    context.update(get_model(Project_Name))
+    context.update(get_dataset(Project_Name))
+
+    return render(request, "overview.html", context)
+    # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
+
+
+def approveModel(request, model_name):
+    # data = json.loads(request.body.decode('utf-8'))
+    # model_id = data.get('model_id')
+    # model_status = data.get('status')
+
+    model_id = request.POST.get('model_id')
+    model_status = request.POST.get('status')
+    comments = request.POST.get('comments')
+    print(model_id)
+    print(model_status)
+    Model_List.objects.filter(Model_ID=model_id).update(
+        Approve_Status=model_status)
+    Model_List.objects.filter(Model_ID=model_id).update(
+        Change_Comments=comments)
+    updated_model = Model_List.objects.get(Model_ID=model_id)
+    # print the updated fields to the console
+    print(
+        f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
+    print(
+        f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
+    return JsonResponse({'success': True})
+
+
+def addModel(request):
+
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
+        max_id = cursor.fetchone()[0]
+        
+    new_id = int(max_id) + 1
+    model_name = request.POST.get('model_name')
+    project_name = request.POST.get('project_name')
+    description = request.POST.get('description')
+    language = request.POST.get('language')
+    version = request.POST.get('version')
+    datasetId = request.POST.get('datasetId')
+    current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
+
+    user = Users.objects.get(pk='hannah@mlops.com') # for now, hardcode this. have to change to actual user id when login page is done. 
+    print(f'THIS IS THE DATASEET ID: {datasetId}')
+    datasetlist_ID = Dataset_List.objects.get(pk=datasetId) # for now, hardcode this. have to change to actual user id when login page is done. 
+    try:
+        new_model = Model_List(
+            Model_ID = new_id,
+            Model_name=model_name,
+            Model_version=version,
+            Project_Name=project_name,
+            Language=language,
+            User_ID=user,  # hardcoded for now
+            Dataset_ID=datasetlist_ID,
+            Model_description=description,
+            Approve_Status=1,
+            Approve_User_ID=None,
+            Change_Comments='',
+            Approve_Comments='',
+            Created_Date=current_datetime,  # datetime field
+            Approved_Date= None, #might want to change it to allow null instead
+            Service_Health_Status='Passing',
+            Data_Drift_Status='Passing',
+            Accuracy_Status='Passing',
+            Challenger_Status='Challengers'
+        )
+        new_model.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
 
 
 def accuracy(request):
     return render(request, "accuracy.html")
 
+
 def accuracy_chart(request):
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    metric = request.GET.get('metric', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
+    if resolution == 'Select':
+        resolution = None
+    if location == 'Select':
+        location = None
+
+    query_dict = {
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+    }
+
+    # Get earliest and latest date from database
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
+        min_date, max_date = cursor.fetchone()
+
+        if not start_date:
+            start_date = min_date
+        if not end_date:
+            end_date = max_date
+        if resolution:
+            # Get the appropriate SQL query based on the selected resolution
+            query = query_dict[resolution].format(
+                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
+        else:
+            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
+                metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            cursor.execute(query, [start_date, end_date])
+            data = cursor.fetchall()
+
+    column_data = []
+    date_labels = []
+    for row in data:
+        date_labels.append(row[0])
+        column_data.append(row[1])
+    chart_data = {
+        'title': "{} over time".format(metric),
+        'data': {
+            "labels": date_labels,
+            "datasets": [
+                {
+                    "label": "{} over time".format(metric),
+                    "data": column_data,
+                    "fill": False,
+                    "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                }
+            ]
+        }
+    }
+    return JsonResponse(chart_data)
+
+def predicted_actual_chart(request):
     start_date = request.GET.get('start_date',None)
     end_date = request.GET.get('end_date',None)
-    metric = request.GET.get('metric',None)
     resolution = request.GET.get('resolution',None)
     location = request.GET.get('location',None)
     if resolution == 'Select':
@@ -73,9 +227,9 @@ def accuracy_chart(request):
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+    'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
@@ -89,60 +243,73 @@ def accuracy_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format("AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format("AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
-    column_data = []
+    target_data = []
+    predicted_data = []
     date_labels = []
     for row in data:
         date_labels.append(row[0])
-        column_data.append(row[1])
+        target_data.append(row[1])
+        predicted_data.append(row[2])
+
     chart_data = {
-        'title': "{} over time".format(metric),
+        'title': "Target and Predicted over time",
         'data': {
             "labels": date_labels,
             "datasets": [
                 {
-                    "label": "{} over time".format(metric),
-                    "data": column_data,
+                    "label": "Target",
+                    "data": target_data,
                     "fill": False,
                     "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                },
+                {
+                    "label": "Predicted",
+                    "data": predicted_data,
+                    "fill": False,
+                    "borderColor": "rgb(192, 75, 192)",
                     "lineTension": 0.1
                 }
             ]
         }
     }
+
     return JsonResponse(chart_data)
 
-        
+
 def service_health(request):
     return render(request, "service_health.html")
 
+
 def service_chart(request):
-    start_date = request.GET.get('start_date',None)
-    end_date = request.GET.get('end_date',None)
-    metric = request.GET.get('metric',None)
-    resolution = request.GET.get('resolution',None)
-    location = request.GET.get('location',None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    metric = request.GET.get('metric', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
     if resolution == 'Select':
         resolution = None
     if location == 'Select':
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_service_health')
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_service_health')
         min_date, max_date = cursor.fetchone()
 
         if not start_date:
@@ -151,11 +318,13 @@ def service_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format(metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format(
+                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(
+                metric, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
@@ -181,8 +350,12 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
-def datadrift(request):
-    return render(request, "datadrift.html")
+def datadrift(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    context.update(drift_importance(Project_Name))
+    return render(request, "datadrift.html", context)
 
 
 def challengers(request):
@@ -191,21 +364,21 @@ def challengers(request):
 
 def modelRegistry(request):
     dataset_list = Dataset_List.objects.all()
+    project_name = Model_List.objects.values('Project_Name').distinct()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
-
         Dataset_id = request.GET.get('dataset_id')
         dataset = get_object_or_404(Dataset_List, pk=Dataset_id)
-        print('in the rendering page')
         dataset_list = {
             'Dataset_name': dataset.Dataset_name,
             'num_of_rows': dataset.num_of_rows,
             'num_of_features': dataset.num_of_features,
+            'Target': dataset.Target,
         }
         return JsonResponse(dataset_list)
 
     # Otherwise, return the HTML page
-    return render(request, "modelRegistry.html", {'dataset_list': dataset_list})
+    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'project_name': project_name})
 
 
 def humility(request):
@@ -306,10 +479,6 @@ def codeEditor2(request):
 #         return JsonResponse(response_data)
 
 
-
-
-import subprocess
-
 def run_code(request):
     if request.method == "POST":
         print('in post')
@@ -322,7 +491,7 @@ def run_code(request):
             command = ["python", "-c", code]
         elif lang == "javascript":
             command = ["node", "-e", code]
-            
+
         elif lang == "c":
             filename = "program.c"
             with open(filename, "w") as f:
@@ -336,12 +505,12 @@ def run_code(request):
                 command = ["./program"]
             except subprocess.CalledProcessError as e:
                 print("Compilation failed: ", e)
-                
+
         elif lang == "cpp":
             filename = "program.cpp"
             with open(filename, "w") as f:
                 f.write(code)
-                
+
             command = ["g++", filename, "-o", "program"]
             try:
                 subprocess.run(command, check=True)
@@ -350,12 +519,12 @@ def run_code(request):
             except subprocess.CalledProcessError as e:
                 print("Compilation failed: ", e)
 
-
         print('after  allocating')
         try:
             # Run the command using subprocess and capture the output
             # result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=False, timeout=10, universal_newlines=True)
-            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            process = subprocess.Popen(
+                command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             stdout, stderr = process.communicate(input='')
             result = stdout + stderr
             response_data = {"success": True, "result": result}
@@ -366,7 +535,6 @@ def run_code(request):
         except Exception as e:
             response_data = {"success": False, "error": str(e)}
         return JsonResponse(response_data)
-
 
 
 def homepage(request):
@@ -383,13 +551,14 @@ def handler404(request):
 # import js2py
 # import pybind11 # Python to cpp
 
+
 def translate_code(request):
     if request.method == 'POST':
         translate_from = request.POST['portFromLanguage']
         translate_to = request.POST['portToLanguage']
         code_translate_from = request.POST['codeTranslateFrom']
 
-        try: 
+        try:
             if translate_from == 'python' and translate_to == 'javascript':  # NOT HARD CODED
                 '''Test case: 
                 ```
@@ -399,7 +568,7 @@ def translate_code(request):
                 '''
                 code_translate_to = pscript.py2js(code_translate_from)
 
-            elif translate_from == 'javascript' and translate_to == 'python': 
+            elif translate_from == 'javascript' and translate_to == 'python':
                 # code_translate_to = js2py.translate_js(code_translate_from)
                 '''hard code: 
                 ```
@@ -409,19 +578,33 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                # print(code_translate_from_formatted)
 
-            elif translate_from == 'python' and translate_to == 'cpp':  
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "for i in range(5):\n    print(i)"
+
+            elif translate_from == 'python' and translate_to == 'cpp':
                 '''hard code: 
                 ```
                 for i in range(5): 
                     print(i)
                 ```
                 '''
-                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
-            elif translate_from == 'cpp' and translate_to == 'python':  
-               '''hard code: 
+            elif translate_from == 'cpp' and translate_to == 'python':
+                '''
+                hard code: 
                 ```
                 #include <iostream>
                 using namespace std;
@@ -434,34 +617,49 @@ def translate_code(request):
                 }
                 ```
                 '''
-               code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "for i in range(5):\n    print(i)"
 
-            elif translate_from == 'python' and translate_to == 'c':  
+            elif translate_from == 'python' and translate_to == 'c':
                 '''hard code: 
                 ```
                 for i in range(5): 
                     print(i)
                 ```
                 '''
-                code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
 
-            elif translate_from == 'c' and translate_to == 'python':  
-               '''hard code: 
+            elif translate_from == 'c' and translate_to == 'python':
+                '''hard code: 
                 ```
                 #include <stdio.h>
 
                 int main() {
-                    int i;
-                    for (i = 0; i < 5; i++) {
-                        printf("%d\n", i);
-                    }
+                    printf("Hello World!");
                     return 0;
                 }
                 ```
                 '''
-               code_translate_to = "for i in range(5):\n    print(i)"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                # code_translate_from_formatted = code_translate_from_formatted.rstrip('%')
+                print(code_translate_from_formatted)
+                if code_translate_from_formatted != '#include<stdio.h>intmain(){printf("HelloWorld!");return0;}':
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = 'print("Hello World!")'
 
-            elif translate_from == 'javascript' and translate_to == 'cpp':  
+            elif translate_from == 'javascript' and translate_to == 'cpp':
                 '''hard code: 
                 ```
                 var i;
@@ -470,10 +668,16 @@ def translate_code(request):
                 }
                 ```
                 '''
-                code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
 
-            elif translate_from == 'cpp' and translate_to == 'javascript':  
-               '''hard code: 
+                if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
+
+            elif translate_from == 'cpp' and translate_to == 'javascript':
+                '''hard code: 
                 ```
                 #include <iostream>
                 using namespace std;
@@ -486,10 +690,15 @@ def translate_code(request):
                 }
                 ```
                 '''
-               code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
+                code_translate_from_formatted = re.sub(
+                    r"[\n\t\s]*", "", code_translate_from)
+                if code_translate_from_formatted != "#include<iostream>usingnamespacestd;intmain(){for(inti=0;i<5;i++){cout<<i<<endl;}return0;}":
+                    code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
+                else:
+                    code_translate_to = "var i;\nfor (i = 0; i < 5; i += 1) {\n  console.log(i);\n}"
 
-            else: 
-                return JsonResponse({'error':'Language combination still WIP.'})
+            else:
+                return JsonResponse({'error': 'Language combination still WIP.'})
 
             return JsonResponse({'translated_code': code_translate_to})
         except:
@@ -497,10 +706,6 @@ def translate_code(request):
 
     else:
         return render(request, 'modelRegistry.html')
-    
-from pathlib import Path  
-from os import path
-from rest_framework.decorators import api_view
 
 
 # CODE EDITOR
@@ -533,170 +738,40 @@ def save_saved(request):
 # LOGIN Functions
 def userlogin(request):
     msg = ''
-    if request.method=='POST':
+    context = {}
+    if request.method == 'POST':
         username = request.POST.get("email")
         pwd = request.POST.get("password")
-        user = Users.objects.filter(User_ID = username, Password = pwd).count()
+        user = Users.objects.filter(User_ID=username, Password=pwd).count()
         if user == 1:
-            user = Users.objects.filter(User_ID = username, Password = pwd).first()
-            request.session["userLogin"]= True
+            print(username)
+            user = Users.objects.filter(User_ID=username, Password=pwd).first()
+            request.session["userLogin"] = True
             request.session["userID"] = user.User_ID
             if user.Role == "MLOps Engineer":
                 request.session["role"] = 'MLOps Engineer'
             else:
                 request.session["role"] = "Data Scientist"
-            return redirect('/app/deployment')
+            # return redirect('/app/deployment')
+            context.update(get_deployments(user.User_ID, user.Role))
+            context.update(get_service_health(user.User_ID, user.Role))
+            context.update(get_data_drift(user.User_ID, user.Role))
+            context.update(get_accuracy(user.User_ID, user.Role))
+            context.update(deployed_models(user.User_ID, user.Role))
+            # return redirect('/app/deployment')
+            return redirect(reverse("deployment"))
+            # return render(request, 'deployments.html', context = context)
             # msg = 'Success'
         else:
             msg = 'Invalid Email/Password'
-    #form = forms.UserLoginForm
-    return render(request, 'loginpage.html',{'msg':msg})
+    # form = forms.UserLoginForm
+    return render(request, 'loginpage.html', {'msg': msg})
+
 
 def userlogout(request):
-    del request.session["userLogin"]
-    redirect('/app/login')
-
-
-# def convert_object_to_df(object, include_pk=False):
-#     '''
-#     Takes in a Django Model object, and boolean parameter indicating whether to include the primary key
-#     Return a Pandas DataFrame (of 1 row)
-#     '''
-#     if not include_pk:
-#         col_lst = [col.name for col in object._meta.fields if not col.primary_key]
-#     else:
-#         col_lst = [col.name for col in object._meta.fields]
-
-#     return pd.DataFrame({k: [getattr(object, k)] for k in col_lst})
-
-
-# def fetch_all_data():
-
-#     #----------------------- Drop All Records, starting with Associative Tables -----------------------#
-#     # Derived Tables
-#     TransactionSchedule.objects.all().delete()
-    
-#     # Associative Tables
-#     Model_List.objects.all().delete()
-#     InvestmentLinkTransactionWorkflow.objects.all().delete()
-#     InvestmentTeamDetailsInfo.objects.all().delete()
-#     InvestmentInvestmentCounterpartyLinksInfo.objects.all().delete()
-#     InvestmentLinkLinkInstruments.objects.all().delete()
-#     InvestmentLinkChildTransactions.objects.all().delete()
-#     InvestmentCountryMixInformation.objects.all().delete()
-#     InvestmentApprovedCommitmentInformation.objects.all().delete()
-#     InvestmentDeals.objects.all().delete()
-#     HR.objects.all().delete()
-
-#     # Entity
-#     Users.objects.all().delete()
-#     InvestmentLink.objects.all().delete()
-#     LegalCommitment.objects.all().delete()
-#     Transaction.objects.all().delete()
-#     Investment.objects.all().delete()
-#     Instrument.objects.all().delete()
-#     Deals.objects.all().delete()
-
-#     #----------------------- HR Dummy -----------------------#
-#     df_hr = pd.read_csv(os.path.join(os.getcwd(), "data/HR.csv"))
-#     df_hr = process_hr(df_hr)
-#     lst_of_hr = convert_df_to_lst_of_table_objects(df_hr, HR)
-#     HR.objects.bulk_create(lst_of_hr)
-
-#     #----------------------- Load Legal Commitments -----------------------#
-#     df_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/LegalCommitment.csv"))
-#     df_legal_commitments = process_legal_commitments(df_legal_commitments)
-#     lst_of_legal_commitments = convert_df_to_lst_of_table_objects(df_legal_commitments, LegalCommitment)
-#     LegalCommitment.objects.bulk_create(lst_of_legal_commitments)
-
-#     #----------------------- Load Investment Links -----------------------#
-#     df_investment_link = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink.csv"))
-#     df_investment_link = process_investment_links(df_investment_link)
-#     list_of_investment_link = convert_df_to_lst_of_table_objects(df_investment_link, InvestmentLink)
-#     InvestmentLink.objects.all().delete()
-#     InvestmentLink.objects.bulk_create(list_of_investment_link)
-
-#     #----------------------- Load Transaction Workflow -----------------------#
-#     df_transaction_workflow = pd.read_csv(os.path.join(os.getcwd(), "data/TransactionNotice.csv"))
-#     df_transaction_workflow = process_transaction(df_transaction_workflow)
-#     lst_of_transaction_workflow = convert_df_to_lst_of_table_objects(df_transaction_workflow, Transaction)
-#     Transaction.objects.bulk_create(lst_of_transaction_workflow)
-
-#     #----------------------- Load Investment -----------------------#
-#     df_investment = pd.read_csv(os.path.join(os.getcwd(), "data/Investment.csv"))
-#     df_investment = process_investment(df_investment)
-#     lst_of_investment = convert_df_to_lst_of_table_objects(df_investment, Investment)
-#     Investment.objects.bulk_create(lst_of_investment)
-
-#     #----------------------- Load Deals -----------------------#
-#     df_deals = pd.read_csv(os.path.join(os.getcwd(), "data/Deals.csv"))
-#     df_deals = process_deals(df_deals)
-#     list_of_deals = convert_df_to_lst_of_table_objects(df_deals, Deals)
-#     Deals.objects.bulk_create(list_of_deals)
-
-#     #----------------------- Load Instrument -----------------------#
-#     df_instrument = pd.read_csv(os.path.join(os.getcwd(), "data/Instrument.csv"))
-#     df_instrument = process_instrument(df_instrument)
-#     list_of_instruments = convert_df_to_lst_of_table_objects(df_instrument, Instrument)
-#     Instrument.objects.bulk_create(list_of_instruments)
-
-#     #----------------------- Load Investment - Team Details Info (Associative Table) -----------------------#
-#     df_InvestmentTeamDetailsInfo = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-TeamDetailsInfo.csv"))
-#     df_InvestmentTeamDetailsInfo = process_investment_team_details_info(df_InvestmentTeamDetailsInfo)
-#     lst_of_InvestmentTeamDetailsInfo = convert_df_to_lst_of_table_objects(df_InvestmentTeamDetailsInfo, InvestmentTeamDetailsInfo)
-#     InvestmentTeamDetailsInfo.objects.bulk_create(lst_of_InvestmentTeamDetailsInfo)
-
-#     #----------------------- Load Investment - Investment Counterparty Links Info (Associative Table) -----------------------#
-#     df_InvestmentCounterpartyLinksInfo = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-InvestmentCounterpartyLinksInfo.csv"))
-#     df_InvestmentCounterpartyLinksInfo = process_investment_counter_party_links_info(df_InvestmentCounterpartyLinksInfo)
-#     lst_of_InvestmentCounterpartyLinksInfo = convert_df_to_lst_of_table_objects(df_InvestmentCounterpartyLinksInfo, InvestmentInvestmentCounterpartyLinksInfo)
-#     InvestmentInvestmentCounterpartyLinksInfo.objects.bulk_create(lst_of_InvestmentCounterpartyLinksInfo)
-
-#     #----------------------- Load Investment Link - Link Instruments (Associative Table) -----------------------#
-#     df_InvestmentLinkLinkInstruments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkInstruments.csv"))
-#     df_InvestmentLinkLinkInstruments = process_investment_link_link_instruments(df_InvestmentLinkLinkInstruments)
-#     lst_of_InvestmentLinkLinkInstruments = convert_df_to_lst_of_table_objects(df_InvestmentLinkLinkInstruments, InvestmentLinkLinkInstruments)
-#     InvestmentLinkLinkInstruments.objects.bulk_create(lst_of_InvestmentLinkLinkInstruments)
-
-#     #----------------------- Load Investment Link - Child Transactions (Associative Table) -----------------------#
-#     df_InvestmentLinkChildTransactions = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-ChildTransactions.csv"))
-#     df_InvestmentLinkChildTransactions = process_investment_link_child_transactions(df_InvestmentLinkChildTransactions)
-#     lst_of_InvestmentLinkChildTransactions = convert_df_to_lst_of_table_objects(df_InvestmentLinkChildTransactions, InvestmentLinkChildTransactions)
-#     InvestmentLinkChildTransactions.objects.bulk_create(lst_of_InvestmentLinkChildTransactions)
-
-#     #----------------------- Load Investment Link Transaction Workflow (Associative Table) -----------------------#
-#     df_investment_link_transaction_workflow = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-TransactionWorkFlow.csv"))
-#     df_investment_link_transaction_workflow = process_investment_link_transaction_workflow(df_investment_link_transaction_workflow)
-#     lst_of_inv_link_transaction = convert_df_to_lst_of_table_objects(df_investment_link_transaction_workflow, InvestmentLinkTransactionWorkflow)
-#     InvestmentLinkTransactionWorkflow.objects.bulk_create(lst_of_inv_link_transaction)
-
-#     #----------------------- Load Investment Link Legal Commitments (Associative Table) -----------------------#
-#     df_investment_link_legal_commitments = pd.read_csv(os.path.join(os.getcwd(), "data/InvestmentLink-LinkLegalCommitments.csv"))    
-#     df_investment_link_legal_commitments = process_investment_link_legal_commitments(df_investment_link_legal_commitments)
-#     lst_of_inv_link_legal_commitments = convert_df_to_lst_of_table_objects(df_investment_link_legal_commitments, InvestmentLinkLegalCommitments)
-#     InvestmentLinkLegalCommitments.objects.bulk_create(lst_of_inv_link_legal_commitments)
-
-#     #----------------------- Load Investment - Approved Commitment Information (Associative Table) -----------------------#
-#     df_InvestmentApprovedCommitmentInformation = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-ApprovedCommitmentInformation.csv"))
-#     df_InvestmentApprovedCommitmentInformation = process_investment_approved_commitment(df_InvestmentApprovedCommitmentInformation)
-#     list_of_investment_approvedcommitment = convert_df_to_lst_of_table_objects(df_InvestmentApprovedCommitmentInformation, InvestmentApprovedCommitmentInformation)
-#     InvestmentApprovedCommitmentInformation.objects.bulk_create(list_of_investment_approvedcommitment)
-
-#     #----------------------- Load Investment - Country Mix Information (Associative Table) -----------------------#
-#     df_InvestmentCountryMixInformation = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-CountryMixInformation.csv"))
-#     df_InvestmentCountryMixInformation = process_investment_country_mix(df_InvestmentCountryMixInformation)
-#     list_of_investment_countrymix = convert_df_to_lst_of_table_objects(df_InvestmentCountryMixInformation, InvestmentCountryMixInformation)
-#     InvestmentCountryMixInformation.objects.bulk_create(list_of_investment_countrymix)
-
-#     #----------------------- Load Investment - Deals (Associative Table) -----------------------#
-#     df_InvestmentDeals = pd.read_csv(os.path.join(os.getcwd(), "data/Investment-Deals.csv"))
-#     df_InvestmentDeals = process_investment_deals(df_InvestmentDeals)
-#     list_of_investment_deals = convert_df_to_lst_of_table_objects(df_InvestmentDeals, InvestmentDeals)
-#     InvestmentDeals.objects.bulk_create(list_of_investment_deals)
-
-#     #----------------------- Load Transaction Schedule (Derived Table) -----------------------#
-#     df_past_transaction_schedule = process_transaction_schedule(pd.DataFrame())
-#     list_of_schedule = convert_df_to_lst_of_table_objects(df_past_transaction_schedule, TransactionSchedule)
-#     TransactionSchedule.objects.bulk_create(list_of_schedule)
-
-#     return Response(status=status.HTTP_200_OK)
+    if request.method == "GET":
+        request.session.flush()
+    # return redirect('/app/logout')
+    # if (request.GET.get("logoutbtn")):
+        # del request.session["userLogin"]
+        return render(request, 'logoutpage.html')
