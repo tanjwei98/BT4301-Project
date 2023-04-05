@@ -490,8 +490,9 @@
                           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           id="modellanguage_file" name="dropdown">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                         </select>
                       </div>
 
@@ -1226,28 +1227,43 @@
 
     var language_from_code;
 
-    // check if the code is successful
+    // check if the code is successful. if not successful, testbtn is disabled
     $(document).ready(function () {
       window.addEventListener('message', event => {
         // var testbtn = document.getElementById('testbtn');
-        var testbtn = $('#testbtn');
-        console.log(testbtn.text())
+        // var testbtn = $('#testbtn');
+        // console.log('testbtn.text():', testbtn.text())
 
         if (event.origin !== window.location.origin) return;
 
         // const { result } = event.data;
-        language_from_code = event.data.language;
-        const result = event.data.result;
+        // language_from_code = event.data.language;
+        // const result = event.data.result;
+        const result = event.data;
 
         if (result === 'failed') {
           console.log('Code failed to run');
-          testbtn.prop('disabled', true);
-          console.log(testbtn.prop('disabled')); // currently not working. have to look into it again
+
+          var testBtns = document.querySelectorAll('[data-modal-target="testmodel"]');
+            testBtns.forEach(function(btn) {
+              btn.disabled = true;
+              btn.style.backgroundColor = 'grey';
+              btn.tooltip = 'Please fix the code before testing';
+          });
+
+          // testbtn.prop('disabled', true);
+          // console.log(testbtn.prop('disabled')); // currently not working. have to look into it again
 
         } else {
           console.log('Code ran successfully');
-          testbtn.prop('disabled', false);
-          console.log(testbtn.prop('disabled'));
+
+          var testBtns = document.querySelectorAll('[data-modal-target="testmodel"]');
+            testBtns.forEach(function(btn) {
+              btn.disabled = false;
+              btn.style.backgroundColor = '#007bff';
+          });
+          // testbtn.prop('disabled', false);
+          // console.log(testbtn.prop('disabled'));
 
         }
       });

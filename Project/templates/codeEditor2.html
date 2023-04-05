@@ -220,13 +220,16 @@
         success: function (response) {
           if (response.success) {
             var result = response.result.replace(/\n/g, '<br>');
-            if (result.includes('SyntaxError') || result.includes('NameError') || result.includes('TypeError')) {
+            // if (result.includes('SyntaxError') || result.includes('NameError') || result.includes('TypeError')) {
+            if (result.includes('error') || result.includes('Error')) {
               // Display the result in the #output div
               console.log('failed');
-              window.parent.postMessage({ result: 'failed', language: data}, '*');
+              // window.parent.postMessage({ result: 'failed', language: data}, '*');
+              window.parent.postMessage('failed', '*');
             } else {
               console.log('pass');
-              window.parent.postMessage({ result: 'success' , language: data}, '*');
+              // window.parent.postMessage({ result: 'success' , language: data}, '*');
+              window.parent.postMessage('success', '*');
             }
             $("#output").html(result);
               
@@ -236,7 +239,8 @@
               return '<div>' + line + '</div>';
             }).join('');
             $("#output").html(errorHtml);
-            window.parent.postMessage({ result: 'failed' }, '*');
+            // window.parent.postMessage({ result: 'failed' }, '*');
+            window.parent.postMessage('failed', '*');
           }
         },
         error: function (xhr) {
