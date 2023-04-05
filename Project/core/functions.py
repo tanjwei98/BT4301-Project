@@ -9,59 +9,67 @@ warnings.filterwarnings("ignore")
 # Deployment page
 def get_deployments(userID, userRole):
     if userRole == "MLOps Engineer":
-        no_of_deployments = Model_List.objects.filter(Approve_User_ID_id = userID).count()
+        no_of_deployments = Model_List.objects.filter(Approve_User_ID_id = userID, Challenger_Status = 'Champion').count()
     else:
-        no_of_deployments = Model_List.objects.filter(User_ID = userID).count()
+        no_of_deployments = Model_List.objects.filter(User_ID = userID, Challenger_Status = 'Champion').count()
     
     return {"no_of_deployments": no_of_deployments}
 
 def get_service_health(userID, userRole):
     if userRole == "MLOps Engineer":
-        SH_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "Passing").count()
-        SH_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "At Risk").count()
-        SH_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "Failing").count()
+        SH_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "Passing", Challenger_Status = 'Champion').count()
+        SH_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "At Risk", Challenger_Status = 'Champion').count()
+        SH_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Service_Health_Status = "Failing", Challenger_Status = 'Champion').count()
     else:
-        SH_pass = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "Passing").count()
-        SH_at_risk = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "At Risk").count()
-        SH_fail = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "Failing").count()
+        SH_pass = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "Passing", Challenger_Status = 'Champion').count()
+        SH_at_risk = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "At Risk", Challenger_Status = 'Champion').count()
+        SH_fail = Model_List.objects.filter(User_ID = userID, Service_Health_Status = "Failing", Challenger_Status = 'Champion').count()
     
     return {"SH_Pass": SH_pass, "SH_At_Risk": SH_at_risk, "SH_Fail": SH_fail}
 
 def get_data_drift(userID, userRole):
     if userRole == "MLOps Engineer":
-        DD_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "Passing").count()
-        DD_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "At Risk").count()
-        DD_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "Failing").count()
+        DD_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "Passing", Challenger_Status = 'Champion').count()
+        DD_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "At Risk", Challenger_Status = 'Champion').count()
+        DD_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Data_Drift_Status = "Failing", Challenger_Status = 'Champion').count()
     else:
-        DD_pass = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "Passing").count()
-        DD_at_risk = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "At Risk").count()
-        DD_fail = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "Failing").count()
+        DD_pass = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "Passing", Challenger_Status = 'Champion').count()
+        DD_at_risk = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "At Risk", Challenger_Status = 'Champion').count()
+        DD_fail = Model_List.objects.filter(User_ID = userID, Data_Drift_Status = "Failing", Challenger_Status = 'Champion').count()
     
     return {"DD_Pass": DD_pass, "DD_At_Risk": DD_at_risk, "DD_Fail": DD_fail}
 
 def get_accuracy(userID, userRole):
     if userRole == "MLOps Engineer":
-        A_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "Passing").count()
-        A_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "At Risk").count()
-        A_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "Failing").count()
+        A_pass = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "Passing", Challenger_Status = 'Champion').count()
+        A_at_risk = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "At Risk", Challenger_Status = 'Champion').count()
+        A_fail = Model_List.objects.filter(Approve_User_ID_id = userID, Accuracy_Status = "Failing", Challenger_Status = 'Champion').count()
     else:
-        A_pass = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "Passing").count()
-        A_at_risk = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "At Risk").count()
-        A_fail = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "Failing").count()
+        A_pass = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "Passing", Challenger_Status = 'Champion').count()
+        A_at_risk = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "At Risk", Challenger_Status = 'Champion').count()
+        A_fail = Model_List.objects.filter(User_ID = userID, Accuracy_Status = "Failing", Challenger_Status = 'Champion').count()
     
     return {"A_Pass": A_pass, "A_At_Risk": A_at_risk, "A_Fail": A_fail}
 
 def deployed_models(userID, userRole):
     if userRole == "MLOps Engineer":
-        models = Model_List.objects.filter(Approve_User_ID_id = userID)
+        models = Model_List.objects.filter(Approve_User_ID_id = userID, Challenger_Status = 'Champion')
     else:
-        models = Model_List.objects.filter(User_ID = userID)
+        models = Model_List.objects.filter(User_ID = userID, Challenger_Status = 'Champion')
     return {"Deployed_Models": models}
 
 # Overview page
 def get_model(ProjectName):
     model = Model_List.objects.filter(Project_Name = ProjectName, Challenger_Status = 'Champion').first()
     return {"Model": model}
+
+def get_pending(ProjectName):
+    model = Model_List.objects.filter(Project_Name = ProjectName, Approve_Status = 'Pending').first()
+    return {"Pending": model}
+
+def get_project(ProjectName):
+    p_models = Model_List.objects.filter(Project_Name = ProjectName).order_by('-Created_Date')
+    return {"Project_models": p_models}
 
 def get_dataset(ProjectName):
     dataset_id = Model_List.objects.filter(Project_Name = ProjectName, Challenger_Status = 'Champion').first().Dataset_ID_id

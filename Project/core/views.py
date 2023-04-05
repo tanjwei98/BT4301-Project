@@ -76,7 +76,8 @@ def overview(request, Project_Name):
     context.update({'Project_Name': Project_Name})
     context.update(get_model(Project_Name))
     context.update(get_dataset(Project_Name))
-
+    context.update(get_project(Project_Name))
+    context.update(get_pending(Project_Name))
     return render(request, "overview.html", context)
     # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
 
