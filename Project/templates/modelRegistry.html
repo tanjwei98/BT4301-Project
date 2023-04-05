@@ -529,8 +529,10 @@
                         <form id="upload-form" class="hidden" enctype="multipart/form-data">
                           <div class="flex items-center justify-between mr-1">
                             <input type="file" name="file" id="file-input" />
-                            <button type="submit"
-                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                            <!-- <button type="submit" -->
+                            <button type="button"
+                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                              id="upload-file-btn">
                               Upload
                             </button>
                             <button
@@ -545,9 +547,24 @@
                         const button = document.getElementById("open-form");
                         const fileInput = document.getElementById("file-input");
                         const gitUrlInput = document.getElementById("git-url-input");
+                        const uploadFileBtn = document.getElementById("upload-file-btn");
 
                         button.addEventListener("click", () => {
                           form.classList.remove("hidden");
+                        });
+
+                        uploadFileBtn.addEventListener("click", () => {
+                          alert('Successfully uploaded file.')
+
+                          // reenable buttons after file is uploaded.
+                          var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+                          var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+                          
+                          testbtn_addnewmodel.disabled = false;
+                          testbtn_addnewmodel.style.backgroundColor = '#007bff';
+
+                          add_mr_btn_file.disabled = false;
+                          add_mr_btn_file.style.backgroundColor = '#007bff';
                         });
 
                         var gitlabButton = document.getElementById("gitlab-button");
@@ -1229,7 +1246,6 @@
 
 
     // check if code file has been uploaded. if not uploaded, testbtn_addnewmodel is disabled. same for add_mr_btn_file
-    // WIP
     var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
     testbtn_addnewmodel.disabled = true;
     testbtn_addnewmodel.style.backgroundColor = 'grey';
@@ -1237,6 +1253,37 @@
     var add_mr_btn_file = document.getElementById('add_mr_btn_file');
     add_mr_btn_file.disabled = true;
     add_mr_btn_file.style.backgroundColor = 'grey';
+
+    $(document).ready(function () {
+      window.addEventListener('message', event => {
+        var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+        var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+
+        if (event.origin !== window.location.origin) return;
+        const result = event.data;
+
+        if (result === 'failed') {
+          console.log('Code failed to run');
+          testbtn_createnewmodel.disabled = true;
+          testbtn_createnewmodel.style.backgroundColor = 'grey';
+          // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
+
+          add_mr_btn_code.disabled = true;
+          add_mr_btn_code.style.backgroundColor = 'grey';
+
+        } else {
+          console.log('Code ran successfully');
+          testbtn_createnewmodel.disabled = false;
+          testbtn_createnewmodel.style.backgroundColor = '#007bff';
+          // testbtn_createnewmodel.tooltip = '';
+
+          add_mr_btn_code.disabled = false;
+          add_mr_btn_code.style.backgroundColor = '#007bff';
+          
+        }
+
+        });
+  });
 
 
     // check if the code is successful. if not successful, testbtn_createnewmodel is disabled. same for add_mr_btn_code
