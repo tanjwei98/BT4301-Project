@@ -490,8 +490,9 @@
                           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           id="modellanguage_file" name="dropdown">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                         </select>
                       </div>
 
@@ -528,8 +529,10 @@
                         <form id="upload-form" class="hidden" enctype="multipart/form-data">
                           <div class="flex items-center justify-between mr-1">
                             <input type="file" name="file" id="file-input" />
-                            <button type="submit"
-                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                            <!-- <button type="submit" -->
+                            <button type="button"
+                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                              id="upload-file-btn">
                               Upload
                             </button>
                             <button
@@ -544,9 +547,24 @@
                         const button = document.getElementById("open-form");
                         const fileInput = document.getElementById("file-input");
                         const gitUrlInput = document.getElementById("git-url-input");
+                        const uploadFileBtn = document.getElementById("upload-file-btn");
 
                         button.addEventListener("click", () => {
                           form.classList.remove("hidden");
+                        });
+
+                        uploadFileBtn.addEventListener("click", () => {
+                          alert('Successfully uploaded file.')
+
+                          // reenable buttons after file is uploaded.
+                          var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+                          var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+                          
+                          testbtn_addnewmodel.disabled = false;
+                          testbtn_addnewmodel.style.backgroundColor = '#007bff';
+
+                          add_mr_btn_file.disabled = false;
+                          add_mr_btn_file.style.backgroundColor = '#007bff';
                         });
 
                         var gitlabButton = document.getElementById("gitlab-button");
@@ -634,7 +652,7 @@
                     <tr>
                       <td class="border border-black px-4 py-2 text-center">
                         <button data-modal-target="testmodel" data-modal-toggle="testmodel"
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn"
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn_addnewmodel"
                           type="button">
                           Test Model
                         </button>
@@ -762,7 +780,7 @@
                       <tr>
                         <td class="border border-black px-4 py-2 text-center"> <button
                             class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn">
+                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn_createnewmodel">
                             Test Model
                           </button>
                         </td>
@@ -1226,29 +1244,87 @@
 
     var language_from_code;
 
-    // check if the code is successful
+
+    // check if code file has been uploaded. if not uploaded, testbtn_addnewmodel is disabled. same for add_mr_btn_file
+    var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+    testbtn_addnewmodel.disabled = true;
+    testbtn_addnewmodel.style.backgroundColor = 'grey';
+
+    var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+    add_mr_btn_file.disabled = true;
+    add_mr_btn_file.style.backgroundColor = 'grey';
+
+  //   $(document).ready(function () {
+  //     window.addEventListener('message', event => {
+  //       var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+  //       var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+
+  //       if (event.origin !== window.location.origin) return;
+  //       const result = event.data;
+
+  //       if (result === 'failed') {
+  //         console.log('Code failed to run');
+  //         testbtn_createnewmodel.disabled = true;
+  //         testbtn_createnewmodel.style.backgroundColor = 'grey';
+  //         // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
+
+  //         add_mr_btn_code.disabled = true;
+  //         add_mr_btn_code.style.backgroundColor = 'grey';
+
+  //       } else {
+  //         console.log('Code ran successfully');
+  //         testbtn_createnewmodel.disabled = false;
+  //         testbtn_createnewmodel.style.backgroundColor = '#007bff';
+  //         // testbtn_createnewmodel.tooltip = '';
+
+  //         add_mr_btn_code.disabled = false;
+  //         add_mr_btn_code.style.backgroundColor = '#007bff';
+          
+  //       }
+
+  //       });
+  // });
+
+
+    // check if the code is successful. if not successful, testbtn_createnewmodel is disabled. same for add_mr_btn_code
+    var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
+    testbtn_createnewmodel.disabled = true;
+    testbtn_createnewmodel.style.backgroundColor = 'grey';
+    // testbtn_createnewmodel.tooltip = 'Please run code before testing';
+
+    var add_mr_btn_code = document.getElementById('add_mr_btn_code');
+    add_mr_btn_code.disabled = true;
+    add_mr_btn_code.style.backgroundColor = 'grey';
+    
     $(document).ready(function () {
       window.addEventListener('message', event => {
-        // var testbtn = document.getElementById('testbtn');
-        var testbtn = $('#testbtn');
-        console.log(testbtn.text())
+        var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
+        var add_mr_btn_code = document.getElementById('add_mr_btn_code');
 
         if (event.origin !== window.location.origin) return;
-
-        // const { result } = event.data;
-        language_from_code = event.data.language;
-        const result = event.data.result;
+        const child_data = event.data;
+        const result = child_data.result;
+        language_from_code = child_data.lang;
+        console.log('this is the result in mod reg:  ', child_data);
 
         if (result === 'failed') {
           console.log('Code failed to run');
-          testbtn.prop('disabled', true);
-          console.log(testbtn.prop('disabled')); // currently not working. have to look into it again
+          testbtn_createnewmodel.disabled = true;
+          testbtn_createnewmodel.style.backgroundColor = 'grey';
+          // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
+
+          add_mr_btn_code.disabled = true;
+          add_mr_btn_code.style.backgroundColor = 'grey';
 
         } else {
           console.log('Code ran successfully');
-          testbtn.prop('disabled', false);
-          console.log(testbtn.prop('disabled'));
+          testbtn_createnewmodel.disabled = false;
+          testbtn_createnewmodel.style.backgroundColor = '#007bff';
+          // testbtn_createnewmodel.tooltip = '';
 
+          add_mr_btn_code.disabled = false;
+          add_mr_btn_code.style.backgroundColor = '#007bff';
+          
         }
       });
     });
@@ -1333,6 +1409,7 @@
       const project_name_code = document.getElementById('projectname_select_code').value;
       const datasetId_code = datasetSelect.value;
 
+      console.log('this is my model language: ', modellanguage_code)
 
       if (modelname_code === '' || modellanguage_code === '' || version_code === '' || description_code === '' || project_name_code === 'default' || datasetId_code === 'default') {
         window.alert('Please fill up all information before adding to model registry')
@@ -1343,7 +1420,7 @@
         console.log('still run leh')
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
-          url: './add-model/',
+          url: './modelRegistry/add-model/',
           type: 'POST',
           beforeSend: function (xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", csrf_token);
@@ -1362,7 +1439,7 @@
           },
           success: function (response) {
             console.log(response);
-            location.reload(); // important! change to load challengers page instead
+            // location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);

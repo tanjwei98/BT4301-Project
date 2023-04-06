@@ -108,6 +108,7 @@ def approveModel(request, model_name):
 
 def addModel(request):
 
+    print('in add modal view')
     with connection.cursor() as cursor:
         cursor.execute('SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
         max_id = cursor.fetchone()[0]
@@ -146,6 +147,8 @@ def addModel(request):
             Challenger_Status='Challengers'
         )
         new_model.save()
+        
+         
         
         return JsonResponse({'success': True})
     except Exception as e:

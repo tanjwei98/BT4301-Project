@@ -212,21 +212,31 @@
       var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
       var language = $('#language').val();
       var code = editor.getValue();
+      // console.log('this is the csrf_token: ', JSON.stringify(csrf_token));
+      // console.log('this is the language: ', JSON.stringify(language));
+      // console.log('this is the code: ', JSON.stringify(code));
+      console.log(1);
       $.ajax({
         url: "/app/codeEditor2/run_code/",
         type: "POST",
         dataType: "json",
-        data: { code: code, lang: language, csrfmiddlewaretoken: csrf_token },
+        data: {code: code, lang: language, csrfmiddlewaretoken: csrf_token },
         success: function (response) {
+          console.log('this is the response in ce2: ', response);
           if (response.success) {
+            console.log('This is the result: ',result);
             var result = response.result.replace(/\n/g, '<br>');
-            if (result.includes('SyntaxError') || result.includes('NameError') || result.includes('TypeError')) {
+            // if (result.includes('SyntaxError') || result.includes('NameError') || result.includes('TypeError')) {
+            if (result.includes('error') || result.includes('Error')) {
               // Display the result in the #output div
               console.log('failed');
-              window.parent.postMessage({ result: 'failed', language: data}, '*');
+              window.parent.postMessage({ result: 'failed', lang: language}, '*');
+              // window.parent.postMessage('failed', '*');
             } else {
               console.log('pass');
-              window.parent.postMessage({ result: 'success' , language: data}, '*');
+              console.log(language)
+              window.parent.postMessage({ result: 'success' , lang: language}, '*');
+              // window.parent.postMessage('success', '*');
             }
             $("#output").html(result);
               
@@ -236,7 +246,8 @@
               return '<div>' + line + '</div>';
             }).join('');
             $("#output").html(errorHtml);
-            window.parent.postMessage({ result: 'failed' }, '*');
+            // window.parent.postMessage({ result: 'failed' }, '*');
+            window.parent.postMessage({ result: 'failed' , lang: language}, '*');
           }
         },
         error: function (xhr) {
