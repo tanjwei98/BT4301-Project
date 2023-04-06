@@ -36,6 +36,6 @@ urlpatterns = [
     # path('saveas/<str:filename>',views.save_saved, name='save_saved'),
     path('challengers/saveas/',views.save_saved, name='save_saved'),
     # path('save',views.save),
-
+    path('challengers/make_champion_model/',views.make_champion_model, name='save_saved'),
     path("codeEditor2/run_code/", views.run_code, name="run_code")
     ]

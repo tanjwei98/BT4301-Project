@@ -93,26 +93,35 @@ def approveModel(request, model_name):
     comments = request.POST.get('comments')
     print(model_id)
     print(model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(
-        Approve_Status=model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(
-        Change_Comments=comments)
-    updated_model = Model_List.objects.get(Model_ID=model_id)
-    # print the updated fields to the console
-    print(
-        f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
-    print(
-        f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
-    return JsonResponse({'success': True})
+    try:
+        Model_List.objects.filter(Approve_Status=1).update(
+            Approve_Status=0) # change current champion to normal
+        Model_List.objects.filter(Approve_Status=2).update(
+            Approve_Status=1) # change current pending to champion
+        Model_List.objects.filter(Approve_Status=1).update(
+            Approve_Comments=comments) # add approve comments to new champion
+        updated_model = Model_List.objects.get(Model_ID=model_id)
+        # print the updated fields to the console
+        print(
+            f"Updated status: {updated_model.Model_ID}, {updated_model.Approve_Status}")
+        print(
+            f"Updated comments: {updated_model.Model_ID}, {updated_model.Approve_Comments}")
+        return JsonResponse({'success': True})
+    
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
+
 
 
 def addModel(request):
 
     print('in add modal view')
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
+        cursor.execute(
+            'SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
         max_id = cursor.fetchone()[0]
-        
+
     new_id = int(max_id) + 1
     model_name = request.POST.get('model_name')
     project_name = request.POST.get('project_name')
@@ -122,12 +131,14 @@ def addModel(request):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
-    user = Users.objects.get(pk='hannah@mlops.com') # for now, hardcode this. have to change to actual user id when login page is done. 
+    # for now, hardcode this. have to change to actual user id when login page is done.
+    user = Users.objects.get(pk='hannah@mlops.com')
     print(f'THIS IS THE DATASEET ID: {datasetId}')
-    datasetlist_ID = Dataset_List.objects.get(pk=datasetId) # for now, hardcode this. have to change to actual user id when login page is done. 
+    # for now, hardcode this. have to change to actual user id when login page is done.
+    datasetlist_ID = Dataset_List.objects.get(pk=datasetId)
     try:
         new_model = Model_List(
-            Model_ID = new_id,
+            Model_ID=new_id,
             Model_name=model_name,
             Model_version=version,
             Project_Name=project_name,
@@ -140,16 +151,14 @@ def addModel(request):
             Change_Comments='',
             Approve_Comments='',
             Created_Date=current_datetime,  # datetime field
-            Approved_Date= None, #might want to change it to allow null instead
+            Approved_Date=None,  # might want to change it to allow null instead
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
             Accuracy_Status='Passing',
             Challenger_Status='Challengers'
         )
         new_model.save()
-        
-         
-        
+
         return JsonResponse({'success': True})
     except Exception as e:
         print(e)
@@ -221,25 +230,27 @@ def accuracy_chart(request):
     }
     return JsonResponse(chart_data)
 
+
 def predicted_actual_chart(request):
-    start_date = request.GET.get('start_date',None)
-    end_date = request.GET.get('end_date',None)
-    resolution = request.GET.get('resolution',None)
-    location = request.GET.get('location',None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
     if resolution == 'Select':
         resolution = None
     if location == 'Select':
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+        'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
         if not start_date:
@@ -248,11 +259,13 @@ def predicted_actual_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format("AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format(
+                "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format("AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
+                "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
@@ -355,6 +368,7 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
+
 def datadrift(request, Project_Name):
     context = {}
     user_id = request.session["userID"]
@@ -366,8 +380,10 @@ def datadrift(request, Project_Name):
         if request.POST['form_id'] == 'chart_change':
             start_date = request.POST['start_time_option']
             end_date = request.POST['end_time_option']
-            context.update(drift_importance(Project_Name, start_date, end_date))
-            context.update(feature_distribution(Project_Name, start_date, end_date))
+            context.update(drift_importance(
+                Project_Name, start_date, end_date))
+            context.update(feature_distribution(
+                Project_Name, start_date, end_date))
             return JsonResponse(context)
 
     return render(request, "datadrift.html", context)
@@ -790,3 +806,31 @@ def userlogout(request):
     # if (request.GET.get("logoutbtn")):
         # del request.session["userLogin"]
         return render(request, 'logoutpage.html')
+
+
+def make_champion_model(request):
+    
+    new_cham_model_id = request.POST.get('model_id')
+    comments = request.POST.get('comments')
+    
+    try:
+        Model_List.objects.filter(Model_ID=new_cham_model_id).update(
+            Approve_Status=2)
+        Model_List.objects.filter(Model_ID=new_cham_model_id).update(
+            Change_Comments=comments)
+        return JsonResponse({'success': True})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
+    
+    # try:
+    #     with connection.cursor() as cursor:
+    #         query = f"UPDATE core_model_list SET Approve_Status = 2 WHERE model_id = {new_cham_model_id};"
+    #         cursor.execute(query)
+    #         connection.commit()
+    #     return JsonResponse({'success': True})
+    # except Exception as e:
+    #     print(e)
+    #     return JsonResponse({'success': False})
+
+    

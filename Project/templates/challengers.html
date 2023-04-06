@@ -2,42 +2,33 @@
 
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Challengers Model Registry [WIP]</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
-    <link rel="stylesheet" href= {% static '/css/tailwind.output.css' %} />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/init-alpine.js"></script> -->
-    <script src={% static '/js/init-alpine.js' %}></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
-    <script src={% static '/js/charts-lines.js' %} defer></script>
-    <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
-    <script src={% static '/js/charts-pie.js' %} defer></script>
-  </head>
-  <body>
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
-      :class="{ 'overflow-hidden': isSideMenuOpen }"
-    >
-      <!-- Desktop sidebar -->
-      <!-- <aside
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challengers Model Registry [WIP]</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
+  <link rel="stylesheet" href={% static '/css/tailwind.output.css' %} />
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <!-- <script src="./assets/js/init-alpine.js"></script> -->
+  <script src={% static '/js/init-alpine.js' %}></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+  <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
+  <script src={% static '/js/charts-lines.js' %} defer></script>
+  <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
+  <script src={% static '/js/charts-pie.js' %} defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+
+  <script src="/static/js/popup.js"></script>
+</head>
+
+<body>
+  <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
+    <!-- Desktop sidebar -->
+    <!-- <aside
         class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
       >
         <div class="py-4 text-gray-500 dark:text-gray-400">
@@ -77,20 +68,15 @@
           </ul>
         </div>
       </aside> -->
-      <div class="flex flex-col flex-1 w-full">
-        <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
-          <div
-            class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300"
-          >
-            <a
-              class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-              href="/app/deployment/"
-            >
-              MLOps Suite
-            </a> 
-            <!-- Search input -->
-            <div class="flex justify-center flex-1 mx-30 lg:mr-32">
-              <!-- <div
+    <div class="flex flex-col flex-1 w-full">
+      <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+        <div class="container flex items-center h-full mx-auto text-purple-600 dark:text-purple-300">
+          <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="/app/deployment/">
+            MLOps Suite
+          </a>
+          <!-- Search input -->
+          <div class="flex justify-center flex-1 mx-30 lg:mr-32">
+            <!-- <div
                 class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
               >
                 <div class="absolute inset-y-0 flex items-center pl-2">
@@ -114,94 +100,59 @@
                   aria-label="Search"
                 />
               </div> -->
-            </div>
-            {% if request.session.userLogin  %}
-            <p class = "text-gray-600 dark:text-gray-400 mr-4">{{ request.session.userID }}</p>
-            {% endif %}
-            <ul class="flex items-center flex-shrink-0 space-x-6">
-              <!-- Theme toggler -->
-              <li class="flex">
-                <button
-                  class="rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleTheme"
-                  aria-label="Toggle color mode"
-                >
-                  <template x-if="!dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-                      ></path>
-                    </svg>
-                  </template>
-                  <template x-if="dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </template>
-                </button>
-              </li>
-              <!-- Notifications menu -->
-              <li class="relative">
-                <button
-                  class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-                  @click="toggleNotificationsMenu"
-                  @keydown.escape="closeNotificationsMenu"
-                  aria-label="Notifications"
-                  aria-haspopup="true"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                    ></path>
+          </div>
+          {% if request.session.userLogin %}
+          <p class="text-gray-600 dark:text-gray-400 mr-4">{{ request.session.userID }}</p>
+          {% endif %}
+          <ul class="flex items-center flex-shrink-0 space-x-6">
+            <!-- Theme toggler -->
+            <li class="flex">
+              <button class="rounded-md focus:outline-none focus:shadow-outline-purple" @click="toggleTheme"
+                aria-label="Toggle color mode">
+                <template x-if="!dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                   </svg>
-                  <!-- Notification badge -->
-                  <span
-                    aria-hidden="true"
-                    class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-                  ></span>
-                </button>
-                <template x-if="isNotificationsMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeNotificationsMenu"
-                    @keydown.escape="closeNotificationsMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Messages</span>
-                        <span
-                          class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600"
-                        >
-                          13
-                        </span>
-                      </a>
-                    </li>
-                    <!-- <li class="flex">
+                </template>
+                <template x-if="dark">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </template>
+              </button>
+            </li>
+            <!-- Notifications menu -->
+            <li class="relative">
+              <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+                @click="toggleNotificationsMenu" @keydown.escape="closeNotificationsMenu" aria-label="Notifications"
+                aria-haspopup="true">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                  </path>
+                </svg>
+                <!-- Notification badge -->
+                <span aria-hidden="true"
+                  class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
+              </button>
+              <template x-if="isNotificationsMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeNotificationsMenu"
+                  @keydown.escape="closeNotificationsMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700">
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Messages</span>
+                      <span
+                        class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">
+                        13
+                      </span>
+                    </a>
+                  </li>
+                  <!-- <li class="flex">
                       <a
                         class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                         href="#"
@@ -214,418 +165,440 @@
                         </span>
                       </a>
                     </li> -->
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Alerts</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
-              </li>
-              <!-- Profile menu -->
-              <li class="relative">
-                <button
-                  class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
-                  @click="toggleProfileMenu"
-                  @keydown.escape="closeProfileMenu"
-                  aria-label="Account"
-                  aria-haspopup="true"
-                >
-                  <!-- <img
+                  <li class="flex">
+                    <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Alerts</span>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+            <!-- Profile menu -->
+            <li class="relative">
+              <button class="align-middle rounded-md focus:shadow-outline-purple focus:outline-none"
+                @click="toggleProfileMenu" @keydown.escape="closeProfileMenu" aria-label="Account" aria-haspopup="true">
+                <!-- <img
                     class="object-cover w-8 h-8 rounded-full"
                     src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
                     alt=""
                     aria-hidden="true"
                   /> -->
-                  <svg
-                    class="w-5 h-5"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                      <path
-                        stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      ></path>
-                  </svg>
-                </button>
-                <template x-if="isProfileMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeProfileMenu"
-                    @keydown.escape="closeProfileMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                    aria-label="submenu"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Profile</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <span>Settings</span>
-                      </a>
-                    </li>
-                    <li class="flex">
-                      <a
-                      class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                      href="{% url 'logout' %}"
-                      >
+                <svg class="w-5 h-5" fill="currentColor" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
+                  </path>
+                </svg>
+              </button>
+              <template x-if="isProfileMenuOpen">
+                <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0" @click.away="closeProfileMenu" @keydown.escape="closeProfileMenu"
+                  class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                  aria-label="submenu">
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Profile</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="#">
+                      <span>Settings</span>
+                    </a>
+                  </li>
+                  <li class="flex">
+                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="{% url 'logout' %}">
                       <span>Log out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
+                    </a>
+                  </li>
+                </ul>
+              </template>
+            </li>
+          </ul>
+        </div>
+      </header>
+      <main class="h-full overflow-y-auto">
+        <div class="container px-6 my-6 mx-auto grid">
+          <!-- New Table -->
+          <div class="w-full overflow-hidden shadow-xs">
+            <div class="w-full overflow-x-auto">
+              <table class="w-full whitespace-no-wrap">
+                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                  <tr class="text-gray-700 dark:text-gray-400">
+                    <td class="px-4 py-3">
+                      <div class="flex items-center text-sm">
+                        <div>
+                          <p class="font-semibold">HDB Pricing Prediction</p>
+                          <p class="text-xs text-gray-600 dark:text-gray-400">
+                            <!--Can include pending status here-->
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      High
+                    </td>
+                    <td class="px-4 py-3 text-xs">
+                      <svg fill="none" stroke="green" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      <svg fill="black" stroke="yellow" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z">
+                        </path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      <svg fill="none" stroke="red" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="50" height="50">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                      1 day ago
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--Navigation tabs to other pages-->
+
+          <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
+            <ul class="flex">
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview">Overview</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview/service_health">Service Health</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/drift">Data Drift</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/overview/accuracy">Accuracy</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/humility">Humility</a>
+              </li>
+              <li class="text-center flex-1">
+                <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/challengers">Challengers</a>
               </li>
             </ul>
           </div>
-        </header>
-        <main class="h-full overflow-y-auto">
-          <div class="container px-6 my-6 mx-auto grid">
-            <!-- New Table -->
-            <div class="w-full overflow-hidden shadow-xs">
-              <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                  <tbody
-                    class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-                  >
-                    <tr class="text-gray-700 dark:text-gray-400">
-                      <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                          <div>
-                            <p class="font-semibold">HDB Pricing Prediction</p>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">
-                              <!--Can include pending status here-->
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        High
-                      </td>
-                      <td class="px-4 py-3 text-xs">
-                        <svg 
-                          fill="none"
-                          stroke="green"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width = "50"
-                          height = "50"
-                        >
-                          <path
-                            stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        <svg
-                          fill="black"
-                          stroke="yellow"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width="50"
-                          height="50"
-                        >
-                          <path 
-                            stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        <svg 
-                          fill="none"
-                          stroke="red"
-                          stroke-width="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          width="50"
-                          height="50"
-                        >
-                          <path
-                            stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"
-                          ></path>
-                        </svg>
-                      </td>
-                      <td class="px-4 py-3 text-sm">
-                        1 day ago
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          <!--Content for your page-->
+          <div class="container mx-auto grid">
+            <div class="flex flex-row justify-between p-4 my-8 text-l font-semibold text-purple-100 bg-purple-600">
+              <div>
+                <p> Challengers </p>
               </div>
-            </div>
-            <!--Navigation tabs to other pages-->
-
-            <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
-              <ul class="flex">
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/service_health">Service Health</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/accuracy">Accuracy</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
-                </li>
-                <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
-                </li>
-              </ul>
-            </div>
-            <!--Content for your page-->
-            <div class="container mx-auto grid">
-              <div class="flex flex-row justify-between p-4 my-8 text-l font-semibold text-purple-100 bg-purple-600">
-                 <div>
-                    <p> Challengers </p>
-                  </div>
-                  <div>
-                    <a class="text-center block bg-white text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers/modelRegistry"> Model Registry</a> 
-                    <!-- edit href -->
-                    <!-- <a class="text-center block bg-white text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers"> Refresh</a>  -->
-                  </div>
-
+              <div>
+                <a class="text-center block bg-white text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                  href="/app/challengers/modelRegistry"> Model Registry</a>
+                <!-- edit href -->
+                <!-- <a class="text-center block bg-white text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers"> Refresh</a>  -->
               </div>
-              
-              <div class="flex mb-4" >
-                <button class="w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="openFormBtn" type="submit">
+
+            </div>
+
+            <div class="flex mb-4">
+              <button class="w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                id="openFormBtn" type="submit">
                 +Add Challenger Model ABC
-                </button> 
-              </div>
-                  <div id="formContainer" class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
-                    <div class="bg-white w-1/2 rounded-lg shadow-lg p-8 border border-black p-4">
-                      <h2 class="text-2xl mb-4">Add Custom Inference Model</h2>
-                      <form class="mr-6 mt-6 mb-6 ml-6 flex-1">
-                        <div class="mb-4">
-                          <label class="block text-gray-700 font-bold mb-2" for="custom">Name your custom model:</label>
-                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="custom" type="text" placeholder="">
-                        </div>
-                        <div class="mb-4">
-                          <label class="block text-gray-700 font-bold mb-2" for="name">Target name:</label>
-                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="">
-                        </div>
-                        <div class="mb-4">
-                          <label class="block text-gray-700 font-bold mb-2" for="type">Target type:</label>
-                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type" type="text" placeholder="">
-                        </div>
-                        <div class="flex items-center justify-between mr-2">
-                          <button id="open-form" onclick="openFolder()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Add custom model</button>
-                          <form id="upload-form" class="hidden" enctype="multipart/form-data">
-                            <input type="file" name="file" id="file-input" />
-                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                              Upload
-                            </button>
-                          </form>
-                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="close" id="close">Close</button>
-                        </div>
-                      </form>
-                      <script>
-                      const openFormBtn = document.getElementById('openFormBtn');
-                      const closeFormBtn = document.getElementById('closeFormBtn');
-                      const formContainer = document.getElementById('formContainer');
-                      const form = document.getElementById("upload-form");
-                      const button = document.getElementById("open-form");
-                      const fileInput = document.getElementById("file-input")
-
-                      openFormBtn.addEventListener('click', () => {
-                        formContainer.classList.remove('hidden');
-                      });
-
-                      function openFolder() {
-                        window.location.href = "https://github.com/";
-                      }
-
-                      closeFormBtn.addEventListener('click', () => {
-                        formContainer.classList.add('hidden');
-                      });
-                      </script>
-
-
-
-                    </div>
+              </button>
+            </div>
+            <div id="formContainer"
+              class="hidden fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
+              <div class="bg-white w-1/2 rounded-lg shadow-lg p-8 border border-black p-4">
+                <h2 class="text-2xl mb-4">Add Custom Inference Model</h2>
+                <form class="mr-6 mt-6 mb-6 ml-6 flex-1">
+                  <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2" for="custom">Name your custom model:</label>
+                    <input
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="custom" type="text" placeholder="">
                   </div>
-                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2" for="name">Target name:</label>
+                    <input
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="name" type="text" placeholder="">
+                  </div>
+                  <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2" for="type">Target type:</label>
+                    <input
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="type" type="text" placeholder="">
+                  </div>
+                  <div class="flex items-center justify-between mr-2">
+                    <button id="open-form" onclick="openFolder()"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      type="button">Add custom model</button>
+                    <form id="upload-form" class="hidden" enctype="multipart/form-data">
+                      <input type="file" name="file" id="file-input" />
+                      <button type="submit"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Upload
+                      </button>
+                    </form>
+                    <button
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      type="close" id="close">Close</button>
+                  </div>
+                </form>
+                <script>
+                  const openFormBtn = document.getElementById('openFormBtn');
+                  const closeFormBtn = document.getElementById('closeFormBtn');
+                  const formContainer = document.getElementById('formContainer');
+                  const form = document.getElementById("upload-form");
+                  const button = document.getElementById("open-form");
+                  const fileInput = document.getElementById("file-input")
 
-              <div class="grid gap-6 xl:grid-cols-3" >
+                  openFormBtn.addEventListener('click', () => {
+                    formContainer.classList.remove('hidden');
+                  });
 
-<!-- adapted from deployments page -->
-                <div class="w-full overflow-hidden rounded-lg shadow-xs">
-                  <div class="w-full overflow-x-auto">
-                    <table class="w-full whitespace-no-wrap">
-                      <thead>
-                        <tr
-                          class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-                        >
-                          <th class="px-4 py-3">Model Name & Description</th>
-                          <th class="px-4 py-3">Target</th>
-                          <th class="px-4 py-3">Target Type</th>
-                          <th class="px-4 py-3">Created</th>
-                          <th class="px-4 py-3"></th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-                      >
+                  function openFolder() {
+                    window.location.href = "https://github.com/";
+                  }
+
+                  closeFormBtn.addEventListener('click', () => {
+                    formContainer.classList.add('hidden');
+                  });
+                </script>
+
+
+
+              </div>
+            </div>
+
+
+            <div class="grid gap-6 xl:grid-cols-3">
+
+              <!-- adapted from deployments page -->
+              <div class="w-full overflow-hidden rounded-lg shadow-xs">
+                <div class="w-full overflow-x-auto">
+                  <table class="w-full whitespace-no-wrap">
+                    <thead>
+                      <tr
+                        class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                        <th class="px-4 py-3">Model Name & Description</th>
+                        <th class="px-4 py-3">Target</th>
+                        <th class="px-4 py-3">Target Type</th>
+                        <th class="px-4 py-3">Created</th>
+                        <th class="px-4 py-3"></th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
 
                       <!-- SOME KIND OF LOOP TO GET ALL MODEL REGISTRY ITEMS -->
-                        <tr class="text-gray-700 dark:text-gray-400" onclick="window.location.href='/app/overview'">
-                          <td class="px-4 py-3">
-                            <div class="flex items-center text-sm">
-                              <div>
-                                <p class="font-semibold" style="cursor:pointer; text-decoration:underline">HDB Pricing Prediction</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">  
-                                  <!--Can include pending status here--></p>
-                              </div>
-                          </td>
-                          <td class="px-4 py-3 text-sm">
-                            HDB_Price
-                          </td>
-                          <td class="px-4 py-3 text-sm">
-                            Numerical
-                          </td>
-                          <td class="px-4 py-3 text-sm">
-                            1 day(s) ago
-                          </td>
-                          <td class="px-4 py-3 text-sm">
-                            <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Make champion model</a> 
-                          </td>
-                        </tr>
-                        <!--  -->
+                      <tr class="text-gray-700 dark:text-gray-400">
+                        <td class="px-4 py-3">
+                          <div class="flex items-center text-sm">
+                            <div>
+                              <p class="font-semibold" style="cursor:pointer; text-decoration:underline">HDB Pricing
+                                Prediction</p>
+                              <p class="text-xs text-gray-600 dark:text-gray-400">
+                                <!--Can include pending status here-->
+                              </p>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                          HDB_Price
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                          Numerical
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                          1 day(s) ago
+                        </td>
+                        {% csrf_token %}
+                        <td class="px-4 py-3 text-sm">
+                          <button
+                            class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                            id='cham_btn' data-modal-target="cham_modal" data-modal-toggle="cham_modal">Make champion
+                            model</button>
+                        </td>
+                      </tr>
+                      <!--  -->
 
-                      </tbody>
-                    </table>
-                  </div>
-                  <div
-                    class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
-                  >
-                    <span class="flex items-center col-span-3">
-                      Showing 3-3 of 3
-                    </span>
-                    <span class="col-span-2"></span>
-                    <!-- Pagination -->
-                    <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                      <nav aria-label="Table navigation">
-                        <ul class="inline-flex items-center">
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-                              aria-label="Previous"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                class="w-4 h-4 fill-current"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                ></path>
-                              </svg>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                            class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              1
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              2
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              3
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              4
-                            </button>
-                          </li>
-                          <li>
-                            <span class="px-3 py-1">...</span>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              8
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              9
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-                              aria-label="Next"
-                            >
-                              <svg
-                                class="w-4 h-4 fill-current"
-                                aria-hidden="true"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                ></path>
-                              </svg>
-                            </button>
-                          </li>
-                        </ul>
-                      </nav>
-                    </span>
-                  </div>
+                    </tbody>
+                  </table>
+                </div>
+                <div
+                  class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+                  <span class="flex items-center col-span-3">
+                    Showing 3-3 of 3
+                  </span>
+                  <span class="col-span-2"></span>
+                  <!-- Pagination -->
+                  <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+                    <nav aria-label="Table navigation">
+                      <ul class="inline-flex items-center">
+                        <li>
+                          <button
+                            class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                            aria-label="Previous">
+                            <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                              <path
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" fill-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            1
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            2
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            3
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            4
+                          </button>
+                        </li>
+                        <li>
+                          <span class="px-3 py-1">...</span>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            8
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            9
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                            aria-label="Next">
+                            <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                              <path
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" fill-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div>
-            <!-- CHART - to adapt from Accuracy page. -->
+        <div>
+          <!-- CHART - to adapt from Accuracy page. -->
 
 
+        </div>
+
+
+
+        <!-- Popup modal for making new champion model -->
+
+        <div id="cham_modal" tabindex="-1" aria-hidden="true"
+          class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+          <div class="relative" style='width: 50%; height: 50%;'>
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+              <form id='testmodel_submit'>
+                {% csrf_token %}
+                <div id='m1header' style='color: white; padding: 10px;'>
+                  <p>Make new Champion Model</p>
+                </div>
+                <div>
+                  <form id="dataset-form" method="GET">
+                    <div>
+                      <p style='padding: 5px'>New Model ID: <span id="new_model_id"></span></p>
+                      <p style='padding: 5px'>New Model Name: <span id="new_model_name"></span></p>
+                      <p style='padding: 5px'>Change Comments: </p>
+                      <input type="text" id="change_comments">
+
+                    </div>
+                  </form>
+                </div>
+
+
+                <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+                  <button type="button" id='testdata_submit_btn' data-modal-hide="cham_modal" data-dismiss="modal"
+                    style="padding: 2px 10px 2px 10px; margin: 20px;"
+                    class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                    Submit request</button>
+
+                  <button id='close-cham_modal' data-modal-hide="cham_modal" data-dismiss="modal"
+                    style="padding: 2px 10px 2px 10px" type="button"
+                    class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                    cancel</button>
+
+                </div>
+
+              </form>
+            </div>
           </div>
+        </div>
 
-      </div>
     </div>
-  </body>
+  </div>
+
+  <script>
+
+    var cham_btn = $('#cham_btn');
+    cham_btn.click(function (event) {
+      new_cham_model_id = 1001; // change to not hardcoded
+      change_comments = 'better accuracy'; // change to not hardcoded
+      // change_comments = document.getElementById("change_comments").value;
+      const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+      $.ajax({
+        url: './challengers/make_champion_model/',
+        type: 'POST',
+        beforeSend: function (xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+          'model_id': new_cham_model_id,
+          'comments': change_comments,
+          'csrfmiddlewaretoken': csrf_token
+        },
+        success: function (response) {
+          console.log(response);
+          // location.reload(); // important! change to load challengers page instead
+        },
+        error: function (xhr, status, error) {
+          console.error('Error:', xhr.status, status, error);
+        }
+      });
+    })
+
+  </script>
+</body>
+
 </html>
