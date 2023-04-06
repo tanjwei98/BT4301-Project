@@ -94,31 +94,10 @@
             </a> 
             <!-- Search input -->
             <div class="flex justify-center flex-1 mx-30 lg:mr-32">
-              <!-- <div
-                class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
-              >
-                <div class="absolute inset-y-0 flex items-center pl-2">
-                  <svg
-                    class="w-4 h-4"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-purple-300 focus:outline-none focus:shadow-outline-purple form-input"
-                  type="text"
-                  placeholder="Search for projects"
-                  aria-label="Search"
-                />
-              </div> -->
             </div>
+            {% if request.session.userLogin  %}
+            <p class = "text-gray-600 dark:text-gray-400 mr-4">{{ request.session.userID }}</p>
+            {% endif %}
             <ul class="flex items-center flex-shrink-0 space-x-6">
               <!-- Theme toggler -->
               <li class="flex">
@@ -390,7 +369,7 @@
             <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
               <ul class="flex">
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'overview' Project_Name %}">Overview</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
@@ -418,13 +397,13 @@
                     <span class="text-gray-700 dark:text-gray-400">
                       Starting Date:
                     </span>
-                    <input type="date" id="startdate" name="startdate" class = "rounded text-gray-700", value="2023-04-05">
+                    <input type="date" id="startdate" name="startdate" class = "rounded text-gray-700", value="2023-04-06">
                   </label>
                   <label class="block mt-4 text-sm" for="enddate">
                     <span class="text-gray-700 dark:text-gray-400">
                       End Date:
                     </span>
-                    <input type="date" id="enddate" name="enddate" class = "rounded text-gray-700", value = "2023-04-07">
+                    <input type="date" id="enddate" name="enddate" class = "rounded text-gray-700", value = "2023-04-10">
                   </label>
                   <button type="button" class = "px-4 py-2 rounded text-white mt-6 bg-purple-600" onclick="update_charts()">Submit</button>
                 </form>

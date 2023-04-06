@@ -58,12 +58,19 @@ def deployed_models(userID, userRole):
         models = Model_List.objects.filter(User_ID = userID, Challenger_Status = 'Champion')
     return {"Deployed_Models": models}
 
+def get_pending(userID, userRole):
+    if userRole == "MLOps Engineer":
+        models = Model_List.objects.filter(Approve_User_ID_id = userID, Approve_Status = 'Pending')
+    else:
+        models = Model_List.objects.filter(User_ID = userID, Approve_Status = 'Pending')
+    return {"all_pending": models}
+
 # Overview page
 def get_model(ProjectName):
     model = Model_List.objects.filter(Project_Name = ProjectName, Challenger_Status = 'Champion').first()
     return {"Model": model}
 
-def get_pending(ProjectName):
+def check_pending(ProjectName):
     model = Model_List.objects.filter(Project_Name = ProjectName, Approve_Status = 'Pending').first()
     return {"Pending": model}
 
@@ -77,7 +84,7 @@ def get_dataset(ProjectName):
     return {"Dataset": dataset}
 
 # Data Drift page
-def drift_importance(ProjectName, start_date = datetime(2023,4,5), end_date = datetime(2023,4,7)):
+def drift_importance(ProjectName, start_date = datetime(2023,4,6), end_date = datetime(2023,4,10)):
     model_id = Model_List.objects.filter(Project_Name = ProjectName, Challenger_Status = 'Champion').first().Model_ID
     drift_data = pd.DataFrame(list(Model_drift.objects.filter(Model_ID_id = model_id).values()))
     drift_data["Date"] = pd.to_datetime(drift_data['Date']).dt.date
@@ -91,14 +98,19 @@ def drift_importance(ProjectName, start_date = datetime(2023,4,5), end_date = da
     if isinstance(end_date, str):
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-    if start_date < datetime(2023,4,5):
-        start_date = datetime(2023,4,5)
+    if start_date < datetime(2023,4,6):
+        start_date = datetime(2023,4,6)
+    if start_date >= datetime(2023,4,10):
+        start_date = datetime(2023,4,9)
     
-    if end_date > datetime(2023,4,7):
+    if end_date > datetime(2023,4,10):
+        end_date = datetime(2023,4,10)
+    if end_date <= datetime(2023,4,6):
         end_date = datetime(2023,4,7)
 
+
     after_start_date = drift_data["Date"] >= (start_date - dt.timedelta(days=1))
-    before_end_date = drift_data["Date"] <= end_date
+    before_end_date = drift_data["Date"] <= (end_date - dt.timedelta(days=1))
     filtered_dataset = drift_data[after_start_date & before_end_date]
     grouped = filtered_dataset.groupby("Feature").mean().reset_index()
     all_features = list(grouped["Feature"])
@@ -118,7 +130,7 @@ def drift_importance(ProjectName, start_date = datetime(2023,4,5), end_date = da
             'at_risk_drift': at_risk_drift, 'at_risk_importance': at_risk_importance, 'at_risk_feature': at_risk_features,
             'all_feature': all_features}
 
-def feature_distribution(ProjectName, start_date = datetime(2023,4,5), end_date = datetime(2023,4,7)):
+def feature_distribution(ProjectName, start_date = datetime(2023,4,6), end_date = datetime(2023,4,10)):
     model_id = Model_List.objects.filter(Project_Name = ProjectName, Challenger_Status = 'Champion').first().Model_ID
     feature_dist_data = pd.DataFrame(list(Feature_Distribution.objects.filter(Model_ID_id = model_id).values()))
     feature_dist_data["Date"] = pd.to_datetime(feature_dist_data['Date']).dt.date
@@ -131,18 +143,18 @@ def feature_distribution(ProjectName, start_date = datetime(2023,4,5), end_date 
     if isinstance(end_date, str):
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-    if start_date < datetime(2023,4,5):
-        start_date = datetime(2023,4,5)
-    if start_date >= datetime(2023,4,7):
+    if start_date < datetime(2023,4,6):
         start_date = datetime(2023,4,6)
+    if start_date >= datetime(2023,4,10):
+        start_date = datetime(2023,4,9)
     
-    if end_date > datetime(2023,4,7):
+    if end_date > datetime(2023,4,10):
+        end_date = datetime(2023,4,10)
+    if end_date <= datetime(2023,4,6):
         end_date = datetime(2023,4,7)
-    if end_date <= datetime(2023,4,5):
-        end_date = datetime(2023,4,6)
 
     after_start_date = feature_dist_data["Date"] >= (start_date - dt.timedelta(days=1))
-    before_end_date = feature_dist_data["Date"] <= end_date
+    before_end_date = feature_dist_data["Date"] <= (end_date - dt.timedelta(days=1))
     filtered_dataset = feature_dist_data[after_start_date & before_end_date]
     #print(filtered_dataset.columns)
     grouped = filtered_dataset.groupby("Feature_values").mean().reset_index()

@@ -624,13 +624,21 @@
                       <td class="px-4 py-3 text-sm">
                         1 day ago
                       </td>
-                      {% if model.Approve_Status == "0" %}
-                      <td class="px-4 py-3 text-sm">
-                        No
+                      {% if all_pending.count != 0 %}
+                      {% for p_model in all_pending %}
+                      {% if p_model.Project_Name == model.Project_Name %}
+                      <td class="px-4 py-3 text-sm text-purple-600 dark:text-purple-400">
+                        Yes
                       </td>
                       {% else %}
                       <td class="px-4 py-3 text-sm">
-                        Yes
+                        No
+                      </td>
+                      {% endif %}
+                      {% endfor %}
+                      {% else %}
+                      <td class="px-4 py-3 text-sm">
+                        No
                       </td>
                       {% endif %}
                     </tr>

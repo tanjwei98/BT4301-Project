@@ -66,6 +66,7 @@ def deployment(request):
     context.update(get_data_drift(user_id, user_role))
     context.update(get_accuracy(user_id, user_role))
     context.update(deployed_models(user_id, user_role))
+    context.update(get_pending(user_id, user_role))
     return render(request, "deployments.html", context)
 
 
@@ -77,7 +78,7 @@ def overview(request, Project_Name):
     context.update(get_model(Project_Name))
     context.update(get_dataset(Project_Name))
     context.update(get_project(Project_Name))
-    context.update(get_pending(Project_Name))
+    context.update(check_pending(Project_Name))
     return render(request, "overview.html", context)
     # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
 
