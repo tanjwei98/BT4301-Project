@@ -1254,36 +1254,36 @@
     add_mr_btn_file.disabled = true;
     add_mr_btn_file.style.backgroundColor = 'grey';
 
-    $(document).ready(function () {
-      window.addEventListener('message', event => {
-        var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
-        var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+  //   $(document).ready(function () {
+  //     window.addEventListener('message', event => {
+  //       var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+  //       var add_mr_btn_file = document.getElementById('add_mr_btn_file');
 
-        if (event.origin !== window.location.origin) return;
-        const result = event.data;
+  //       if (event.origin !== window.location.origin) return;
+  //       const result = event.data;
 
-        if (result === 'failed') {
-          console.log('Code failed to run');
-          testbtn_createnewmodel.disabled = true;
-          testbtn_createnewmodel.style.backgroundColor = 'grey';
-          // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
+  //       if (result === 'failed') {
+  //         console.log('Code failed to run');
+  //         testbtn_createnewmodel.disabled = true;
+  //         testbtn_createnewmodel.style.backgroundColor = 'grey';
+  //         // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
 
-          add_mr_btn_code.disabled = true;
-          add_mr_btn_code.style.backgroundColor = 'grey';
+  //         add_mr_btn_code.disabled = true;
+  //         add_mr_btn_code.style.backgroundColor = 'grey';
 
-        } else {
-          console.log('Code ran successfully');
-          testbtn_createnewmodel.disabled = false;
-          testbtn_createnewmodel.style.backgroundColor = '#007bff';
-          // testbtn_createnewmodel.tooltip = '';
+  //       } else {
+  //         console.log('Code ran successfully');
+  //         testbtn_createnewmodel.disabled = false;
+  //         testbtn_createnewmodel.style.backgroundColor = '#007bff';
+  //         // testbtn_createnewmodel.tooltip = '';
 
-          add_mr_btn_code.disabled = false;
-          add_mr_btn_code.style.backgroundColor = '#007bff';
+  //         add_mr_btn_code.disabled = false;
+  //         add_mr_btn_code.style.backgroundColor = '#007bff';
           
-        }
+  //       }
 
-        });
-  });
+  //       });
+  // });
 
 
     // check if the code is successful. if not successful, testbtn_createnewmodel is disabled. same for add_mr_btn_code
@@ -1302,7 +1302,10 @@
         var add_mr_btn_code = document.getElementById('add_mr_btn_code');
 
         if (event.origin !== window.location.origin) return;
-        const result = event.data;
+        const child_data = event.data;
+        const result = child_data.result;
+        language_from_code = child_data.lang;
+        console.log('this is the result in mod reg:  ', child_data);
 
         if (result === 'failed') {
           console.log('Code failed to run');
@@ -1406,6 +1409,7 @@
       const project_name_code = document.getElementById('projectname_select_code').value;
       const datasetId_code = datasetSelect.value;
 
+      console.log('this is my model language: ', modellanguage_code)
 
       if (modelname_code === '' || modellanguage_code === '' || version_code === '' || description_code === '' || project_name_code === 'default' || datasetId_code === 'default') {
         window.alert('Please fill up all information before adding to model registry')
@@ -1416,7 +1420,7 @@
         console.log('still run leh')
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
-          url: './add-model/',
+          url: './modelRegistry/add-model/',
           type: 'POST',
           beforeSend: function (xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", csrf_token);
@@ -1435,7 +1439,7 @@
           },
           success: function (response) {
             console.log(response);
-            location.reload(); // important! change to load challengers page instead
+            // location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);
