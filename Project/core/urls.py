@@ -26,6 +26,7 @@ urlpatterns = [
     path('humility/add', views.humility_add, name = 'humility_add'),
     path('challengers/', views.challengers, name = 'challengers'),
     path('challengers/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
+    path('challengers/challenger_chart', views.challenger_chart, name = 'modelRegistry'),
     path('codeEditor2/', views.codeEditor2, name = 'codeEditor2'),
     # path('mregistry/', views.mregistry, name = 'mregistry'),
     #path('login/', views.loginpage, name='loginpage'),

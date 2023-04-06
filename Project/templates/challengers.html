@@ -30,6 +30,52 @@
     <script src={% static '/js/charts-lines.js' %} defer></script>
     <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
     <script src={% static '/js/charts-pie.js' %} defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+          .dropdown {
+            position: relative;
+            left     : 10px;
+            display: inline-block;
+            margin: 2%;
+          }
+
+          .filterdiv {
+            flex: 1 1 auto
+          }
+          .dropdown-btn {
+            background-color: white;
+            color: #333;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            width: 160px;
+            text-align: center;
+          }
+
+          .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            padding: 10px;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            left: 0;
+            right: 0;
+          }
+
+          .dropdown-content button {
+            text-align: center;
+            color: #333;
+            display: block;
+            padding: 10px;
+          }
+
+          .dropdown:hover .dropdown-content {
+            display: block;
+          }
+    </style>
   </head>
   <body>
     <div
@@ -377,13 +423,13 @@
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/service_health">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/service_health">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview/accuracy">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/accuracy">Accuracy</a>
                 </li>
                 <li class="text-center flex-1">
                   <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
@@ -612,17 +658,78 @@
                     </span>
                   </div>
                 </div>
+                <div>
+                  <label for="segment-dropdown" style="color: white;">Accuracy Metric:</label>
+                  <div class="dropdown">
+                    <button class="dropdown-btn" id="segment-dropdown">Select</button>
+                    <div class="dropdown-content">
+                      <button onclick="selectloc(this)" value="AUC">AUC</button>
+                      <button onclick="selectloc(this)" value="LogLoss">LogLoss</button>
+                      <button onclick="selectloc(this)" value="Gini_Norm">Gini Norm</button>
+                      <button onclick="selectloc(this)" value="KS">KS</button>
+                      <button onclick="selectloc(this)" value="Rate_Top10">Rate_Top10</button>
+                    </div>
+                  </div>
+                </div>
+                  <canvas id="accuracy-chart"></canvas>
+                </div>
               </div>
             </div>
           </div>
-
-          <div>
-            <!-- CHART - to adapt from Accuracy page. -->
-
-
-          </div>
-
       </div>
     </div>
   </body>
+  <script>
+    let aucCtx = document.getElementById("accuracy-chart").getContext("2d");
+    let aucChart = new Chart(aucCtx, {
+        type: "line",
+        options: {
+          responsive: true,
+        }
+      });
+    $(document).ready(function() {
+        $.ajax({
+          success: (jsonResponse) => {
+            // Load data for the first option
+            loadChart(aucChart)
+          },
+          error: () => console.log("Failed to fetch chart filter options!")
+        });
+      });
+      function loadChart(chart,metric) {
+        $.ajax({
+            url: 'challenger_chart',
+            data: {
+                'metric': metric,
+            },
+            type: "GET",
+            dataType: "json",
+            success: (jsonResponse) => {
+                // Extract data from the response
+                const title = jsonResponse.title;
+                const labels = jsonResponse.data.labels;
+                const datasets = jsonResponse.data.datasets;
+
+                // Reset the current chart
+                chart.data.datasets = [];
+                chart.data.labels = [];
+
+                // Load new data into the chart
+                chart.data.labels = labels;
+                datasets.forEach(dataset => {
+                    chart.data.datasets.push(dataset);
+                });
+                chart.update();
+            },
+            error: () => console.log("Failed to fetch chart data from !")
+        });
+      }
+      function selectloc(button) {
+        console.log(button.value)
+        var btn = document.getElementById("segment-dropdown");
+        btn.value = button.value; // will just add a hidden value
+        btn.innerHTML = button.value;
+        loadChart(aucChart, button.value)
+      }
+  </script>
 </html>

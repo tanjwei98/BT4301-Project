@@ -25,6 +25,7 @@ from datetime import datetime
 # from models import Model_Accuracy
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import numpy as np
 
 # Create your views here.
 
@@ -146,12 +147,54 @@ def addModel(request):
             Challenger_Status='Challengers'
         )
         new_model.save()
-        
-         
-        
+
+        # create dates for the data
+        timez = pytz.timezone('Asia/Singapore')
+        dates = pd.date_range(start='4/6/2022', periods=5,tz=timez).normalize()
+        print(dates)
+
+        # create a dataframe with the columns
+        data = pd.DataFrame({'Date': dates})
+
+        # generate random data for each column
+        data['AUC'] = np.random.normal(loc=0.77, scale=0.001, size=len(dates))
+        data['KS'] = np.random.normal(loc=0.6, scale=0.1, size=len(dates))
+        data['LogLoss'] = np.random.normal(loc=0.65, scale=0.01, size=len(dates))
+        data['Gini_NormI'] = np.random.normal(loc=0.2, scale=0.01, size=len(dates))
+        data['Rate_Top10'] = np.random.normal(loc=0.9, scale=0.01, size=len(dates))
+        data['Location'] = "West"
+
+        # create the other data frames with different locations
+        data_north = data.copy()
+        data_north['Location'] = "North"
+
+        data_east = data.copy()
+        data_east['Location'] = "East"
+
+        data_south = data.copy()
+        data_south['Location'] = "South"
+
+        # concatenate all data frames together
+        all_data = pd.concat([data, data_north, data_east, data_south], ignore_index=True)
+
+        for i in range(len(all_data)):
+            new_accuracy = Model_Accuracy(
+                LogLoss = all_data['LogLoss'][i],
+                AUC = all_data['AUC'][i],
+                KS = all_data['KS'][i],
+                Gini_Norm = all_data['Gini_NormI'][i],
+                Rate_Top10 = all_data['Rate_Top10'][i],
+                Date = all_data['Date'][i],
+                Location = all_data['Location'][i],
+                Target = 50,
+                Predicted = 50,
+                Model_ID = new_model,
+                Dataset_ID=datasetlist_ID
+            )
+            new_accuracy.save()
         return JsonResponse({'success': True})
     except Exception as e:
-        print(e)
+        print("exception",e)
         return JsonResponse({'success': False})
 
 
@@ -171,7 +214,7 @@ def accuracy_chart(request):
         location = None
 
     query_dict = {
-        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Model_ID_id" = \'{}\' AND "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
         'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
         'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
@@ -182,6 +225,10 @@ def accuracy_chart(request):
             'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
+        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\'')
+        model_id = cursor.fetchone()[0]
+        #model_id = 1005
+
         if not start_date:
             start_date = min_date
         if not end_date:
@@ -189,15 +236,15 @@ def accuracy_chart(request):
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
             query = query_dict[resolution].format(
-                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
-                metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict['Daily'].format(
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
-
+            
     column_data = []
     date_labels = []
     for row in data:
@@ -285,7 +332,6 @@ def predicted_actual_chart(request):
             ]
         }
     }
-
     return JsonResponse(chart_data)
 
 
@@ -352,6 +398,49 @@ def service_chart(request):
             ]
         }
     }
+    return JsonResponse(chart_data)
+
+def challenger_chart(request):
+    # Get earliest and latest date from database
+    metric = request.GET.get('metric', "AUC")
+    print(metric)
+    with connection.cursor() as cursor:
+        query = 'SELECT "Date", "Model_ID_id", AVG("{}") FROM core_model_accuracy GROUP BY "Date", "Model_ID_id" ORDER BY "Date", "Model_ID_id"'.format(metric)
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+    model_data = {}
+    date_labels = []
+    for row in data:
+        date = row[0]
+        model_id = row[1]
+        auc = row[2]
+
+        if model_id not in model_data:
+            model_data[model_id] = {'label': 'Model {}'.format(model_id), 'data': []}
+
+        model_data[model_id]['data'].append(auc)
+
+        if date not in date_labels:
+            date_labels.append(date)
+
+    datasets = []
+    for model_id, data in model_data.items():
+        datasets.append({
+            'label': data['label'],
+            'data': data['data'],
+            'fill': False,
+            'lineTension': 0.1
+        })
+
+    chart_data = {
+        'title': 'AUC over time for different models',
+        'data': {
+            'labels': date_labels,
+            'datasets': datasets
+        }
+    }
+
     return JsonResponse(chart_data)
 
 def datadrift(request, Project_Name):
