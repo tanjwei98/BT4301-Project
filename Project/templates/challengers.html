@@ -2,88 +2,79 @@
 
 <!DOCTYPE html>
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Challengers Model Registry [WIP]</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
-    <link rel="stylesheet" href= {% static '/css/tailwind.output.css' %} />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/init-alpine.js"></script> -->
-    <script src={% static '/js/init-alpine.js' %}></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-      defer
-    ></script>
-    <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
-    <script src={% static '/js/charts-lines.js' %} defer></script>
-    <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
-    <script src={% static '/js/charts-pie.js' %} defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-          .dropdown {
-            position: relative;
-            left     : 10px;
-            display: inline-block;
-            margin: 2%;
-          }
 
-          .filterdiv {
-            flex: 1 1 auto
-          }
-          .dropdown-btn {
-            background-color: white;
-            color: #333;
-            padding: 5px;
-            border: none;
-            cursor: pointer;
-            width: 160px;
-            text-align: center;
-          }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challengers Model Registry [WIP]</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="./assets/css/tailwind.output.css" /> -->
+  <link rel="stylesheet" href={% static '/css/tailwind.output.css' %} />
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <!-- <script src="./assets/js/init-alpine.js"></script> -->
+  <script src={% static '/js/init-alpine.js' %}></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+  <!-- <script src="./assets/js/charts-lines.js" defer></script> -->
+  <script src={% static '/js/charts-lines.js' %} defer></script>
+  <!-- <script src="./assets/js/charts-pie.js" defer></script> -->
+  <script src={% static '/js/charts-pie.js' %} defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+  <script src="/static/js/popup.js"></script>
+  <style>
+    .dropdown {
+      position: relative;
+      left: 10px;
+      display: inline-block;
+      margin: 2%;
+    }
 
-          .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            padding: 10px;
-            z-index: 1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            left: 0;
-            right: 0;
-          }
+    .filterdiv {
+      flex: 1 1 auto
+    }
 
-          .dropdown-content button {
-            text-align: center;
-            color: #333;
-            display: block;
-            padding: 10px;
-          }
+    .dropdown-btn {
+      background-color: white;
+      color: #333;
+      padding: 5px;
+      border: none;
+      cursor: pointer;
+      width: 160px;
+      text-align: center;
+    }
 
-          .dropdown:hover .dropdown-content {
-            display: block;
-          }
-    </style>
-  </head>
-  <body>
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
-      :class="{ 'overflow-hidden': isSideMenuOpen }"
-    >
-      <!-- Desktop sidebar -->
-      <!-- <aside
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      padding: 10px;
+      z-index: 1;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      left: 0;
+      right: 0;
+    }
+
+    .dropdown-content button {
+      text-align: center;
+      color: #333;
+      display: block;
+      padding: 10px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
+    <!-- Desktop sidebar -->
+    <!-- <aside
         class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
       >
         <div class="py-4 text-gray-500 dark:text-gray-400">
@@ -499,135 +490,169 @@
                       </tr>
                       <!--  -->
 
-                      </tbody>
-                    </table>
-                  </div>
-                  <div
-                    class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
-                  >
-                    <span class="flex items-center col-span-3">
-                      Showing 3-3 of 3
-                    </span>
-                    <span class="col-span-2"></span>
-                    <!-- Pagination -->
-                    <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                      <nav aria-label="Table navigation">
-                        <ul class="inline-flex items-center">
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-                              aria-label="Previous"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                class="w-4 h-4 fill-current"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                ></path>
-                              </svg>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                            class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              1
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              2
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              3
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              4
-                            </button>
-                          </li>
-                          <li>
-                            <span class="px-3 py-1">...</span>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              8
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple"
-                            >
-                              9
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-                              aria-label="Next"
-                            >
-                              <svg
-                                class="w-4 h-4 fill-current"
-                                aria-hidden="true"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                ></path>
-                              </svg>
-                            </button>
-                          </li>
-                        </ul>
-                      </nav>
-                    </span>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
-                <div>
-                  <label for="segment-dropdown" style="color: white;">Accuracy Metric:</label>
-                  <div class="dropdown">
-                    <button class="dropdown-btn" id="segment-dropdown">Select</button>
-                    <div class="dropdown-content">
-                      <button onclick="selectloc(this)" value="AUC">AUC</button>
-                      <button onclick="selectloc(this)" value="LogLoss">LogLoss</button>
-                      <button onclick="selectloc(this)" value="Gini_Norm">Gini Norm</button>
-                      <button onclick="selectloc(this)" value="KS">KS</button>
-                      <button onclick="selectloc(this)" value="Rate_Top10">Rate_Top10</button>
-                    </div>
-                  </div>
-                </div>
-                  <canvas id="accuracy-chart"></canvas>
+                <div
+                  class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+                  <span class="flex items-center col-span-3">
+                    Showing 3-3 of 3
+                  </span>
+                  <span class="col-span-2"></span>
+                  <!-- Pagination -->
+                  <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+                    <nav aria-label="Table navigation">
+                      <ul class="inline-flex items-center">
+                        <li>
+                          <button
+                            class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                            aria-label="Previous">
+                            <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                              <path
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" fill-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            1
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            2
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            3
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            4
+                          </button>
+                        </li>
+                        <li>
+                          <span class="px-3 py-1">...</span>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            8
+                          </button>
+                        </li>
+                        <li>
+                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                            9
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                            aria-label="Next">
+                            <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                              <path
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" fill-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </span>
                 </div>
               </div>
+              <div>
+                <label for="segment-dropdown" style="color: white;">Accuracy Metric:</label>
+                <div class="dropdown">
+                  <button class="dropdown-btn" id="segment-dropdown">Select</button>
+                  <div class="dropdown-content">
+                    <button onclick="selectloc(this)" value="AUC">AUC</button>
+                    <button onclick="selectloc(this)" value="LogLoss">LogLoss</button>
+                    <button onclick="selectloc(this)" value="Gini_Norm">Gini Norm</button>
+                    <button onclick="selectloc(this)" value="KS">KS</button>
+                    <button onclick="selectloc(this)" value="Rate_Top10">Rate_Top10</button>
+                  </div>
+                </div>
+              </div>
+              <canvas id="accuracy-chart"></canvas>
             </div>
           </div>
+        </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Popup modal for making new champion model -->
+
+  <div id="cham_modal" tabindex="-1" aria-hidden="true"
+    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+    <div class="relative" style='width: 50%; height: 50%;'>
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="height: 100%;">
+        <form id='testmodel_submit'>
+          {% csrf_token %}
+          <div id='m1header' style='color: white; padding: 20px;'>
+            <p>Make new Champion Model</p>
+          </div>
+          <div>
+            <form id="dataset-form" method="GET">
+              <div style = 'color: white; padding-top: 10px'>
+                <p style='padding: 7px'>New Model Name: <span id="new_model_name"></span></p>
+                <p style="padding: 7px; display: inline-block;">Change Comments: </p>
+                <input type="text" id="change_comments" style = 'display: inline-block; height: 30px; vertical-align: middle; color: black; '>
+
+                <p style='padding: 7px;'>
+                  <label for="deployment_dropdown">Select an Deployment Strategy:</label>
+                  <select id="deployment_dropdown" name="deployment_dropdown" style = 'height: 40px; vertical-align: middle; color: black; font-size: 15px;'>
+                    <option value="" selected>Select an option</option>
+                    <option value="bg">Blue / Green</option>
+                    <option value="canary">Canary</option>
+                  </select>
+                </p>
+
+              </div>
+            </form>
+          </div>
+
+
+          <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
+
+            <button 
+              type="button" id='make_cham_model_submit'
+               data-modal-hide="cham_modal" 
+               data-dismiss="modal"
+              style="padding: 2px 10px 2px 10px; margin: 20px;"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              Submit request</button>
+
+            <button id='close-cham_modal' data-modal-hide="cham_modal" data-dismiss="modal"
+              style="padding: 2px 10px 2px 10px" type="button"
+              class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+              cancel</button>
+
+          </div>
+
+        </form>
       </div>
     </div>
   </div>
+
 
   <script>
 
     var cham_btn = $('#cham_btn');
     cham_btn.click(function (event) {
-      new_cham_model_id = 1001; // change to not hardcoded
-      change_comments = 'better accuracy'; // change to not hardcoded
-      // change_comments = document.getElementById("change_comments").value;
+      new_model_name.textContent = '' // jww update the new model champion model name 
+    })
+
+    var make_cham_model_submit = $('#make_cham_model_submit');
+    make_cham_model_submit.click(function (event) {
+      new_cham_model_id = 1001; // jww change to not hardcoded
+      change_comments = document.getElementById("change_comments").value;
       const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
       $.ajax({
         url: "{% url 'make_champion' Project_Name %}",
@@ -652,59 +677,62 @@
     })
 
   </script>
+
 </body>
 
-  <script>
-    let aucCtx = document.getElementById("accuracy-chart").getContext("2d");
-    let aucChart = new Chart(aucCtx, {
-        type: "line",
-        options: {
-          responsive: true,
-        }
-      });
-    $(document).ready(function() {
-        $.ajax({
-          success: (jsonResponse) => {
-            // Load data for the first option
-            loadChart(aucChart)
-          },
-          error: () => console.log("Failed to fetch chart filter options!")
-        });
-      });
-      function loadChart(chart,metric) {
-        $.ajax({
-            url: 'challenger_chart',
-            data: {
-                'metric': metric,
-            },
-            type: "GET",
-            dataType: "json",
-            success: (jsonResponse) => {
-                // Extract data from the response
-                const title = jsonResponse.title;
-                const labels = jsonResponse.data.labels;
-                const datasets = jsonResponse.data.datasets;
+<script>
 
-                // Reset the current chart
-                chart.data.datasets = [];
-                chart.data.labels = [];
+  let aucCtx = document.getElementById("accuracy-chart").getContext("2d");
+  let aucChart = new Chart(aucCtx, {
+    type: "line",
+    options: {
+      responsive: true,
+    }
+  });
+  $(document).ready(function () {
+    $.ajax({
+      success: (jsonResponse) => {
+        // Load data for the first option
+        loadChart(aucChart)
+      },
+      error: () => console.log("Failed to fetch chart filter options!")
+    });
+  });
+  function loadChart(chart, metric) {
+    $.ajax({
+      url: 'challenger_chart',
+      data: {
+        'metric': metric,
+      },
+      type: "GET",
+      dataType: "json",
+      success: (jsonResponse) => {
+        // Extract data from the response
+        const title = jsonResponse.title;
+        const labels = jsonResponse.data.labels;
+        const datasets = jsonResponse.data.datasets;
 
-                // Load new data into the chart
-                chart.data.labels = labels;
-                datasets.forEach(dataset => {
-                    chart.data.datasets.push(dataset);
-                });
-                chart.update();
-            },
-            error: () => console.log("Failed to fetch chart data from !")
+        // Reset the current chart
+        chart.data.datasets = [];
+        chart.data.labels = [];
+
+        // Load new data into the chart
+        chart.data.labels = labels;
+        datasets.forEach(dataset => {
+          chart.data.datasets.push(dataset);
         });
-      }
-      function selectloc(button) {
-        console.log(button.value)
-        var btn = document.getElementById("segment-dropdown");
-        btn.value = button.value; // will just add a hidden value
-        btn.innerHTML = button.value;
-        loadChart(aucChart, button.value)
-      }
-  </script>
+        chart.update();
+      },
+      error: () => console.log("Failed to fetch chart data from !")
+    });
+  }
+  function selectloc(button) {
+    console.log(button.value)
+    var btn = document.getElementById("segment-dropdown");
+    btn.value = button.value; // will just add a hidden value
+    btn.innerHTML = button.value;
+    loadChart(aucChart, button.value)
+  }
+</script>
+
 </html>

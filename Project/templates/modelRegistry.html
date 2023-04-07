@@ -468,7 +468,7 @@
                         </input>
                       </div>
 
-                      <div class="mb-4 mx-6">
+                      <!-- <div class="mb-4 mx-6">
                         <label class="block text-gray-700 font-bold mb-2" for="projectname_select_file">
                           Project Name
                         </label>
@@ -480,7 +480,7 @@
                           {% endfor %}
                         </select>
 
-                      </div>
+                      </div> -->
 
                       <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2" for="dropdown">
@@ -671,6 +671,8 @@
                           type="submit" id='add_mr_btn_file'>
                           Add to Model Registry
                         </button></td>
+
+                        
                     </tr>
                   </table>
                 </div>
@@ -738,7 +740,7 @@
                       </input>
                     </div>
 
-                    <div class="mb-4 mx-6">
+                    <!-- <div class="mb-4 mx-6">
                       <label class="block text-gray-700 font-bold mb-2" for="projectname_select_code">
                         Project Name
                       </label>
@@ -749,7 +751,7 @@
                         <option value="{{ pn.Project_Name }}">{{ pn.Project_Name }}</option>
                         {% endfor %}
                       </select>
-                    </div>
+                    </div> -->
 
                     <div class="mb-4">
                       <label class="block text-gray-700 font-bold mb-2" for="modelversion_code">
@@ -1254,37 +1256,6 @@
     add_mr_btn_file.disabled = true;
     add_mr_btn_file.style.backgroundColor = 'grey';
 
-  //   $(document).ready(function () {
-  //     window.addEventListener('message', event => {
-  //       var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
-  //       var add_mr_btn_file = document.getElementById('add_mr_btn_file');
-
-  //       if (event.origin !== window.location.origin) return;
-  //       const result = event.data;
-
-  //       if (result === 'failed') {
-  //         console.log('Code failed to run');
-  //         testbtn_createnewmodel.disabled = true;
-  //         testbtn_createnewmodel.style.backgroundColor = 'grey';
-  //         // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
-
-  //         add_mr_btn_code.disabled = true;
-  //         add_mr_btn_code.style.backgroundColor = 'grey';
-
-  //       } else {
-  //         console.log('Code ran successfully');
-  //         testbtn_createnewmodel.disabled = false;
-  //         testbtn_createnewmodel.style.backgroundColor = '#007bff';
-  //         // testbtn_createnewmodel.tooltip = '';
-
-  //         add_mr_btn_code.disabled = false;
-  //         add_mr_btn_code.style.backgroundColor = '#007bff';
-          
-  //       }
-
-  //       });
-  // });
-
 
     // check if the code is successful. if not successful, testbtn_createnewmodel is disabled. same for add_mr_btn_code
     var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
@@ -1335,10 +1306,7 @@
     testdata_submit_btn.click(function () {
       console.log('clicked on submit')
       var dataset_rows = parseInt(document.getElementById('num-rows').textContent);
-      if (dataset_rows >= 800) {
-        window.alert('Huge dataset detected. Spinning up RAM for better efficiency')
-      }
-      // check with the team on whether we should show accuracy? get random data? or how does it work?
+      window.alert('Test is Successful')
     });
 
 
@@ -1346,12 +1314,15 @@
     // for files
     var add_mr_btn_file = $('#add_mr_btn_file');
     add_mr_btn_file.click(function (event) {
+
+      // sm add a prompt that it is successful
       event.preventDefault();
       const modelname_file = document.getElementById('modelname_file').value;
       const modellanguage_file = document.getElementById('modellanguage_file').value;
       const version_file = document.getElementById('modelversion_file').value;
       const description_file = document.getElementById('modeldescription_file').value;
-      const project_name_file = document.getElementById('projectname_select_file').value;
+      const project_name_file = ''; // jww 
+      // const project_name_file = document.getElementById('projectname_select_file').value;
       const datasetId_file = datasetSelect.value;
 
 
@@ -1383,10 +1354,9 @@
             'csrfmiddlewaretoken': csrf_token
           },
           success: function (response) {
-            console.log('this is the response')
             console.log(response);
-
-            // location.reload(); // important! change to load challengers page instead
+            window.alert('Model is added to Model Registry');
+            location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);
@@ -1406,7 +1376,8 @@
       const modellanguage_code = language_from_code;
       const version_code = document.getElementById('modelversion_code').value;
       const description_code = document.getElementById('modeldescription_code').value;
-      const project_name_code = document.getElementById('projectname_select_code').value;
+      // const project_name_code = document.getElementById('projectname_select_code').value;
+      const project_name_code = ''; // jww 
       const datasetId_code = datasetSelect.value;
 
       console.log('this is my model language: ', modellanguage_code)
@@ -1416,8 +1387,6 @@
         return;
       }
       else {
-
-        console.log('still run leh')
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
           url: './modelRegistry/add-model/',
@@ -1439,7 +1408,8 @@
           },
           success: function (response) {
             console.log(response);
-            // location.reload(); // important! change to load challengers page instead
+            window.alert('Model is added to Model Registry')
+            location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);

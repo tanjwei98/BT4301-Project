@@ -738,8 +738,7 @@
     $(document).ready(function () {
       $('#approve_btn').click(function (event) {
         event.preventDefault();
-        const model_id = 1001; // need to update this to get the model_id from database
-        const model_status = 1;
+        const model_id = 1001; // jww need to update this to get the model_id from database
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         const comments = document.querySelector('#comments').value;
         if (comments === '') {
@@ -756,7 +755,7 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 'model_id': model_id, 'status': model_status, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
+          data: { 'model_id': model_id, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
 
           success: function (response) {
             console.log(response);
