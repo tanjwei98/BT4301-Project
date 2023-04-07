@@ -661,7 +661,7 @@
         </p>
         <!-- Modal description -->
         <p class="text-sm text-gray-700 dark:text-gray-400">
-          Change Summary:
+          Change Summary: {{ Pending.Change_Comments }}
         </p>
 
 
@@ -738,7 +738,7 @@
     $(document).ready(function () {
       $('#approve_btn').click(function (event) {
         event.preventDefault();
-        const model_id = 1001; // jww need to update this to get the model_id from database
+        const model_id = "{{ Pending_ID }}"; // jww need to update this to get the model_id from database
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         const comments = document.querySelector('#comments').value;
         if (comments === '') {

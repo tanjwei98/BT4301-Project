@@ -2,6 +2,7 @@ from .models import *
 import datetime as dt
 from datetime import date, datetime
 import pandas as pd
+from django.utils import timezone
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -72,7 +73,11 @@ def get_model(ProjectName):
 
 def check_pending(ProjectName):
     model = Model_List.objects.filter(Project_Name = ProjectName, Approve_Status = 'Pending').first()
-    return {"Pending": model}
+    if model == None:
+        model_ID = None
+    else:
+        model_ID = model.Model_ID
+    return {"Pending": model, "Pending_ID":model_ID}
 
 def get_project(ProjectName):
     p_models = Model_List.objects.filter(Project_Name = ProjectName).order_by('-Created_Date')
@@ -165,3 +170,17 @@ def feature_distribution(ProjectName, start_date = datetime(2023,4,6), end_date 
     feature = feature_dist_data["Feature"].iloc[0]
 
     return {"train_dist": training_distribution, "scoring_dist": scoring_distribution, "feature_values": feature_values, 'feature': feature}
+
+# Challenger Page
+def get_registry_models(userID, Project_Name):
+    models = Model_List.objects.filter(User_ID = userID, Project_Name = Project_Name)
+    dataset_id = Model_List.objects.filter(Project_Name = Project_Name, Challenger_Status = 'Champion').first().Dataset_ID_id
+    dataset_target = Dataset_List.objects.filter(Dataset_ID = dataset_id).first().Target
+
+    now = timezone.now()
+    
+    return {"Registry_Models": models, "m_Target":dataset_target, "now_time": now}
+
+def get_registry_count(userID, Project_Name):
+    model_count = Model_List.objects.filter(User_ID = userID, Project_Name = Project_Name).count()
+    return {"Registry_Count": model_count}

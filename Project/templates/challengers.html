@@ -460,34 +460,47 @@
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
 
                       <!-- SOME KIND OF LOOP TO GET ALL MODEL REGISTRY ITEMS -->
+                      {% for r_model in Registry_Models %}
                       <tr class="text-gray-700 dark:text-gray-400">
                         <td class="px-4 py-3">
                           <div class="flex items-center text-sm">
                             <div>
-                              <p class="font-semibold" style="cursor:pointer; text-decoration:underline">HDB Pricing
-                                Prediction</p>
+                              <!-- <p class="font-semibold" style="cursor:pointer; text-decoration:underline">HDB Pricing
+                                Prediction</p> -->
+                              <p> {{ r_model.Model_name }} </p>
                               <p class="text-xs text-gray-600 dark:text-gray-400">
                                 <!--Can include pending status here-->
                               </p>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                          HDB_Price
+                          {{ m_Target }}
                         </td>
                         <td class="px-4 py-3 text-sm">
                           Numerical
                         </td>
                         <td class="px-4 py-3 text-sm">
-                          1 day(s) ago
+                          {{ r_model.Created_Date|timesince:now_time }} ago
+                          <!-- {{ r_model.Created_Date }} -->
                         </td>
+                        {% if r_model.Challenger_Status == "Challenger" %}
                         {% csrf_token %}
                         <td class="px-4 py-3 text-sm">
+                          
                           <button
                             class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                            id='cham_btn' data-modal-target="cham_modal" data-modal-toggle="cham_modal">Make champion
+                            id='cham_btn' data-modal-target="cham_modal" data-modal-toggle="cham_modal" value = "{{ r_model }}">Make champion
                             model</button>
+                            <input type="hidden" id="model_id"  value= "{{ r_model.Model_ID }}">
+                            <input type="hidden" id="model_name" value= "{{ r_model.Model_name }}">
                         </td>
+                        {% else%}
+                        <td class="px-4 py-3 text-sm">
+                          Champion
+                        </td>
+                        {% endif %}
                       </tr>
+                      {% endfor %}
                       <!--  -->
 
                     </tbody>
@@ -496,7 +509,7 @@
                 <div
                   class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
                   <span class="flex items-center col-span-3">
-                    Showing 3-3 of 3
+                    Showing {{ Registry_Count }}-{{ Registry_Count }} of {{ Registry_Count }}
                   </span>
                   <span class="col-span-2"></span>
                   <!-- Pagination -->
@@ -518,34 +531,6 @@
                           <button
                             class="px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple">
                             1
-                          </button>
-                        </li>
-                        <li>
-                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
-                            2
-                          </button>
-                        </li>
-                        <li>
-                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
-                            3
-                          </button>
-                        </li>
-                        <li>
-                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
-                            4
-                          </button>
-                        </li>
-                        <li>
-                          <span class="px-3 py-1">...</span>
-                        </li>
-                        <li>
-                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
-                            8
-                          </button>
-                        </li>
-                        <li>
-                          <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
-                            9
                           </button>
                         </li>
                         <li>
@@ -643,15 +628,17 @@
 
 
   <script>
-
+    var model_id = document.getElementById("model_id").value
+    var model_name = document.getElementById("model_name").value
     var cham_btn = $('#cham_btn');
     cham_btn.click(function (event) {
-      new_model_name.textContent = '' // jww update the new model champion model name 
+      new_model_name.textContent = model_name // jww update the new model champion model name
+      console.log(document.getElementById("cham_btn").value)
     })
 
     var make_cham_model_submit = $('#make_cham_model_submit');
     make_cham_model_submit.click(function (event) {
-      new_cham_model_id = 1001; // jww change to not hardcoded
+      new_cham_model_id = model_id; // jww change to not hardcoded
       change_comments = document.getElementById("change_comments").value;
       const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
       $.ajax({

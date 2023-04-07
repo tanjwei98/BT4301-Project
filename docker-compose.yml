@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+ db:
+  image: postgres
+  environment:
+   POSTGRES_USER: 'postgres'
+   POSTGRES_PASSWORD: 'enter password'
+   POSTGRES_DB: 'BT4301'
+  ports:
+   - "5432:5432"
+
+ django:
+  image: django-docker:0.0.1
+  container_name: first_django_container
+  build: .
+  ports:
+   - "8000:8000"
+  depends_on:
+   - db
+  command: python Project/manage.py runserver 0.0.0.0:8000

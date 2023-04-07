@@ -77,10 +77,15 @@ WSGI_APPLICATION = "MLOpsSuite.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB','Enter database name'),
+        'USER': os.environ.get('POSTGRES_USER','Enter user name'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD','Enter your password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': 5432,
     }
 }
+
 
 
 # Password validation
