@@ -89,17 +89,25 @@ def approveModel(request, model_name):
     # model_status = data.get('status')
 
     model_id = request.POST.get('model_id')
-    model_status = request.POST.get('status')
     comments = request.POST.get('comments')
+    approved_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
     print(model_id)
-    print(model_status)
     try:
-        Model_List.objects.filter(Approve_Status=1).update(
-            Approve_Status=0) # change current champion to normal
-        Model_List.objects.filter(Approve_Status=2).update(
-            Approve_Status=1) # change current pending to champion
-        Model_List.objects.filter(Approve_Status=1).update(
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Challenger_Status='Challenger') # change current champion to Challenger 
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Approve_Status='None') # change current champion to None
+        Model_List.objects.filter(Approve_Status='Pending').update(
+            Approve_Status='Approve') # change current pending to champion
+        Model_List.objects.filter(Approve_Status='Approve').update(
             Approve_Comments=comments) # add approve comments to new champion
+       
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Challenger_Status='Champion') # change new challenger to champion 
+        
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Approved_Date=approved_datetime) # add the approved datetime
+        
         updated_model = Model_List.objects.get(Model_ID=model_id)
         # print the updated fields to the console
         print(
@@ -116,7 +124,7 @@ def approveModel(request, model_name):
 
 def addModel(request):
 
-    print('in add modal view')
+    user_id = request.session["userID"] # returns string
     with connection.cursor() as cursor:
         cursor.execute(
             'SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
@@ -132,9 +140,9 @@ def addModel(request):
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
     # for now, hardcode this. have to change to actual user id when login page is done.
-    user = Users.objects.get(pk='hannah@mlops.com')
-    print(f'THIS IS THE DATASEET ID: {datasetId}')
-    # for now, hardcode this. have to change to actual user id when login page is done.
+    # user = Users.objects.get(pk='hannah@mlops.com')
+    print(user_id)
+    user = Users.objects.get(pk=user_id)
     datasetlist_ID = Dataset_List.objects.get(pk=datasetId)
     try:
         new_model = Model_List(
@@ -143,10 +151,10 @@ def addModel(request):
             Model_version=version,
             Project_Name=project_name,
             Language=language,
-            User_ID=user,  # hardcoded for now
+            User_ID=user, 
             Dataset_ID=datasetlist_ID,
             Model_description=description,
-            Approve_Status=1,
+            Approve_Status='None',
             Approve_User_ID=None,
             Change_Comments='',
             Approve_Comments='',
@@ -155,7 +163,7 @@ def addModel(request):
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
             Accuracy_Status='Passing',
-            Challenger_Status='Challengers'
+            Challenger_Status='Challenger'
         )
         new_model.save()
 

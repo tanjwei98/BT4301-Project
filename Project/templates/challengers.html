@@ -572,9 +572,8 @@
 
     var cham_btn = $('#cham_btn');
     cham_btn.click(function (event) {
-      new_cham_model_id = 1001; // change to not hardcoded
-      change_comments = 'better accuracy'; // change to not hardcoded
-      // change_comments = document.getElementById("change_comments").value;
+      new_cham_model_id = 1001; // jww change to not hardcoded
+      change_comments = document.getElementById("change_comments").value;
       const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
       $.ajax({
         url: './challengers/make_champion_model/',
