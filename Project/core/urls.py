@@ -18,7 +18,6 @@ urlpatterns = [
     path('overview/<model_name>/approve-model/', views.approveModel, name = 'approveModel'),
     path('accuracy/<Project_Name>/', views.accuracy, name = 'accuracy'),
     path('accuracy/<Project_Name>/accuracy_chart/', views.accuracy_chart, name='accuracy_chart'),
-    path('accuracy/<Project_Name>/predicted_actual_chart/', views.predicted_actual_chart, name='predicted_actual_chart'),
     path('service_health/<Project_Name>/', views.service_health, name = 'service_health'),
     path('service_health/<Project_Name>/service_chart', views.service_chart, name = 'service_chart'),
     path('drift/<Project_Name>/', views.datadrift, name = 'drift'),

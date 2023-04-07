@@ -256,7 +256,7 @@ def accuracy_chart(request, Project_Name):
         min_date, max_date = cursor.fetchone()
 
         
-        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\'')
+        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
         model_id = cursor.fetchone()[0]
         #model_id = 1005
 
@@ -298,78 +298,6 @@ def accuracy_chart(request, Project_Name):
     }
     return JsonResponse(chart_data)
 
-
-def predicted_actual_chart(request, Project_Name):
-    start_date = request.GET.get('start_date', None)
-    end_date = request.GET.get('end_date', None)
-    resolution = request.GET.get('resolution', None)
-    location = request.GET.get('location', None)
-    if resolution == 'Select':
-        resolution = None
-    if location == 'Select':
-        location = None
-
-    query_dict = {
-        'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
-    }
-
-    # Get earliest and latest date from database
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
-        min_date, max_date = cursor.fetchone()
-
-        if not start_date:
-            start_date = min_date
-        if not end_date:
-            end_date = max_date
-        if resolution:
-            # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format(
-                "AND \"Location\" = '{}'".format(location) if location else "")
-            cursor.execute(query, [start_date, end_date])
-            data = cursor.fetchall()
-        else:
-            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
-                "AND \"Location\" = '{}'".format(location) if location else "")
-            cursor.execute(query, [start_date, end_date])
-            data = cursor.fetchall()
-
-    target_data = []
-    predicted_data = []
-    date_labels = []
-    for row in data:
-        date_labels.append(row[0])
-        target_data.append(row[1])
-        predicted_data.append(row[2])
-
-    chart_data = {
-        'title': "Target and Predicted over time",
-        'data': {
-            "labels": date_labels,
-            "datasets": [
-                {
-                    "label": "Target",
-                    "data": target_data,
-                    "fill": False,
-                    "borderColor": "rgb(75, 192, 192)",
-                    "lineTension": 0.1
-                },
-                {
-                    "label": "Predicted",
-                    "data": predicted_data,
-                    "fill": False,
-                    "borderColor": "rgb(192, 75, 192)",
-                    "lineTension": 0.1
-                }
-            ]
-        }
-    }
-    return JsonResponse(chart_data)
-
-
 def service_health(request, Project_Name):
     context = {}
     user_id = request.session["userID"]
@@ -389,7 +317,7 @@ def service_chart(request, Project_Name):
         location = None
 
     query_dict = {
-        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Model_ID_id" = \'{}\' AND "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
         'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
         'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
@@ -400,6 +328,10 @@ def service_chart(request, Project_Name):
             'SELECT MIN("Date"), MAX("Date") FROM core_service_health')
         min_date, max_date = cursor.fetchone()
 
+        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
+        model_id = cursor.fetchone()[0]
+        #model_id = 1005
+
         if not start_date:
             start_date = min_date
         if not end_date:
@@ -407,15 +339,15 @@ def service_chart(request, Project_Name):
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
             query = query_dict[resolution].format(
-                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_service_health WHERE "Date" BETWEEN %s AND %s {}'.format(
-                metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict['Daily'].format(
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
-
+            
     column_data = []
     date_labels = []
     for row in data:

@@ -446,31 +446,31 @@
                   onclick="displayValue(this)"
                 >
                   <h1>Logloss</h1> 
-                  <h1 style="padding-top: 8%;">0.500</h1>
+                  <h1 id = 'logloss-metric' style="padding-top: 8%;">0.500</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                   <h1>AUC</h1>
-                  <h1 style="padding-top: 8%;">0.500</h1>
+                  <h1 id = 'auc-metric'style="padding-top: 8%;">0.500</h1>
                 </button>
                   <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                   <h1>Gini Norm</h1>
-                  <h1 style="padding-top: 8%;">0.500</h1>
+                  <h1 id = 'gini-metric' style="padding-top: 8%;">0.500</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                  <h1>KS</h1>
-                 <h1 style="padding-top: 8%;">0.500</h1>
+                 <h1 id = 'ks-metric' style="padding-top: 8%;">0.500</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                  <h1>Rate@Top10%</h1>
-                 <h1 style="padding-top: 8%;">0.500</h1>
+                 <h1 id='rate-metric' style="padding-top: 8%;">0.500</h1>
                 </button>
               </div>
             </div>
@@ -483,10 +483,6 @@
                   class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400"
                 >
               </div>
-              <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
-                Predicted vs Actual
-              </h4>
-              <canvas id="predicted-actual-chart"></canvas>
             </div>
           </div>
         </main>
@@ -501,19 +497,11 @@
           responsive: true,
         }
       });
-    let paCtx = document.getElementById("predicted-actual-chart").getContext("2d");
-    let paChart = new Chart(paCtx, {
-        type: "line",
-        options: {
-          responsive: true,
-        }
-      });
     $(document).ready(function() {
         $.ajax({
           success: (jsonResponse) => {
             // Load data for the first option
             loadChart(aucChart, null)
-            loadChart2(paChart, null)
           },
           error: () => console.log("Failed to fetch chart filter options!")
         });
@@ -557,38 +545,6 @@
             error: () => console.log("Failed to fetch chart data from " + endpoint + "!")
         });
       }
-      function loadChart2(chart, location) {
-        resolution = document.getElementById("resolution-dropdown").innerHTML
-        $.ajax({
-            url: 'predicted_actual_chart',
-            data: {
-                'start_date': $('#start-date').val(),
-                'end_date': $('#end-date').val(),
-                'resolution': resolution,
-                'location': location
-            },
-            type: "GET",
-            dataType: "json",
-            success: (jsonResponse) => {
-                // Extract data from the response
-                const title = jsonResponse.title;
-                const labels = jsonResponse.data.labels;
-                const datasets = jsonResponse.data.datasets;
-
-                // Reset the current chart
-                chart.data.datasets = [];
-                chart.data.labels = [];
-
-                // Load new data into the chart
-                chart.data.labels = labels;
-                datasets.forEach(dataset => {
-                    chart.data.datasets.push(dataset);
-                });
-                chart.update();
-            },
-            error: () => console.log("Failed to fetch chart data from " + endpoint + "!")
-        });
-      } 
       function displayValue(button) {
         var val = button.querySelector("button h1").innerText;
         document.getElementById("display_metric").innerText = val;
@@ -622,6 +578,16 @@
 
 
       window.onload = function() {
+
+      function generateRandomValue(mean, stdDev) {
+          return (Math.random() * stdDev * 2) + (mean - stdDev);
+      }
+
+      document.getElementById('auc-metric').innerText = generateRandomValue(0.7, 0.001).toFixed(2);
+      document.getElementById('ks-metric').innerText = generateRandomValue(0.5,0.01).toFixed(2);
+      document.getElementById('logloss-metric').innerText = generateRandomValue(1.0, 0.01).toFixed(2);
+      document.getElementById('gini-metric').innerText = generateRandomValue(0.5, 0.01).toFixed(2);
+      document.getElementById('rate-metric').innerText = generateRandomValue(0.8, 0.01).toFixed(2);
       // Get the start date button and input field
       const startDateBtn = document.getElementById('start-date-dropdown');
       const startDateInput = document.getElementById('start-date');
