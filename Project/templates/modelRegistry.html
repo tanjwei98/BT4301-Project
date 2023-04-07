@@ -414,27 +414,27 @@
             <ul class="flex">
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview">Overview</a>
+                  href="{% url 'overview' Project_Name %}">Overview</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview/service_health">Service Health</a>
+                  href="{% url 'service_health' Project_Name %}">Service Health</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/drift">Data Drift</a>
+                  href="{% url 'drift' Project_Name %}">Data Drift</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview/accuracy">Accuracy</a>
+                  href="{% url 'accuracy' Project_Name %}">Accuracy</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/humility">Humility</a>
+                  href="{% url 'humility' Project_Name %}">Humility</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/challengers">Challengers</a>
+                  href="{% url 'challengers' Project_Name %}">Challengers</a>
               </li>
             </ul>
           </div>
@@ -468,7 +468,7 @@
                         </input>
                       </div>
 
-                      <div class="mb-4 mx-6">
+                      <!-- <div class="mb-4 mx-6">
                         <label class="block text-gray-700 font-bold mb-2" for="projectname_select_file">
                           Project Name
                         </label>
@@ -480,7 +480,7 @@
                           {% endfor %}
                         </select>
 
-                      </div>
+                      </div> -->
 
                       <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2" for="dropdown">
@@ -490,8 +490,9 @@
                           class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           id="modellanguage_file" name="dropdown">
                           <option value="python">Python</option>
-                          <option value="java">Java</option>
                           <option value="javascript">Javascript</option>
+                          <option value="c">C</option>
+                          <option value="cpp">C++</option>
                         </select>
                       </div>
 
@@ -522,87 +523,56 @@
                         <button id="open-form"
                           class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 mr-1"
                           type="button">+Add new files</button>
-                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2" id="gitlab-button">Access GitLab</button>                      
-                          <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
-                            Create new version
-                          </button>
-                          <form id="upload-form" class="hidden" enctype="multipart/form-data">
                         <button
                           class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700 ml-2"
                           id="gitlab-button">Access GitLab</button>
                         <form id="upload-form" class="hidden" enctype="multipart/form-data">
                           <div class="flex items-center justify-between mr-1">
                             <input type="file" name="file" id="file-input" />
-                            <button type="submit"
-                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                            <!-- <button type="submit" -->
+                            <button type="button"
+                              class="bg-blue-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                              id="upload-file-btn">
                               Upload
                             </button>
-                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2" type="close" id="close">Close</button>
-                          </form>
-                          
-                        </div>
-                        
-                          <div id="output-div" class="hidden">
-                            <ul id="output-list" class="list-disc ml-5"></ul>
-                          </div>
-                          
-                          <script>
-                            var gitlabButton = document.getElementById("gitlab-button");
-                            gitlabButton.addEventListener("click", openGitLab);
-                            const form = document.getElementById("upload-form");
-                            const button = document.getElementById("open-form");
-                            const fileInput = document.getElementById("file-input");
-                            const gitUrlInput = document.getElementById("git-url-input");
-                            const outputDiv = document.getElementById('output-div');
-                            const outputList = document.getElementById('output-list');
+                            <button
+                              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
+                              type="close" id="close">Close</button>
+                        </form>
+                      </div>
+                      <script>
+                        var gitlabButton = document.getElementById("gitlab-button");
+                        gitlabButton.addEventListener("click", openGitLab);
+                        const form = document.getElementById("upload-form");
+                        const button = document.getElementById("open-form");
+                        const fileInput = document.getElementById("file-input");
+                        const gitUrlInput = document.getElementById("git-url-input");
+                        const uploadFileBtn = document.getElementById("upload-file-btn");
 
                         button.addEventListener("click", () => {
                           form.classList.remove("hidden");
                         });
 
+                        uploadFileBtn.addEventListener("click", () => {
+                          alert('Successfully uploaded file.')
+
+                          // reenable buttons after file is uploaded.
+                          var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+                          var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+                          
+                          testbtn_addnewmodel.disabled = false;
+                          testbtn_addnewmodel.style.backgroundColor = '#007bff';
+
+                          add_mr_btn_file.disabled = false;
+                          add_mr_btn_file.style.backgroundColor = '#007bff';
+                        });
+
                         var gitlabButton = document.getElementById("gitlab-button");
                         gitlabButton.addEventListener("click", openGitLab);
 
-                            function openGitLab() {
-                              //window.open("http://192.168.1.109:80/gitlab-instance-07999c85", "_blank");
-                              window.open("http://192.168.1.109/", "_blank");
-                              //window.open("http://192.168.1.109/gitlab-instance-07999c85/first-gitlab-project/-/blob/main/IT5005_AI_Assignment_3-3.ipynb", "_blank");
-
-                              const projectName = 'second gitlab project'; // replace with your project ID
-                              //const apiEndpoint = `http://192.168.1.109/gitlab-instance-07999c85/`;
-                              const apiUrl = 'http://localhost/api/v4/projects/';
-                              const token = 'glpat-nxsPeUx-Tvnca3SWfKyB';
-                              fetch(`${apiUrl}?search=${projectName}`, {
-                                  headers: { "PRIVATE-TOKEN": token },
-                                })
-                                  .then((response) => response.json())
-                                  .then((data) => {
-                                    const projectId = data[0].id;
-
-                                    // Fetch files in project
-                                    //fetch(`${apiUrl}${projectId}/repository/tree`, {
-                                    fetch(`${apiUrl}${projectId}/repository/tree?path=src`, {
-                                      headers: { "PRIVATE-TOKEN": token },
-                                    })
-                                      .then((response) => response.json())
-                                      //.then((data) => console.log(data))
-                                      .then((data) => {
-                                        const fileNames = data.map(file => file.name);
-                                        console.log(fileNames);
-                                        outputList.innerHTML = '';
-                                        fileNames.forEach(name => {
-                                          const li = document.createElement('li');
-                                          li.textContent = name;
-                                          outputList.appendChild(li);
-                                        });
-                                        outputDiv.classList.remove('hidden');
-                                        console.log("Success");
-                                      })
-                                      .catch((error) => console.error(error));
-                                  })
-                                  .catch((error) => console.error(error));
-
-                              }
+                        function openGitLab() {
+                          window.open("http://192.168.1.109:80", "_blank");
+                        }
 
                         fileInput.addEventListener("change", () => {
                           gitUrlInput.classList.add("hidden");
@@ -630,35 +600,41 @@
 
                     </div>
 
+                    <button class="mb-4 bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700">
+                      Create new version
+                    </button>
 
+                  </div>
+
+                  <div id="myModal" tabindex="-1" aria-hidden="true"
+                    class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+                    <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+
+                    <div
+                      class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+
+                      <div
+                        class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
+                        <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                          viewBox="0 0 18 18">
+                          <path d="M1 1l16 16m-16 0L1 17"></path>
+                        </svg>
+                        <span class="text-sm">(Esc)</span>
                       </div>
 
-                      <div id="myModal" tabindex="-1" aria-hidden="true"
-                        class="modal fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
-                        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-                      
-                        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
-                      
-                          <div class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
-                            <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                              <path d="M1 1l16 16m-16 0L1 17"></path>
-                            </svg>
-                            <span class="text-sm">(Esc)</span>
-                          </div>
-                      
-                          <div class="modal-content py-4 text-left px-6">
-                            <h1 class="modal-header font-bold text-2xl mb-2">Modal Title</h1>
-                            <p class="modal-text text-gray-700 mb-4">Modal content goes here.</p>
-                      
-                            <div class="modal-buttons flex justify-end pt-2">
-                              <button id="modalCloseButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-                                Close
-                              </button>
-                              <button id="modalConfirmButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Confirm
-                              </button>
-                            </div>
-                          </div>
+                      <div class="modal-content py-4 text-left px-6">
+                        <h1 class="modal-header font-bold text-2xl mb-2">Modal Title</h1>
+                        <p class="modal-text text-gray-700 mb-4">Modal content goes here.</p>
+
+                        <div class="modal-buttons flex justify-end pt-2">
+                          <button id="modalCloseButton"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                            Close
+                          </button>
+                          <button id="modalConfirmButton"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            Confirm
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -676,7 +652,7 @@
                     <tr>
                       <td class="border border-black px-4 py-2 text-center">
                         <button data-modal-target="testmodel" data-modal-toggle="testmodel"
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn"
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn_addnewmodel"
                           type="button">
                           Test Model
                         </button>
@@ -695,6 +671,8 @@
                           type="submit" id='add_mr_btn_file'>
                           Add to Model Registry
                         </button></td>
+
+                        
                     </tr>
                   </table>
                 </div>
@@ -762,7 +740,7 @@
                       </input>
                     </div>
 
-                    <div class="mb-4 mx-6">
+                    <!-- <div class="mb-4 mx-6">
                       <label class="block text-gray-700 font-bold mb-2" for="projectname_select_code">
                         Project Name
                       </label>
@@ -773,7 +751,7 @@
                         <option value="{{ pn.Project_Name }}">{{ pn.Project_Name }}</option>
                         {% endfor %}
                       </select>
-                    </div>
+                    </div> -->
 
                     <div class="mb-4">
                       <label class="block text-gray-700 font-bold mb-2" for="modelversion_code">
@@ -804,7 +782,7 @@
                       <tr>
                         <td class="border border-black px-4 py-2 text-center"> <button
                             class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn">
+                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn_createnewmodel">
                             Test Model
                           </button>
                         </td>
@@ -1159,7 +1137,7 @@
       console.log('in eventlistener')
       event.preventDefault();
       const formData = new FormData(translateForm);
-      fetch('/app/challengers/modelRegistry/translate/', {
+      fetch("{% url 'translate_code' Project_Name %}", {
         method: 'POST',
         body: formData,
       }).then(response => response.json())
@@ -1252,7 +1230,7 @@
         numFeatures.textContent = '';
         targetVariable.textContent = '';
       } else {
-        xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
+        xhr.open('GET', "{% url 'modelRegistry' Project_Name %}?dataset_id=${datasetId}");
         xhr.setRequestHeader('Accept', 'application/json'); // add this line
         xhr.onload = () => {
           const dataset = JSON.parse(xhr.responseText);
@@ -1268,29 +1246,56 @@
 
     var language_from_code;
 
-    // check if the code is successful
+
+    // check if code file has been uploaded. if not uploaded, testbtn_addnewmodel is disabled. same for add_mr_btn_file
+    var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
+    testbtn_addnewmodel.disabled = true;
+    testbtn_addnewmodel.style.backgroundColor = 'grey';
+
+    var add_mr_btn_file = document.getElementById('add_mr_btn_file');
+    add_mr_btn_file.disabled = true;
+    add_mr_btn_file.style.backgroundColor = 'grey';
+
+
+    // check if the code is successful. if not successful, testbtn_createnewmodel is disabled. same for add_mr_btn_code
+    var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
+    testbtn_createnewmodel.disabled = true;
+    testbtn_createnewmodel.style.backgroundColor = 'grey';
+    // testbtn_createnewmodel.tooltip = 'Please run code before testing';
+
+    var add_mr_btn_code = document.getElementById('add_mr_btn_code');
+    add_mr_btn_code.disabled = true;
+    add_mr_btn_code.style.backgroundColor = 'grey';
+    
     $(document).ready(function () {
       window.addEventListener('message', event => {
-        // var testbtn = document.getElementById('testbtn');
-        var testbtn = $('#testbtn');
-        console.log(testbtn.text())
+        var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
+        var add_mr_btn_code = document.getElementById('add_mr_btn_code');
 
         if (event.origin !== window.location.origin) return;
-
-        // const { result } = event.data;
-        language_from_code = event.data.language;
-        const result = event.data.result;
+        const child_data = event.data;
+        const result = child_data.result;
+        language_from_code = child_data.lang;
+        console.log('this is the result in mod reg:  ', child_data);
 
         if (result === 'failed') {
           console.log('Code failed to run');
-          testbtn.prop('disabled', true);
-          console.log(testbtn.prop('disabled')); // currently not working. have to look into it again
+          testbtn_createnewmodel.disabled = true;
+          testbtn_createnewmodel.style.backgroundColor = 'grey';
+          // testbtn_createnewmodel.tooltip = 'Please fix the code before testing';
+
+          add_mr_btn_code.disabled = true;
+          add_mr_btn_code.style.backgroundColor = 'grey';
 
         } else {
           console.log('Code ran successfully');
-          testbtn.prop('disabled', false);
-          console.log(testbtn.prop('disabled'));
+          testbtn_createnewmodel.disabled = false;
+          testbtn_createnewmodel.style.backgroundColor = '#007bff';
+          // testbtn_createnewmodel.tooltip = '';
 
+          add_mr_btn_code.disabled = false;
+          add_mr_btn_code.style.backgroundColor = '#007bff';
+          
         }
       });
     });
@@ -1301,10 +1306,7 @@
     testdata_submit_btn.click(function () {
       console.log('clicked on submit')
       var dataset_rows = parseInt(document.getElementById('num-rows').textContent);
-      if (dataset_rows >= 800) {
-        window.alert('Huge dataset detected. Spinning up RAM for better efficiency')
-      }
-      // check with the team on whether we should show accuracy? get random data? or how does it work?
+      window.alert('Test is Successful')
     });
 
 
@@ -1312,12 +1314,15 @@
     // for files
     var add_mr_btn_file = $('#add_mr_btn_file');
     add_mr_btn_file.click(function (event) {
+
+      // sm add a prompt that it is successful
       event.preventDefault();
       const modelname_file = document.getElementById('modelname_file').value;
       const modellanguage_file = document.getElementById('modellanguage_file').value;
       const version_file = document.getElementById('modelversion_file').value;
       const description_file = document.getElementById('modeldescription_file').value;
-      const project_name_file = document.getElementById('projectname_select_file').value;
+      const project_name_file = "{{ Project_Name }}"; // jww 
+      // const project_name_file = document.getElementById('projectname_select_file').value;
       const datasetId_file = datasetSelect.value;
 
 
@@ -1349,10 +1354,9 @@
             'csrfmiddlewaretoken': csrf_token
           },
           success: function (response) {
-            console.log('this is the response')
             console.log(response);
-
-            // location.reload(); // important! change to load challengers page instead
+            window.alert('Model is added to Model Registry');
+            location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);
@@ -1372,20 +1376,20 @@
       const modellanguage_code = language_from_code;
       const version_code = document.getElementById('modelversion_code').value;
       const description_code = document.getElementById('modeldescription_code').value;
-      const project_name_code = document.getElementById('projectname_select_code').value;
+      // const project_name_code = document.getElementById('projectname_select_code').value;
+      const project_name_code = "{{ Project_Name }}"; // jww 
       const datasetId_code = datasetSelect.value;
 
+      console.log('this is my model language: ', modellanguage_code)
 
       if (modelname_code === '' || modellanguage_code === '' || version_code === '' || description_code === '' || project_name_code === 'default' || datasetId_code === 'default') {
         window.alert('Please fill up all information before adding to model registry')
         return;
       }
       else {
-
-        console.log('still run leh')
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({
-          url: './add-model/',
+          url: './modelRegistry/add-model/',
           type: 'POST',
           beforeSend: function (xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", csrf_token);
@@ -1404,6 +1408,7 @@
           },
           success: function (response) {
             console.log(response);
+            window.alert('Model is added to Model Registry')
             location.reload(); // important! change to load challengers page instead
           },
           error: function (xhr, status, error) {

@@ -25,6 +25,7 @@ from datetime import datetime
 # from models import Model_Accuracy
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import numpy as np
 
 # Create your views here.
 
@@ -66,6 +67,7 @@ def deployment(request):
     context.update(get_data_drift(user_id, user_role))
     context.update(get_accuracy(user_id, user_role))
     context.update(deployed_models(user_id, user_role))
+    context.update(get_pending(user_id, user_role))
     return render(request, "deployments.html", context)
 
 
@@ -76,7 +78,8 @@ def overview(request, Project_Name):
     context.update({'Project_Name': Project_Name})
     context.update(get_model(Project_Name))
     context.update(get_dataset(Project_Name))
-
+    context.update(get_project(Project_Name))
+    context.update(check_pending(Project_Name))
     return render(request, "overview.html", context)
     # return HttpResponseRedirect(reverse('overview', args=(model_id,)))
 
@@ -87,29 +90,47 @@ def approveModel(request, model_name):
     # model_status = data.get('status')
 
     model_id = request.POST.get('model_id')
-    model_status = request.POST.get('status')
     comments = request.POST.get('comments')
+    approved_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
     print(model_id)
-    print(model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(
-        Approve_Status=model_status)
-    Model_List.objects.filter(Model_ID=model_id).update(
-        Change_Comments=comments)
-    updated_model = Model_List.objects.get(Model_ID=model_id)
-    # print the updated fields to the console
-    print(
-        f"Updated status: {updated_model.Model_name}, {updated_model.Approve_Status}")
-    print(
-        f"Updated comments: {updated_model.Model_name}, {updated_model.Change_Comments}")
-    return JsonResponse({'success': True})
-
-
-def addModel(request):
-
-    with connection.cursor() as cursor:
-        cursor.execute('SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
-        max_id = cursor.fetchone()[0]
+    try:
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Challenger_Status='Challenger') # change current champion to Challenger 
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Approve_Status='None') # change current champion to None
+        Model_List.objects.filter(Approve_Status='Pending').update(
+            Approve_Status='Approve') # change current pending to champion
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Approve_Comments=comments) # add approve comments to new champion
+       
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Challenger_Status='Champion') # change new challenger to champion 
         
+        Model_List.objects.filter(Approve_Status='Approve').update(
+            Approved_Date=approved_datetime) # add the approved datetime
+        
+        updated_model = Model_List.objects.get(Model_ID=model_id)
+        # print the updated fields to the console
+        print(
+            f"Updated status: {updated_model.Model_ID}, {updated_model.Approve_Status}")
+        print(
+            f"Updated comments: {updated_model.Model_ID}, {updated_model.Approve_Comments}")
+        return JsonResponse({'success': True})
+    
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
+
+
+
+def addModel(request, Project_Name):
+
+    user_id = request.session["userID"] # returns string
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
+        max_id = cursor.fetchone()[0]
+
     new_id = int(max_id) + 1
     model_name = request.POST.get('model_name')
     project_name = request.POST.get('project_name')
@@ -119,43 +140,99 @@ def addModel(request):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
-    user = Users.objects.get(pk='hannah@mlops.com') # for now, hardcode this. have to change to actual user id when login page is done. 
-    print(f'THIS IS THE DATASEET ID: {datasetId}')
-    datasetlist_ID = Dataset_List.objects.get(pk=datasetId) # for now, hardcode this. have to change to actual user id when login page is done. 
+    # for now, hardcode this. have to change to actual user id when login page is done.
+    # user = Users.objects.get(pk='hannah@mlops.com')
+    print(user_id)
+    user = Users.objects.get(pk=user_id)
+    datasetlist_ID = Dataset_List.objects.get(pk=datasetId)
     try:
         new_model = Model_List(
-            Model_ID = new_id,
+            Model_ID=new_id,
             Model_name=model_name,
             Model_version=version,
             Project_Name=project_name,
             Language=language,
-            User_ID=user,  # hardcoded for now
+            User_ID=user, 
             Dataset_ID=datasetlist_ID,
             Model_description=description,
-            Approve_Status=1,
+            Approve_Status='None',
             Approve_User_ID=None,
             Change_Comments='',
             Approve_Comments='',
             Created_Date=current_datetime,  # datetime field
-            Approved_Date= None, #might want to change it to allow null instead
+            Approved_Date=None,  # might want to change it to allow null instead
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
             Accuracy_Status='Passing',
-            Challenger_Status='Challengers'
+            Challenger_Status='Challenger'
         )
         new_model.save()
-        
+
+        # create dates for the data
+        timez = pytz.timezone('Asia/Singapore')
+        dates = pd.date_range(start='4/6/2022', periods=5,tz=timez).normalize()
+        print(dates)
+
+        # create a dataframe with the columns
+        data = pd.DataFrame({'Date': dates})
+
+        # generate random data for each column
+        data['AUC'] = np.random.normal(loc=0.77, scale=0.001, size=len(dates))
+        data['KS'] = np.random.normal(loc=0.6, scale=0.1, size=len(dates))
+        data['LogLoss'] = np.random.normal(loc=0.65, scale=0.01, size=len(dates))
+        data['Gini_NormI'] = np.random.normal(loc=0.2, scale=0.01, size=len(dates))
+        data['Rate_Top10'] = np.random.normal(loc=0.9, scale=0.01, size=len(dates))
+        data['Location'] = "West"
+
+        # create the other data frames with different locations
+        data_north = data.copy()
+        data_north['Location'] = "North"
+
+        data_east = data.copy()
+        data_east['Location'] = "East"
+
+        data_south = data.copy()
+        data_south['Location'] = "South"
+
+        # concatenate all data frames together
+        all_data = pd.concat([data, data_north, data_east, data_south], ignore_index=True)
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'SELECT MAX("id") FROM core_model_accuracy;')
+            max_accuracy_id = cursor.fetchone()[0]
+        print(max_accuracy_id)
+
+        for i in range(len(all_data)):
+            new_accuracy = Model_Accuracy(
+                id = max_accuracy_id + i + 1,
+                LogLoss = all_data['LogLoss'][i],
+                AUC = all_data['AUC'][i],
+                KS = all_data['KS'][i],
+                Gini_Norm = all_data['Gini_NormI'][i],
+                Rate_Top10 = all_data['Rate_Top10'][i],
+                Date = all_data['Date'][i],
+                Location = all_data['Location'][i],
+                Target = 50,
+                Predicted = 50,
+                Model_ID = new_model,
+                Dataset_ID=datasetlist_ID
+            )
+            new_accuracy.save()
         return JsonResponse({'success': True})
     except Exception as e:
-        print(e)
+        print("exception",e)
         return JsonResponse({'success': False})
 
 
-def accuracy(request):
-    return render(request, "accuracy.html")
+def accuracy(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "accuracy.html", context)
 
 
-def accuracy_chart(request):
+def accuracy_chart(request, Project_Name):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     metric = request.GET.get('metric', None)
@@ -167,7 +244,7 @@ def accuracy_chart(request):
         location = None
 
     query_dict = {
-        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Daily': 'SELECT "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Model_ID_id" = \'{}\' AND "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
         'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
         'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("{}") as "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
@@ -178,6 +255,11 @@ def accuracy_chart(request):
             'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
+        
+        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\'')
+        model_id = cursor.fetchone()[0]
+        #model_id = 1005
+
         if not start_date:
             start_date = min_date
         if not end_date:
@@ -185,15 +267,15 @@ def accuracy_chart(request):
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
             query = query_dict[resolution].format(
-                metric, metric, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "{}" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
-                metric, "AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict['Daily'].format(
+                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
-
+            
     column_data = []
     date_labels = []
     for row in data:
@@ -216,25 +298,27 @@ def accuracy_chart(request):
     }
     return JsonResponse(chart_data)
 
-def predicted_actual_chart(request):
-    start_date = request.GET.get('start_date',None)
-    end_date = request.GET.get('end_date',None)
-    resolution = request.GET.get('resolution',None)
-    location = request.GET.get('location',None)
+
+def predicted_actual_chart(request, Project_Name):
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    resolution = request.GET.get('resolution', None)
+    location = request.GET.get('location', None)
     if resolution == 'Select':
         resolution = None
     if location == 'Select':
         location = None
 
     query_dict = {
-    'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
-    'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
-    'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
+        'Daily': 'SELECT "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY "Date" ORDER BY "Date"',
+        'Weekly': 'SELECT date_trunc(\'week\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'week\', "Date") ORDER BY "Date"',
+        'Monthly': 'SELECT date_trunc(\'month\', "Date") as "Date", AVG("Target") as "target", AVG("Predicted") as "predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {} GROUP BY date_trunc(\'month\', "Date") ORDER BY "Date"'
     }
 
     # Get earliest and latest date from database
     with connection.cursor() as cursor:
-        cursor.execute('SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
+        cursor.execute(
+            'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
         if not start_date:
@@ -243,11 +327,13 @@ def predicted_actual_chart(request):
             end_date = max_date
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
-            query = query_dict[resolution].format("AND \"Location\" = '{}'".format(location) if location else "")
+            query = query_dict[resolution].format(
+                "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
-            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format("AND \"Location\" = '{}'".format(location) if location else "")
+            query = 'SELECT "Date", "Target", "Predicted" FROM core_model_accuracy WHERE "Date" BETWEEN %s AND %s {}'.format(
+                "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
 
@@ -281,15 +367,17 @@ def predicted_actual_chart(request):
             ]
         }
     }
-
     return JsonResponse(chart_data)
 
 
-def service_health(request):
-    return render(request, "service_health.html")
+def service_health(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "service_health.html", context)
 
 
-def service_chart(request):
+def service_chart(request, Project_Name):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     metric = request.GET.get('metric', None)
@@ -350,21 +438,79 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
+def challenger_chart(request, Project_Name):
+    # Get earliest and latest date from database
+    metric = request.GET.get('metric', "AUC")
+    print(metric)
+    with connection.cursor() as cursor:
+        query = 'SELECT "Date", "Model_ID_id", AVG("{}") FROM core_model_accuracy GROUP BY "Date", "Model_ID_id" ORDER BY "Date", "Model_ID_id"'.format(metric)
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+    model_data = {}
+    date_labels = []
+    for row in data:
+        date = row[0]
+        model_id = row[1]
+        auc = row[2]
+
+        if model_id not in model_data:
+            model_data[model_id] = {'label': 'Model {}'.format(model_id), 'data': []}
+
+        model_data[model_id]['data'].append(auc)
+
+        if date not in date_labels:
+            date_labels.append(date)
+
+    datasets = []
+    for model_id, data in model_data.items():
+        datasets.append({
+            'label': data['label'],
+            'data': data['data'],
+            'fill': False,
+            'lineTension': 0.1
+        })
+
+    chart_data = {
+        'title': 'AUC over time for different models',
+        'data': {
+            'labels': date_labels,
+            'datasets': datasets
+        }
+    }
+
+    return JsonResponse(chart_data)
+
 def datadrift(request, Project_Name):
     context = {}
     user_id = request.session["userID"]
     context.update({'Project_Name': Project_Name})
     context.update(drift_importance(Project_Name))
+    context.update(feature_distribution(Project_Name))
+
+    if request.method == 'POST':
+        if request.POST['form_id'] == 'chart_change':
+            start_date = request.POST['start_time_option']
+            end_date = request.POST['end_time_option']
+            context.update(drift_importance(
+                Project_Name, start_date, end_date))
+            context.update(feature_distribution(
+                Project_Name, start_date, end_date))
+            return JsonResponse(context)
+
     return render(request, "datadrift.html", context)
 
 
-def challengers(request):
-    return render(request, "challengers.html")
+def challengers(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "challengers.html", context)
 
 
-def modelRegistry(request):
+def modelRegistry(request, Project_Name):
     dataset_list = Dataset_List.objects.all()
-    project_name = Model_List.objects.values('Project_Name').distinct()
+    # project_name = Model_List.objects.values('Project_Name').distinct()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
         Dataset_id = request.GET.get('dataset_id')
@@ -378,15 +524,21 @@ def modelRegistry(request):
         return JsonResponse(dataset_list)
 
     # Otherwise, return the HTML page
-    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'project_name': project_name})
+    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'Project_Name': Project_Name})
 
 
-def humility(request):
-    return render(request, "humility.html")
+def humility(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "humility.html", context)
 
 
-def humility_add(request):
-    return render(request, "humilityAdd.html")
+def humility_add(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "humilityAdd.html", context)
 
 # def mregistry(request):
 #     return render(request, "mregistry.html")
@@ -552,7 +704,7 @@ def handler404(request):
 # import pybind11 # Python to cpp
 
 
-def translate_code(request):
+def translate_code(request, Project_Name):
     if request.method == 'POST':
         translate_from = request.POST['portFromLanguage']
         translate_to = request.POST['portToLanguage']
@@ -709,7 +861,7 @@ def translate_code(request):
 
 
 # CODE EDITOR
-def save_saved(request):
+def save_saved(request, Project_Name):
     if request.method == 'POST':
         code = request.POST['code']
         lang = request.POST['filechooser']
@@ -721,7 +873,7 @@ def save_saved(request):
             fp.close()
             print(f'saved as {_filename}')
         messages.success(request, f"Successfully saved file {_filename}.")
-        return redirect('/app/challengers/modelRegistry')
+        return redirect(reverse("modelRegistry", Project_Name))
 
 
 # retrieve data information from the database, when user select data to test model
@@ -775,3 +927,31 @@ def userlogout(request):
     # if (request.GET.get("logoutbtn")):
         # del request.session["userLogin"]
         return render(request, 'logoutpage.html')
+
+
+def make_champion_model(request, Project_Name):
+    
+    new_cham_model_id = request.POST.get('model_id')
+    comments = request.POST.get('comments')
+    
+    try:
+        Model_List.objects.filter(Model_ID=new_cham_model_id).update(
+            Approve_Status=2)
+        Model_List.objects.filter(Model_ID=new_cham_model_id).update(
+            Change_Comments=comments)
+        return JsonResponse({'success': True})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'success': False})
+    
+    # try:
+    #     with connection.cursor() as cursor:
+    #         query = f"UPDATE core_model_list SET Approve_Status = 2 WHERE model_id = {new_cham_model_id};"
+    #         cursor.execute(query)
+    #         connection.commit()
+    #     return JsonResponse({'success': True})
+    # except Exception as e:
+    #     print(e)
+    #     return JsonResponse({'success': False})
+
+    
