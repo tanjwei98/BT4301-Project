@@ -22,5 +22,5 @@ import core.views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('app/', include('core.urls')),
-    path('', core.views.handler404)
+    path('', core.views.userlogin)
 ]

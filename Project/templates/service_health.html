@@ -118,6 +118,9 @@
             <!-- Search input -->
             <div class="flex justify-center flex-1 mx-30 lg:mr-32">
             </div>
+            {% if request.session.userLogin  %}
+            <p class = "text-gray-600 dark:text-gray-400 mr-4">{{ request.session.userID }}</p>
+            {% endif %}
             <ul class="flex items-center flex-shrink-0 space-x-6">
               <!-- Theme toggler -->
               <li class="flex">
@@ -262,10 +265,10 @@
                     </li>
                     <li class="flex">
                       <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
+                      class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                      href="{% url 'logout' %}"
                       >
-                        <span>Log out</span>
+                      <span>Log out</span>
                       </a>
                     </li>
                   </ul>
@@ -357,23 +360,39 @@
             <div class="main-content py-7 flex-1 bg-white shadow-md dark:bg-gray-800 mt-12 md:mt-2 pb-24 md:pb-5">
               <ul class="flex">
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/overview">Overview</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'overview' Project_Name %}">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/service_health">Service Health</a>
+                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href=".">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/drift">Data Drift</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'drift' Project_Name %}">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/accuracy">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'accuracy' Project_Name %}">Accuracy</a>
                 </li>
+                {% if request.session.role == 'MLOps Engineer' %}
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 cursor-not-allowed hover:text-gray-800 py-2 px-4"
+                    href=".">Humility</a>
                 </li>
+                {% else %}
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/challengers">Challengers</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                    href="{% url 'humility' Project_Name %}">Humility</a>
                 </li>
+                {% endif %}
+                {% if request.session.role == 'MLOps Engineer' %}
+                <li class="text-center flex-1">
+                  <a class="text-center block rounded text-gray-700 cursor-not-allowed dark:text-gray-400 hover:text-gray-800 py-2 px-4"
+                    href=".">Challengers</a>
+                </li>
+                {% else %}
+                <li class="text-center flex-1">
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                    href="{% url 'challengers' Project_Name %}">Challengers</a>
+                </li>
+                {% endif %}
               </ul>
             </div>
             <!--Content for your page-->
@@ -427,31 +446,31 @@
                   onclick="displayValue(this)"
                 >
                   <h1>Response Time</h1> 
-                  <h1 style="padding-top: 8%;">5 ms</h1>
+                  <h1 id = response-time style="padding-top: 8%;">5 ms</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                   <h1>Execution Time</h1>
-                  <h1 style="padding-top: 8%;">5 ms</h1>
+                  <h1 id = execution-time style="padding-top: 8%;">5 ms</h1>
                 </button>
                   <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                   <h1>Data Error Rate</h1>
-                  <h1 style="padding-top: 8%;">2%</h1>
+                  <h1 id="data-error-rate" style="padding-top: 8%;">2%</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                  <h1>System Error Rate</h1>
-                 <h1 style="padding-top: 8%;">2%</h1>
+                 <h1 id = "system-error-rate" style="padding-top: 8%;">2%</h1>
                 </button>
                 <button
                   class="px-10 py-4 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                   onclick="displayValue(this)">
                  <h1>Total Predictions</h1>
-                 <h1 style="padding-top: 8%;">5000</h1>
+                 <h1 id="total-predictions" style="padding-top: 8%;"></h1>
                 </button>
               </div>
             </div>
@@ -559,6 +578,19 @@
 
 
       window.onload = function() {
+
+      function generateRandomValue(mean, stdDev) {
+          return Math.round((Math.random() * stdDev * 2) + (mean - stdDev));
+      }
+
+      document.getElementById('response-time').innerText = generateRandomValue(5, 3) + ' ms';
+      document.getElementById('execution-time').innerText = generateRandomValue(5, 3) + ' ms';
+      document.getElementById('data-error-rate').innerText = generateRandomValue(2, 2) + '%';
+      document.getElementById('system-error-rate').innerText = generateRandomValue(2, 2) + '%';
+      document.getElementById('total-predictions').innerText = generateRandomValue(5500, 1000);
+      if (document.getElementById('total-predictions').innerText > 5500) {
+        alert('Total predictions exceed normal amount, spinning up RAM');
+      }
       // Get the start date button and input field
       const startDateBtn = document.getElementById('start-date-dropdown');
       const startDateInput = document.getElementById('start-date');

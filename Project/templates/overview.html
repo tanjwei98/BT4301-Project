@@ -98,6 +98,9 @@
                 />
               </div> -->
           </div>
+          {% if request.session.userLogin  %}
+          <p class = "text-gray-600 dark:text-gray-400 mr-4">{{ request.session.userID }}</p>
+          {% endif %}
           <ul class="flex items-center flex-shrink-0 space-x-6">
             <!-- Theme toggler -->
             <li class="flex">
@@ -191,22 +194,12 @@
                   class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
                   aria-label="submenu">
                   <li class="flex">
-                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                      href="#">
-                      <span>Profile</span>
-                    </a>
-                  </li>
-                  <li class="flex">
-                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                      href="#">
-                      <span>Settings</span>
-                    </a>
-                  </li>
-                  <li class="flex">
-                    <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                      href="#">
-                      <span>Log out</span>
-                    </a>
+                    <a
+                    class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                    href="{% url 'logout' %}"
+                    >
+                    <span>Log out</span>
+                  </a>
                   </li>
                 </ul>
               </template>
@@ -417,11 +410,11 @@
             <ul class="flex">
               <li class="text-center flex-1">
                 <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="#">Overview</a>
+                  href=".">Overview</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/service_health">Service Health</a>
+                  href="{% url 'service_health' Project_Name %}">Service Health</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
@@ -429,7 +422,7 @@
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/accuracy">Accuracy</a>
+                  href="{% url 'accuracy' Project_Name %}">Accuracy</a>
               </li>
               {% if request.session.role == 'MLOps Engineer' %}
               <li class="text-center flex-1">
@@ -439,7 +432,7 @@
               {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/humility">Humility</a>
+                  href="{% url 'humility' Project_Name %}">Humility</a>
               </li>
               {% endif %}
               {% if request.session.role == 'MLOps Engineer' %}
@@ -450,14 +443,14 @@
               {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/challengers">Challengers</a>
+                  href="{% url 'challengers' Project_Name %}">Challengers</a>
               </li>
               {% endif %}
             </ul>
           </div>
           <!--Content for your page-->
           <div class="container mx-auto grid">
-            {% if Model.Approve_Status == "Pending" %}
+            {% if request.session.role == 'MLOps Engineer' and Pending.Approve_Status == "Pending" %}
             <div class="flex flex-col justify-between p-4 my-8 text-sm font-semibold text-purple-100 bg-purple-600">
               <div>
                 <p> This deployment has pending changes</p>
@@ -540,7 +533,7 @@
                 </span>
               </div>
 
-              <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+              <!-- <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800" >
                 <h4 class="mb-4 font-bold text-purple-600 dark:text-purple-400">
                   Governance Logs
                 </h4>
@@ -553,7 +546,67 @@
                 <h5 class="mb-4 text-gray-600 dark:text-gray-300">
                   Reviewed:
                 </h5>
-              </div>
+              </div> -->
+
+              <details class="bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 rounded open:bg-gray-800 duration-300">
+                <summary class="bg-inherit font-bold px-5 py-3 cursor-pointer">Governance Logs</summary>
+                <div class="text-gray-600 dark:text-gray-300 bg-white px-5 dark:bg-gray-800 py-3 border border-gray-300 text-sm font-light ">
+                    <div class = "flex flex row">
+                      <p class="font-semibold py-2 mr-1 text-gray-600 dark:text-gray-300">
+                        Deployment Created: 
+                      </p>
+                      <p class = "py-2 mr-1 text-gray-600 dark:text-gray-300">
+                        {{ Model.Created_Date }} •
+                      </p>
+                      <p class = "py-2 text-gray-600 dark:text-gray-300">
+                        {{ Model.User_ID_id }}
+                      </p>
+                    </div>
+
+                    <hr class = 'pb-5 dark:bg-gray-800'>
+                    {% for p_model in Project_models %}
+                    {% if p_model.Approve_Comments != '' %}
+                    <p class = "font-semibold pt-6 text-purple-600 dark:text-purple-400">
+                      Reviewed by:
+                    </p>
+                    <span class = "mb-5 text-gray-600 dark:text-gray-300">
+                      {{ p_model.Approve_User_ID_id }} on {{ p_model.Approved_Date }}
+                    </span>
+                    <p class = "font-semibold pt-6 text-gray-600 dark:text-gray-300">
+                      Comments:
+                    </p>
+                    <span class = "mb-5 text-gray-600 dark:text-gray-300">
+                      {{ p_model.Approve_Comments }}
+                    </span>
+                    {% endif %}
+                    <p class = "font-semibold text-purple-600 dark:text-purple-400">
+                      Approval Requested
+                    </p>
+                    <p class = "font-semibold text-gray-600 dark:text-gray-300">
+                      Changes:
+                    </p>
+                    <span class = "mb-5 text-gray-600 dark:text-gray-300">
+                      {{ p_model.Change_Comments }}
+                    </span>
+                    <p class = "font-semibold pt-5 text-gray-600 dark:text-gray-300">
+                      Raised By: 
+                    </p>
+                    <span class = "py-3 text-gray-600 dark:text-gray-300">
+                      {{ p_model.User_ID_id }} on {{ p_model.Approved_Date }}
+                    </span>
+                    <hr>
+                    {% endfor %}
+                    <span class="font-semibold py-3 text-purple-600 dark:text-purple-400">
+                      Reviewers:  
+                    </span>
+                    <p class = "text-gray-600 dark:text-gray-300">
+                      Data Science Manager (jack@mlops.com)
+                    </p>
+                    <p class = "text-gray-600 dark:text-gray-300">
+                      MLOps Admin (john@mlops.com)
+                    </p>
+                </div>
+            </details>
               <!--<div>
                   <label class="block text-gray-700 font-bold mb-2" for="dropdown">
                     Version
@@ -680,13 +733,12 @@
     //   console.log(3);
     // });
 
-
+    
 
     $(document).ready(function () {
       $('#approve_btn').click(function (event) {
         event.preventDefault();
-        const model_id = 1001; // need to update this to get the model_id from database
-        const model_status = 'Approved';
+        const model_id = 1001; // jww need to update this to get the model_id from database
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         const comments = document.querySelector('#comments').value;
         if (comments === '') {
@@ -703,7 +755,7 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 'model_id': model_id, 'status': model_status, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
+          data: { 'model_id': model_id, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
 
           success: function (response) {
             console.log(response);
