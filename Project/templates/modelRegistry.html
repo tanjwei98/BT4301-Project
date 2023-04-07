@@ -1321,7 +1321,7 @@
       const modellanguage_file = document.getElementById('modellanguage_file').value;
       const version_file = document.getElementById('modelversion_file').value;
       const description_file = document.getElementById('modeldescription_file').value;
-      const project_name_file = ''; // jww 
+      const project_name_file = "{{ Project_Name }}"; // jww 
       // const project_name_file = document.getElementById('projectname_select_file').value;
       const datasetId_file = datasetSelect.value;
 
@@ -1377,7 +1377,7 @@
       const version_code = document.getElementById('modelversion_code').value;
       const description_code = document.getElementById('modeldescription_code').value;
       // const project_name_code = document.getElementById('projectname_select_code').value;
-      const project_name_code = ''; // jww 
+      const project_name_code = "{{ Project_Name }}"; // jww 
       const datasetId_code = datasetSelect.value;
 
       console.log('this is my model language: ', modellanguage_code)
