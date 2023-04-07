@@ -505,6 +505,8 @@ def challengers(request, Project_Name):
     context = {}
     user_id = request.session["userID"]
     context.update({'Project_Name': Project_Name})
+    context.update(get_registry_models(user_id, Project_Name))
+    context.update(get_registry_count(user_id, Project_Name))
     return render(request, "challengers.html", context)
 
 
