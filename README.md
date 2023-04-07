@@ -59,3 +59,8 @@ python3 Project/manage.py migrate core
 + If gitlab is successfully installed as a docker container, then you would be able to access it as 192.168.1.109:80(wherein 80 is the port number mentioned in the docker gitlab container)
 + To login into gitlab you need userid and password. root is the userid. For password, tyoe in the following command in the command line: docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
 + You will get a password, use it to login into gitlab
+
+## What all new things?
++ Format of databases on settings.py is different, just enter your details
++ A new docker-compose.yml file is added to the root directory, add your database details in it.
++ A new dockerfile is added to the root directory, no details to be added to it.
