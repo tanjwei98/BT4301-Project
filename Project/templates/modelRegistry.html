@@ -414,27 +414,27 @@
             <ul class="flex">
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview">Overview</a>
+                  href="{% url 'overview' Project_Name %}">Overview</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview/service_health">Service Health</a>
+                  href="{% url 'service_health' Project_Name %}">Service Health</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/drift">Data Drift</a>
+                  href="{% url 'drift' Project_Name %}">Data Drift</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/overview/accuracy">Accuracy</a>
+                  href="{% url 'accuracy' Project_Name %}">Accuracy</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/humility">Humility</a>
+                  href="{% url 'humility' Project_Name %}">Humility</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/challengers">Challengers</a>
+                  href="{% url 'challengers' Project_Name %}">Challengers</a>
               </li>
             </ul>
           </div>
@@ -1135,7 +1135,7 @@
       console.log('in eventlistener')
       event.preventDefault();
       const formData = new FormData(translateForm);
-      fetch('/app/challengers/modelRegistry/translate/', {
+      fetch("{% url 'translate_code' Project_Name %}", {
         method: 'POST',
         body: formData,
       }).then(response => response.json())
@@ -1228,7 +1228,7 @@
         numFeatures.textContent = '';
         targetVariable.textContent = '';
       } else {
-        xhr.open('GET', `{% url "modelRegistry" %}?dataset_id=${datasetId}`);
+        xhr.open('GET', "{% url 'modelRegistry' Project_Name %}?dataset_id=${datasetId}");
         xhr.setRequestHeader('Accept', 'application/json'); // add this line
         xhr.onload = () => {
           const dataset = JSON.parse(xhr.responseText);

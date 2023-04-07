@@ -410,11 +410,11 @@
             <ul class="flex">
               <li class="text-center flex-1">
                 <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="#">Overview</a>
+                  href=".">Overview</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/service_health">Service Health</a>
+                  href="{% url 'service_health' Project_Name %}">Service Health</a>
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
@@ -422,7 +422,7 @@
               </li>
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/accuracy">Accuracy</a>
+                  href="{% url 'accuracy' Project_Name %}">Accuracy</a>
               </li>
               {% if request.session.role == 'MLOps Engineer' %}
               <li class="text-center flex-1">
@@ -432,7 +432,7 @@
               {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/humility">Humility</a>
+                  href="{% url 'humility' Project_Name %}">Humility</a>
               </li>
               {% endif %}
               {% if request.session.role == 'MLOps Engineer' %}
@@ -443,7 +443,7 @@
               {% else %}
               <li class="text-center flex-1">
                 <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
-                  href="/app/challengers">Challengers</a>
+                  href="{% url 'challengers' Project_Name %}">Challengers</a>
               </li>
               {% endif %}
             </ul>

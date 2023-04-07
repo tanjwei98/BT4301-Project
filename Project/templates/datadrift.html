@@ -372,20 +372,36 @@
                   <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'overview' Project_Name %}">Overview</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Service Health</a>
+                  <a class="text-center block text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'service_health' Project_Name %}">Service Health</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Data Drift</a>
+                  <a class="text-center block text-purple-600 dark:text-purple-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href=".">Data Drift</a>
                 </li>
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Accuracy</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="{% url 'accuracy' Project_Name %}">Accuracy</a>
                 </li>
+                {% if request.session.role == 'MLOps Engineer' %}
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="/app/humility">Humility</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 cursor-not-allowed hover:text-gray-800 py-2 px-4"
+                    href=".">Humility</a>
                 </li>
+                {% else %}
                 <li class="text-center flex-1">
-                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4" href="#">Challengers</a>
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                    href="{% url 'humility' Project_Name %}">Humility</a>
                 </li>
+                {% endif %}
+                {% if request.session.role == 'MLOps Engineer' %}
+                <li class="text-center flex-1">
+                  <a class="text-center block rounded text-gray-700 cursor-not-allowed dark:text-gray-400 hover:text-gray-800 py-2 px-4"
+                    href=".">Challengers</a>
+                </li>
+                {% else %}
+                <li class="text-center flex-1">
+                  <a class="text-center block rounded text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-4"
+                    href="{% url 'challengers' Project_Name %}">Challengers</a>
+                </li>
+                {% endif %}
               </ul>
             </div>
             <!--Content for your page-->

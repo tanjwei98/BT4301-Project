@@ -115,7 +115,7 @@ def approveModel(request, model_name):
 
 
 
-def addModel(request):
+def addModel(request, Project_Name):
 
     print('in add modal view')
     with connection.cursor() as cursor:
@@ -217,11 +217,14 @@ def addModel(request):
         return JsonResponse({'success': False})
 
 
-def accuracy(request):
-    return render(request, "accuracy.html")
+def accuracy(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "accuracy.html", context)
 
 
-def accuracy_chart(request):
+def accuracy_chart(request, Project_Name):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     metric = request.GET.get('metric', None)
@@ -244,6 +247,7 @@ def accuracy_chart(request):
             'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
+        
         cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\'')
         model_id = cursor.fetchone()[0]
         #model_id = 1005
@@ -287,7 +291,7 @@ def accuracy_chart(request):
     return JsonResponse(chart_data)
 
 
-def predicted_actual_chart(request):
+def predicted_actual_chart(request, Project_Name):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     resolution = request.GET.get('resolution', None)
@@ -358,11 +362,14 @@ def predicted_actual_chart(request):
     return JsonResponse(chart_data)
 
 
-def service_health(request):
-    return render(request, "service_health.html")
+def service_health(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "service_health.html", context)
 
 
-def service_chart(request):
+def service_chart(request, Project_Name):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     metric = request.GET.get('metric', None)
@@ -423,7 +430,7 @@ def service_chart(request):
     }
     return JsonResponse(chart_data)
 
-def challenger_chart(request):
+def challenger_chart(request, Project_Name):
     # Get earliest and latest date from database
     metric = request.GET.get('metric', "AUC")
     print(metric)
@@ -486,13 +493,16 @@ def datadrift(request, Project_Name):
     return render(request, "datadrift.html", context)
 
 
-def challengers(request):
-    return render(request, "challengers.html")
+def challengers(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "challengers.html", context)
 
 
-def modelRegistry(request):
+def modelRegistry(request, Project_Name):
     dataset_list = Dataset_List.objects.all()
-    project_name = Model_List.objects.values('Project_Name').distinct()
+    # project_name = Model_List.objects.values('Project_Name').distinct()
     # If the request accepts JSON, return a JSON response
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
         Dataset_id = request.GET.get('dataset_id')
@@ -506,15 +516,21 @@ def modelRegistry(request):
         return JsonResponse(dataset_list)
 
     # Otherwise, return the HTML page
-    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'project_name': project_name})
+    return render(request, "modelRegistry.html", {'dataset_list': dataset_list, 'Project_Name': Project_Name})
 
 
-def humility(request):
-    return render(request, "humility.html")
+def humility(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "humility.html", context)
 
 
-def humility_add(request):
-    return render(request, "humilityAdd.html")
+def humility_add(request, Project_Name):
+    context = {}
+    user_id = request.session["userID"]
+    context.update({'Project_Name': Project_Name})
+    return render(request, "humilityAdd.html", context)
 
 # def mregistry(request):
 #     return render(request, "mregistry.html")
@@ -680,7 +696,7 @@ def handler404(request):
 # import pybind11 # Python to cpp
 
 
-def translate_code(request):
+def translate_code(request, Project_Name):
     if request.method == 'POST':
         translate_from = request.POST['portFromLanguage']
         translate_to = request.POST['portToLanguage']
@@ -837,7 +853,7 @@ def translate_code(request):
 
 
 # CODE EDITOR
-def save_saved(request):
+def save_saved(request, Project_Name):
     if request.method == 'POST':
         code = request.POST['code']
         lang = request.POST['filechooser']
@@ -849,7 +865,7 @@ def save_saved(request):
             fp.close()
             print(f'saved as {_filename}')
         messages.success(request, f"Successfully saved file {_filename}.")
-        return redirect('/app/challengers/modelRegistry')
+        return redirect(reverse("modelRegistry", Project_Name))
 
 
 # retrieve data information from the database, when user select data to test model
@@ -905,7 +921,7 @@ def userlogout(request):
         return render(request, 'logoutpage.html')
 
 
-def make_champion_model(request):
+def make_champion_model(request, Project_Name):
     
     new_cham_model_id = request.POST.get('model_id')
     comments = request.POST.get('comments')
