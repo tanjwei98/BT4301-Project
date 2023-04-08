@@ -369,7 +369,7 @@
 
             </div>
 
-            <div class="flex mb-4">
+            <!-- <div class="flex mb-4">
               <button class="w-half bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
                 id="openFormBtn" type="submit">
                 +Add Challenger Model ABC
@@ -438,7 +438,7 @@
 
 
               </div>
-            </div>
+            </div> -->
 
 
             <div class="grid gap-6 xl:grid-cols-3">
@@ -483,7 +483,7 @@
                           {{ r_model.Created_Date|timesince:now_time }} ago
                           <!-- {{ r_model.Created_Date }} -->
                         </td>
-                        {% if r_model.Challenger_Status == "Challenger" %}
+                        {% if r_model.Challenger_Status == "Challenger" or r_model.Challenger_Status == "Challengers" %}
                         {% csrf_token %}
                         <td class="px-4 py-3 text-sm">
                           
@@ -495,8 +495,8 @@
                             <input type="hidden" id="model_name" value= "{{ r_model.Model_name }}">
                         </td>
                         {% else%}
-                        <td class="px-4 py-3 text-sm">
-                          Champion
+                        <td class="px-4 py-3 text-sm font-semibold">
+                          Current champion model
                         </td>
                         {% endif %}
                       </tr>
