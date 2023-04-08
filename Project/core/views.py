@@ -170,7 +170,7 @@ def addModel(request, Project_Name):
 
         # create dates for the data
         timez = pytz.timezone('Asia/Singapore')
-        dates = pd.date_range(start='4/6/2022', periods=5,tz=timez).normalize()
+        dates = pd.date_range(start='4/6/2023', periods=5,tz=timez).normalize()
         print(dates)
 
         # create a dataframe with the columns
