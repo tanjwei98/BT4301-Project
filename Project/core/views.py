@@ -97,7 +97,7 @@ def approveModel(request, model_name):
             Model_List.objects.filter(Project_Name=project_name, Challenger_Status='Champion').update(
                  Challenger_Status='Challenger', Approve_Status='None')
         # change current pending to champion tgt with other columns
-        Model_List.objects.filter(Model_id=model_id).update(
+        Model_List.objects.filter(Model_ID=model_id).update(
              Approve_Comments=comments, Challenger_Status='Champion',
              Approved_Date=approved_datetime, Approve_Status='Approved') 
 
@@ -326,7 +326,7 @@ def service_chart(request, Project_Name):
         min_date, max_date = cursor.fetchone()
 
         cursor.execute(
-            'select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
+            'select "Model_ID" from core_model_list where "Project_Name"=\'{}\''.format(Project_Name))
         model_id = cursor.fetchone()[0]
         # model_id = 1005
 

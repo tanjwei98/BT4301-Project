@@ -732,7 +732,7 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 'model_id': model_id, 'comments': comments, project_name: project_name, 'csrfmiddlewaretoken': csrf_token },
+          data: { 'model_id': model_id, 'comments': comments, 'project_name': project_name, 'csrfmiddlewaretoken': csrf_token },
 
           success: function (response) {
             console.log(response);
