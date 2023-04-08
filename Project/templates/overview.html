@@ -710,31 +710,6 @@
     //   return null;
     // }
 
-
-    // const approve_btn = document.getElementById('approve_btn');
-    // approve_btn.addEventListener('click', () => {
-    //   const model_id = 1001; // need to update this to get the model_id from database
-    //   const model_status = 'rejected';
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.open('POST', './approve-model/');
-    //   console.log(1);
-    //   xhr.setRequestHeader('Content-Type', 'application/json');
-    //   console.log(2);
-    //   const data = { model_id: model_id, status: model_status };
-    //   xhr.onload = () => {
-    //     if (xhr.status === 200) { // check if the response status is OK
-    //       const response = JSON.parse(xhr.response); // parse the response JSON
-    //       print(response)
-    //     } else {
-    //       console.error('Error:', xhr.status);
-    //     }
-    //   };
-    //   xhr.send(JSON.stringify(data));
-    //   console.log(3);
-    // });
-
-    
-
     $(document).ready(function () {
       $('#approve_btn').click(function (event) {
         event.preventDefault();
@@ -759,7 +734,8 @@
 
           success: function (response) {
             console.log(response);
-            location.reload(); // reload the page
+            window.alert('Model has been approved and deployed successfully.')
+            // location.reload(); // reload the page
           },
           error: function (xhr, status, error) {
             console.error('Error:', xhr.status, status, error);

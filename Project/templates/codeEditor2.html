@@ -212,9 +212,6 @@
       var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
       var language = $('#language').val();
       var code = editor.getValue();
-      // console.log('this is the csrf_token: ', JSON.stringify(csrf_token));
-      // console.log('this is the language: ', JSON.stringify(language));
-      // console.log('this is the code: ', JSON.stringify(code));
       console.log(1);
       $.ajax({
         url: "/app/codeEditor2/run_code/",

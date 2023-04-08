@@ -608,8 +608,8 @@
 
             <button 
               type="button" id='make_cham_model_submit'
-               data-modal-hide="cham_modal" 
-               data-dismiss="modal"
+              data-modal-hide="cham_modal" 
+              data-dismiss="modal"
               style="padding: 2px 10px 2px 10px; margin: 20px;"
               class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
               Submit request</button>
@@ -655,6 +655,7 @@
         },
         success: function (response) {
           console.log(response);
+          window.alert('Request has been made. Model will be deployed once approved.')
           // location.reload(); // important! change to load challengers page instead
         },
         error: function (xhr, status, error) {
