@@ -506,7 +506,7 @@
                           // reenable buttons after file is uploaded.
                           var testbtn_addnewmodel = document.getElementById('testbtn_addnewmodel');
                           var add_mr_btn_file = document.getElementById('add_mr_btn_file');
-                          
+
                           testbtn_addnewmodel.disabled = false;
                           testbtn_addnewmodel.style.backgroundColor = '#007bff';
 
@@ -596,8 +596,8 @@
                     <tr>
                       <td class="border border-black px-4 py-2 text-center">
                         <button data-modal-target="testmodel" data-modal-toggle="testmodel"
-                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700" id="testbtn_addnewmodel"
-                          type="button">
+                          class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
+                          id="testbtn_addnewmodel" type="button">
                           Test Model
                         </button>
                       </td>
@@ -608,7 +608,7 @@
                           Add to Model Registry
                         </button></td>
 
-                        
+
                     </tr>
                   </table>
                 </div>
@@ -705,7 +705,8 @@
                       <tr>
                         <td class="border border-black px-4 py-2 text-center"> <button
                             class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-700"
-                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel" id="testbtn_createnewmodel">
+                            type="submit" data-modal-target="testmodel" data-modal-toggle="testmodel"
+                            id="testbtn_createnewmodel">
                             Test Model
                           </button>
                         </td>
@@ -862,7 +863,8 @@
 
             <div id='m1footer' style='right:0; bottom: 0; position: absolute; padding: 10px;'>
 
-              <button type="button" id='testdata_submit_btn' data-modal-hide="testmodel" data-dismiss="modal" style="padding: 2px 10px 2px 10px; margin: 20px;"
+              <button type="button" id='testdata_submit_btn' data-modal-hide="testmodel" data-dismiss="modal"
+                style="padding: 2px 10px 2px 10px; margin: 20px;"
                 class="btn btn-primary text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                 Choose this Dataset</button>
 
@@ -1132,39 +1134,36 @@
     //   });
     // }
 
-
-
-
     // Add an event listener to the drop-down box
     const datasetSelect = document.getElementById('dataset-select');
     const datasetName = document.getElementById('dataset-name');
     const numRows = document.getElementById('num-rows');
     const numFeatures = document.getElementById('num-features');
     const targetVariable = document.getElementById('target-variable');
-
-
+    const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
     datasetSelect.addEventListener('change', () => {
-      const datasetId = datasetSelect.value;
-      const xhr = new XMLHttpRequest();
-      // xhr.open('GET', `/challengers/modelRegistry/?dataset_id=${datasetId}`);
-      if (datasetId === 'default') {
-        datasetName.textContent = '';
-        numRows.textContent = '';
-        numFeatures.textContent = '';
-        targetVariable.textContent = '';
-      } else {
-        xhr.open('GET', "{% url 'modelRegistry' Project_Name %}?dataset_id=${datasetId}");
-        xhr.setRequestHeader('Accept', 'application/json'); // add this line
-        xhr.onload = () => {
-          const dataset = JSON.parse(xhr.responseText);
-          datasetName.textContent = dataset.Dataset_name;
-          numRows.textContent = dataset.num_of_rows;
-          numFeatures.textContent = dataset.num_of_features;
-          targetVariable.textContent = dataset.Target;
-        };
-        xhr.send();
-      }
+      $.ajax({
+        url: './modelRegistry/get_dataset_info/',
+        type: 'GET',
+        beforeSend: function (xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        },
+        data: {
+            'dataset_id': datasetSelect.value,
+            'csrfmiddlewaretoken': csrf_token
+        },
+        success: function (response) {
+          console.log(response);
+          datasetName.textContent = response.Dataset_name;
+          numRows.textContent = response.num_of_rows;
+          numFeatures.textContent = response.num_of_features;
+          targetVariable.textContent = response.Target;
 
+        },
+        error: function (xhr, status, error) {
+          console.error('Error:', xhr.status, status, error);
+        }
+      });
     });
 
     var language_from_code;
@@ -1189,7 +1188,7 @@
     var add_mr_btn_code = document.getElementById('add_mr_btn_code');
     add_mr_btn_code.disabled = true;
     add_mr_btn_code.style.backgroundColor = 'grey';
-    
+
     $(document).ready(function () {
       window.addEventListener('message', event => {
         var testbtn_createnewmodel = document.getElementById('testbtn_createnewmodel');
@@ -1218,7 +1217,7 @@
 
           add_mr_btn_code.disabled = false;
           add_mr_btn_code.style.backgroundColor = '#007bff';
-          
+
         }
       });
     });
@@ -1255,7 +1254,6 @@
       }
       else {
 
-        console.log('in the ajax')
         console.log(datasetId_file)
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
         $.ajax({

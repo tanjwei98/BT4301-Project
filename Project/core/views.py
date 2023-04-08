@@ -130,6 +130,7 @@ def addModel(request, Project_Name):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
+    Approve_User = Users.objects.get(pk='shawn@mlops.com')
     # for now, hardcode this. have to change to actual user id when login page is done.
     # user = Users.objects.get(pk='hannah@mlops.com')
     print(user_id)
@@ -146,11 +147,11 @@ def addModel(request, Project_Name):
             Dataset_ID=datasetlist_ID,
             Model_description=description,
             Approve_Status='None',
-            Approve_User_ID='shawn@mlops.com',
+            Approve_User_ID=Approve_User,
             Change_Comments='',
             Approve_Comments='',
             Created_Date=current_datetime,  # datetime field
-            Approved_Date=None,  # might want to change it to allow null instead
+            Approved_Date=None,  
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
             Accuracy_Status='Passing',
@@ -441,6 +442,20 @@ def challengers(request, Project_Name):
     context.update(get_registry_models(user_id, Project_Name))
     context.update(get_registry_count(user_id, Project_Name))
     return render(request, "challengers.html", context)
+
+def get_dataset_info(request, Project_Name):
+    print(Project_Name)
+    # if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
+    Dataset_id = request.GET.get('dataset_id')
+    dataset = get_object_or_404(Dataset_List, pk=Dataset_id)
+    dataset_list = {
+        'Dataset_name': dataset.Dataset_name,
+        'num_of_rows': dataset.num_of_rows,
+        'num_of_features': dataset.num_of_features,
+        'Target': dataset.Target,
+    }
+    return JsonResponse(dataset_list)
+
 
 
 def modelRegistry(request, Project_Name):
