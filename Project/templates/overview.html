@@ -710,8 +710,10 @@
     //   return null;
     // }
 
+    
     $(document).ready(function () {
       $('#approve_btn').click(function (event) {
+        const project_name = "{{ Project_Name }}"
         event.preventDefault();
         const model_id = "{{ Pending_ID }}"; // jww need to update this to get the model_id from database
         const csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
@@ -730,7 +732,7 @@
           // contentType: 'application/json',
           // data: JSON.stringify({ model_id: model_id, status: model_status }),
           contentType: 'application/x-www-form-urlencoded',
-          data: { 'model_id': model_id, 'comments': comments, 'csrfmiddlewaretoken': csrf_token },
+          data: { 'model_id': model_id, 'comments': comments, project_name: project_name, 'csrfmiddlewaretoken': csrf_token },
 
           success: function (response) {
             console.log(response);

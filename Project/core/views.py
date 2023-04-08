@@ -86,19 +86,20 @@ def overview(request, Project_Name):
 
 def approveModel(request, model_name):
     model_id = request.POST.get('model_id')
+    project_name = request.POST.get('project_name')
     comments = request.POST.get('comments')
     approved_datetime = datetime.strftime(
         timezone.now(), '%Y-%m-%d %H:%M:%S%z')
     print(model_id)
     try:
         # change current champion to Challenger. Approve Status: Approved -> None
-        if Model_List.objects.filter(Approve_Status='Approve').exists():
-            Model_List.objects.filter(Approve_Status='Approve').update(
+        if Model_List.objects.filter(Project_Name=project_name, Challenger_Status='Champion').exists():
+            Model_List.objects.filter(Project_Name=project_name, Challenger_Status='Champion').update(
                  Challenger_Status='Challenger', Approve_Status='None')
         # change current pending to champion tgt with other columns
-        Model_List.objects.filter(Approve_Status='Pending').update(
+        Model_List.objects.filter(Model_id=model_id).update(
              Approve_Comments=comments, Challenger_Status='Champion',
-             Approved_Date=approved_datetime, Approve_Status='Approve') 
+             Approved_Date=approved_datetime, Approve_Status='Approved') 
 
         updated_model = Model_List.objects.get(Model_ID=model_id)
         # print the updated fields to the console
