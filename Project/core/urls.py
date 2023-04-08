@@ -25,6 +25,7 @@ urlpatterns = [
     path('humility/<Project_Name>/add', views.humility_add, name = 'humility_add'),
     path('challengers/<Project_Name>/', views.challengers, name = 'challengers'),
     path('challengers/<Project_Name>/modelRegistry', views.modelRegistry, name = 'modelRegistry'),
+    path('challengers/<Project_Name>/modelRegistry/get_dataset_info/', views.get_dataset_info, name = 'get_dataset_info'),
     path('challengers/<Project_Name>/challenger_chart', views.challenger_chart, name = 'challenger_charts'),
     path('codeEditor2/', views.codeEditor2, name = 'codeEditor2'),
     # path('mregistry/', views.mregistry, name = 'mregistry'),

@@ -85,30 +85,21 @@ def overview(request, Project_Name):
 
 
 def approveModel(request, model_name):
-    # data = json.loads(request.body.decode('utf-8'))
-    # model_id = data.get('model_id')
-    # model_status = data.get('status')
-
     model_id = request.POST.get('model_id')
     comments = request.POST.get('comments')
-    approved_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
+    approved_datetime = datetime.strftime(
+        timezone.now(), '%Y-%m-%d %H:%M:%S%z')
     print(model_id)
     try:
-        Model_List.objects.filter(Approve_Status='Approve').update(
-            Challenger_Status='Challenger') # change current champion to Challenger 
-        Model_List.objects.filter(Approve_Status='Approve').update(
-            Approve_Status='None') # change current champion to None
+        # change current champion to Challenger. Approve Status: Approved -> None
+        if Model_List.objects.filter(Approve_Status='Approve').exists():
+            Model_List.objects.filter(Approve_Status='Approve').update(
+                 Challenger_Status='Challenger', Approve_Status='None')
+        # change current pending to champion tgt with other columns
         Model_List.objects.filter(Approve_Status='Pending').update(
-            Approve_Status='Approve') # change current pending to champion
-        Model_List.objects.filter(Approve_Status='Approve').update(
-            Approve_Comments=comments) # add approve comments to new champion
-       
-        Model_List.objects.filter(Approve_Status='Approve').update(
-            Challenger_Status='Champion') # change new challenger to champion 
-        
-        Model_List.objects.filter(Approve_Status='Approve').update(
-            Approved_Date=approved_datetime) # add the approved datetime
-        
+             Approve_Comments=comments, Challenger_Status='Champion',
+             Approved_Date=approved_datetime, Approve_Status='Approve') 
+
         updated_model = Model_List.objects.get(Model_ID=model_id)
         # print the updated fields to the console
         print(
@@ -116,16 +107,15 @@ def approveModel(request, model_name):
         print(
             f"Updated comments: {updated_model.Model_ID}, {updated_model.Approve_Comments}")
         return JsonResponse({'success': True})
-    
+
     except Exception as e:
         print(e)
         return JsonResponse({'success': False})
 
 
-
 def addModel(request, Project_Name):
 
-    user_id = request.session["userID"] # returns string
+    user_id = request.session["userID"]  # returns string
     with connection.cursor() as cursor:
         cursor.execute(
             'SELECT MAX(CAST("Model_ID" AS integer)) FROM core_model_list;')
@@ -140,6 +130,7 @@ def addModel(request, Project_Name):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
+    Approve_User = Users.objects.get(pk='shawn@mlops.com')
     # for now, hardcode this. have to change to actual user id when login page is done.
     # user = Users.objects.get(pk='hannah@mlops.com')
     print(user_id)
@@ -152,15 +143,15 @@ def addModel(request, Project_Name):
             Model_version=version,
             Project_Name=project_name,
             Language=language,
-            User_ID=user, 
+            User_ID=user,
             Dataset_ID=datasetlist_ID,
             Model_description=description,
             Approve_Status='None',
-            Approve_User_ID=None,
+            Approve_User_ID=Approve_User,
             Change_Comments='',
             Approve_Comments='',
             Created_Date=current_datetime,  # datetime field
-            Approved_Date=None,  # might want to change it to allow null instead
+            Approved_Date=None,  
             Service_Health_Status='Passing',
             Data_Drift_Status='Passing',
             Accuracy_Status='Passing',
@@ -179,9 +170,12 @@ def addModel(request, Project_Name):
         # generate random data for each column
         data['AUC'] = np.random.normal(loc=0.77, scale=0.001, size=len(dates))
         data['KS'] = np.random.normal(loc=0.6, scale=0.1, size=len(dates))
-        data['LogLoss'] = np.random.normal(loc=0.65, scale=0.01, size=len(dates))
-        data['Gini_NormI'] = np.random.normal(loc=0.2, scale=0.01, size=len(dates))
-        data['Rate_Top10'] = np.random.normal(loc=0.9, scale=0.01, size=len(dates))
+        data['LogLoss'] = np.random.normal(
+            loc=0.65, scale=0.01, size=len(dates))
+        data['Gini_NormI'] = np.random.normal(
+            loc=0.2, scale=0.01, size=len(dates))
+        data['Rate_Top10'] = np.random.normal(
+            loc=0.9, scale=0.01, size=len(dates))
         data['Location'] = "West"
 
         # create the other data frames with different locations
@@ -195,7 +189,8 @@ def addModel(request, Project_Name):
         data_south['Location'] = "South"
 
         # concatenate all data frames together
-        all_data = pd.concat([data, data_north, data_east, data_south], ignore_index=True)
+        all_data = pd.concat(
+            [data, data_north, data_east, data_south], ignore_index=True)
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -205,23 +200,23 @@ def addModel(request, Project_Name):
 
         for i in range(len(all_data)):
             new_accuracy = Model_Accuracy(
-                id = max_accuracy_id + i + 1,
-                LogLoss = all_data['LogLoss'][i],
-                AUC = all_data['AUC'][i],
-                KS = all_data['KS'][i],
-                Gini_Norm = all_data['Gini_NormI'][i],
-                Rate_Top10 = all_data['Rate_Top10'][i],
-                Date = all_data['Date'][i],
-                Location = all_data['Location'][i],
-                Target = 50,
-                Predicted = 50,
-                Model_ID = new_model,
+                id=max_accuracy_id + i + 1,
+                LogLoss=all_data['LogLoss'][i],
+                AUC=all_data['AUC'][i],
+                KS=all_data['KS'][i],
+                Gini_Norm=all_data['Gini_NormI'][i],
+                Rate_Top10=all_data['Rate_Top10'][i],
+                Date=all_data['Date'][i],
+                Location=all_data['Location'][i],
+                Target=50,
+                Predicted=50,
+                Model_ID=new_model,
                 Dataset_ID=datasetlist_ID
             )
             new_accuracy.save()
         return JsonResponse({'success': True})
     except Exception as e:
-        print("exception",e)
+        print("exception", e)
         return JsonResponse({'success': False})
 
 
@@ -255,10 +250,10 @@ def accuracy_chart(request, Project_Name):
             'SELECT MIN("Date"), MAX("Date") FROM core_model_accuracy')
         min_date, max_date = cursor.fetchone()
 
-        
-        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
+        cursor.execute(
+            'select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
         model_id = cursor.fetchone()[0]
-        #model_id = 1005
+        # model_id = 1005
 
         if not start_date:
             start_date = min_date
@@ -267,15 +262,15 @@ def accuracy_chart(request, Project_Name):
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
             query = query_dict[resolution].format(
-                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric, model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
             query = query_dict['Daily'].format(
-                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric, model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
-            
+
     column_data = []
     date_labels = []
     for row in data:
@@ -297,6 +292,7 @@ def accuracy_chart(request, Project_Name):
         }
     }
     return JsonResponse(chart_data)
+
 
 def service_health(request, Project_Name):
     context = {}
@@ -328,9 +324,10 @@ def service_chart(request, Project_Name):
             'SELECT MIN("Date"), MAX("Date") FROM core_service_health')
         min_date, max_date = cursor.fetchone()
 
-        cursor.execute('select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
+        cursor.execute(
+            'select "Model_ID" from core_model_list where "Challenger_Status" = \'Champion\' and "Project_Name"=\'{}\''.format(Project_Name))
         model_id = cursor.fetchone()[0]
-        #model_id = 1005
+        # model_id = 1005
 
         if not start_date:
             start_date = min_date
@@ -339,15 +336,15 @@ def service_chart(request, Project_Name):
         if resolution:
             # Get the appropriate SQL query based on the selected resolution
             query = query_dict[resolution].format(
-                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric, model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
         else:
             query = query_dict['Daily'].format(
-                metric, metric,model_id, "AND \"Location\" = '{}'".format(location) if location else "")
+                metric, metric, model_id, "AND \"Location\" = '{}'".format(location) if location else "")
             cursor.execute(query, [start_date, end_date])
             data = cursor.fetchall()
-            
+
     column_data = []
     date_labels = []
     for row in data:
@@ -370,12 +367,14 @@ def service_chart(request, Project_Name):
     }
     return JsonResponse(chart_data)
 
+
 def challenger_chart(request, Project_Name):
     # Get earliest and latest date from database
     metric = request.GET.get('metric', "AUC")
     print(metric)
     with connection.cursor() as cursor:
-        query = 'SELECT "Date", "Model_ID_id", AVG("{}") FROM core_model_accuracy GROUP BY "Date", "Model_ID_id" ORDER BY "Date", "Model_ID_id"'.format(metric)
+        query = 'SELECT "Date", "Model_ID_id", AVG("{}") FROM core_model_accuracy GROUP BY "Date", "Model_ID_id" ORDER BY "Date", "Model_ID_id"'.format(
+            metric)
         cursor.execute(query)
         data = cursor.fetchall()
 
@@ -387,7 +386,8 @@ def challenger_chart(request, Project_Name):
         auc = row[2]
 
         if model_id not in model_data:
-            model_data[model_id] = {'label': 'Model {}'.format(model_id), 'data': []}
+            model_data[model_id] = {
+                'label': 'Model {}'.format(model_id), 'data': []}
 
         model_data[model_id]['data'].append(auc)
 
@@ -412,6 +412,7 @@ def challenger_chart(request, Project_Name):
     }
 
     return JsonResponse(chart_data)
+
 
 def datadrift(request, Project_Name):
     context = {}
@@ -440,6 +441,20 @@ def challengers(request, Project_Name):
     context.update(get_registry_models(user_id, Project_Name))
     context.update(get_registry_count(user_id, Project_Name))
     return render(request, "challengers.html", context)
+
+def get_dataset_info(request, Project_Name):
+    print(Project_Name)
+    # if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
+    Dataset_id = request.GET.get('dataset_id')
+    dataset = get_object_or_404(Dataset_List, pk=Dataset_id)
+    dataset_list = {
+        'Dataset_name': dataset.Dataset_name,
+        'num_of_rows': dataset.num_of_rows,
+        'num_of_features': dataset.num_of_features,
+        'Target': dataset.Target,
+    }
+    return JsonResponse(dataset_list)
+
 
 
 def modelRegistry(request, Project_Name):
@@ -484,86 +499,6 @@ def loginpage(request):
 
 def codeEditor2(request):
     return render(request, "codeEditor2.html")
-
-
-# def run_code(request):
-#     if request.method == "POST":
-#         print('iin here')
-#         code = request.POST.get("code")
-#         print(f'this is my code {code}')
-#         try:
-#             # Create an empty dictionary to serve as the local namespace for executing the code
-#             local_ns = {}
-#             print(f'in try now')
-#             # Execute the code in the local namespace
-#             exec(code, globals(), local_ns)
-#             print(local_ns)
-#             # Check if the code defined a variable named 'result'
-#             if 'result' in local_ns:
-#                 result = local_ns['result']
-#             else:
-#                 result = None
-
-#             response_data = {"success": True, "result": result}
-#         except Exception as e:
-#             print(f'exception')
-#             print(e)
-#             response_data = {"success": False, "result": str(e)}
-#         print(response_data)
-#         return JsonResponse(response_data)
-
-
-# def run_code(request):
-#     if request.method == "POST":
-#         print('iin here')
-#         # Get the selected programming language and code from the form data
-#         lang = request.POST.get("lang")
-#         code = request.POST.get("code")
-#         print(lang)
-#         print(code)
-#         print(lang)
-#         command = ''
-#         # Choose the appropriate interpreter or compiler based on the selected language
-#         if lang == "python":
-#             command = ["python", "-c", code]
-#         elif lang == "r":
-#             command = ["Rscript", "-e", code]
-#         elif lang == "javascript":
-#             command = ["node", "-e", code]
-#         elif lang == "c":
-#             filename = "program.c"
-#             with open(filename, "w") as f:
-#                 f.write(code)
-#             command = ["gcc", filename, "-o", "program"]
-#             subprocess.run(command)
-#             print(f"Compilation completed: {os.path.exists('program')}")
-#             command = ["./program"]
-#         elif lang == "cpp":
-#             filename = "program.cpp"
-#             with open(filename, "w") as f:
-#                 f.write(code)
-#             command = ["g++", filename, "-o", "program"]
-#             subprocess.run(command)
-#             print(f"Compilation completed: {os.path.exists('program')}")
-#             command = ["./program"]
-
-#         try:
-#             # Run the command using subprocess and capture the output
-#             result = subprocess.check_output(
-#                 command, stderr=subprocess.STDOUT, shell=False, timeout=10, universal_newlines=True)
-#             response_data = {"success": True, "result": result}
-#         except subprocess.CalledProcessError as e:
-#             print('in CalledProcessError')
-#             response_data = {"success": False, "error": str(e.output)}
-#         except subprocess.TimeoutExpired as e:
-#             print('in TimeoutExpired')
-#             response_data = {"success": False, "error": "Time limit exceeded"}
-#         except Exception as e:
-#             print('in other exception')
-#             response_data = {"success": False, "error": str(e)}
-#         print(response_data)
-#         return JsonResponse(response_data)
-
 
 def run_code(request):
     if request.method == "POST":
@@ -646,9 +581,9 @@ def translate_code(request, Project_Name):
 
         try:
             if translate_from == 'python' and translate_to == 'javascript':  # NOT HARD CODED
-                '''Test case: 
+                '''Test case:
                 ```
-                for i in range(5): 
+                for i in range(5):
                     print(i)
                 ```
                 '''
@@ -656,7 +591,7 @@ def translate_code(request, Project_Name):
 
             elif translate_from == 'javascript' and translate_to == 'python':
                 # code_translate_to = js2py.translate_js(code_translate_from)
-                '''hard code: 
+                '''hard code:
                 ```
                 var i;
                 for (i = 0; i < 5; i += 1) {
@@ -674,23 +609,23 @@ def translate_code(request, Project_Name):
                     code_translate_to = "for i in range(5):\n    print(i)"
 
             elif translate_from == 'python' and translate_to == 'cpp':
-                '''hard code: 
+                '''hard code:
                 ```
-                for i in range(5): 
+                for i in range(5):
                     print(i)
                 ```
                 '''
                 code_translate_from_formatted = re.sub(
                     r"[\n\t\s]*", "", code_translate_from)
                 # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
-                if code_translate_from_formatted != "foriinrange(5):print(i)}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i++) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
             elif translate_from == 'cpp' and translate_to == 'python':
                 '''
-                hard code: 
+                hard code:
                 ```
                 #include <iostream>
                 using namespace std;
@@ -711,22 +646,22 @@ def translate_code(request, Project_Name):
                     code_translate_to = "for i in range(5):\n    print(i)"
 
             elif translate_from == 'python' and translate_to == 'c':
-                '''hard code: 
+                '''hard code:
                 ```
-                for i in range(5): 
+                for i in range(5):
                     print(i)
                 ```
                 '''
                 code_translate_from_formatted = re.sub(
                     r"[\n\t\s]*", "", code_translate_from)
                 # if code_translate_from_formatted != "vari;for(i=0;i<5;i+=1){console.log(i);}":
-                if code_translate_from_formatted != "foriinrange(5):print(i)}":
+                if code_translate_from_formatted != "foriinrange(5):print(i)":
                     code_translate_to = "ERROR: Try again with a different code snippet. This code snippet is not supported."
                 else:
                     code_translate_to = "#include <stdio.h>\n\nint main() {\n    int i;\n    for (i = 0; i < 5; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}"
 
             elif translate_from == 'c' and translate_to == 'python':
-                '''hard code: 
+                '''hard code:
                 ```
                 #include <stdio.h>
 
@@ -746,7 +681,7 @@ def translate_code(request, Project_Name):
                     code_translate_to = 'print("Hello World!")'
 
             elif translate_from == 'javascript' and translate_to == 'cpp':
-                '''hard code: 
+                '''hard code:
                 ```
                 var i;
                 for (i = 0; i < 5; i += 1) {
@@ -763,7 +698,7 @@ def translate_code(request, Project_Name):
                     code_translate_to = "#include <iostream>\nusing namespace std;\n\nint main() {\n  for (int i = 0; i < 5; i += 1) {\n    cout << i << endl;\n  }\n  return 0;\n}"
 
             elif translate_from == 'cpp' and translate_to == 'javascript':
-                '''hard code: 
+                '''hard code:
                 ```
                 #include <iostream>
                 using namespace std;
@@ -864,28 +799,16 @@ def userlogout(request):
 
 
 def make_champion_model(request, Project_Name):
-    
     new_cham_model_id = request.POST.get('model_id')
     comments = request.POST.get('comments')
-    
+    approved_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
     try:
         Model_List.objects.filter(Model_ID=new_cham_model_id).update(
-            Approve_Status=2)
-        Model_List.objects.filter(Model_ID=new_cham_model_id).update(
-            Change_Comments=comments)
+            Approve_Status='Pending', Change_Comments=comments)
+
         return JsonResponse({'success': True})
     except Exception as e:
         print(e)
         return JsonResponse({'success': False})
-    
-    # try:
-    #     with connection.cursor() as cursor:
-    #         query = f"UPDATE core_model_list SET Approve_Status = 2 WHERE model_id = {new_cham_model_id};"
-    #         cursor.execute(query)
-    #         connection.commit()
-    #     return JsonResponse({'success': True})
-    # except Exception as e:
-    #     print(e)
-    #     return JsonResponse({'success': False})
 
     
