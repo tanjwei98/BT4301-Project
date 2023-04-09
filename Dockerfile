@@ -6,7 +6,7 @@ WORKDIR /code
 
 COPY requirements.txt .
 
-ENV DB_PORT=5432
+ENV DB_PORT=5433
 ENV POSTGRES_HOST=db
 
 RUN pip install -r requirements.txt
