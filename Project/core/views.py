@@ -131,7 +131,7 @@ def addModel(request, Project_Name):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
-    Approve_User = Users.objects.get(pk='john@mlops.com')
+    Approve_User = Users.objects.get(pk='shawn@mlops.com')
     # for now, hardcode this. have to change to actual user id when login page is done.
     # user = Users.objects.get(pk='hannah@mlops.com')
     print(user_id)
@@ -169,14 +169,14 @@ def addModel(request, Project_Name):
         data = pd.DataFrame({'Date': dates})
 
         # generate random data for each column
-        data['AUC'] = np.random.normal(loc=0.77, scale=0.001, size=len(dates))
-        data['KS'] = np.random.normal(loc=0.6, scale=0.1, size=len(dates))
+        data['AUC'] = np.random.normal(loc=0.8, scale=0.05, size=len(dates))
+        data['KS'] = np.random.normal(loc=0.76, scale=0.1, size=len(dates))
         data['LogLoss'] = np.random.normal(
-            loc=0.65, scale=0.01, size=len(dates))
+            loc=0.1, scale=0.05, size=len(dates))
         data['Gini_NormI'] = np.random.normal(
-            loc=0.2, scale=0.01, size=len(dates))
+            loc=0.8, scale=0.05, size=len(dates))
         data['Rate_Top10'] = np.random.normal(
-            loc=0.9, scale=0.01, size=len(dates))
+            loc=0.9, scale=0.05, size=len(dates))
         data['Location'] = "West"
 
         # create the other data frames with different locations
@@ -374,10 +374,15 @@ def challenger_chart(request, Project_Name):
     metric = request.GET.get('metric', "AUC")
     print(metric)
     with connection.cursor() as cursor:
-        query = 'SELECT "Date", "Model_ID_id", AVG("{}") FROM core_model_accuracy GROUP BY "Date", "Model_ID_id" ORDER BY "Date", "Model_ID_id"'.format(
-            metric)
+        query = '''
+        SELECT "Date", "Model_ID_id", AVG("{}"), (SELECT "Model_name" FROM core_model_list WHERE "Model_ID" = "Model_ID_id") as newcolumn
+        FROM core_model_accuracy 
+        GROUP BY "Date", "Model_ID_id" 
+        ORDER BY "Date", "Model_ID_id"
+        '''.format(metric)
         cursor.execute(query)
         data = cursor.fetchall()
+
 
     model_data = {}
     date_labels = []
@@ -385,10 +390,11 @@ def challenger_chart(request, Project_Name):
         date = row[0]
         model_id = row[1]
         auc = row[2]
+        model_name = row[3]
 
         if model_id not in model_data:
             model_data[model_id] = {
-                'label': 'Model {}'.format(model_id), 'data': []}
+                'label': model_name, 'data': []}
 
         model_data[model_id]['data'].append(auc)
 

@@ -583,7 +583,7 @@
           return Math.round((Math.random() * stdDev * 2) + (mean - stdDev));
       }
 
-      document.getElementById('response-time').innerText = generateRandomValue(300, 5) + ' ms';
+      document.getElementById('response-time').innerText = generateRandomValue(80, 5) + ' ms';
       document.getElementById('execution-time').innerText = generateRandomValue(90, 3) + ' ms';
       document.getElementById('data-error-rate').innerText = generateRandomValue(2, 0.1) + '%';
       document.getElementById('system-error-rate').innerText = generateRandomValue(2, 0.1) + '%';
