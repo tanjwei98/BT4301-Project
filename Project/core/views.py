@@ -131,7 +131,7 @@ def addModel(request, Project_Name):
     datasetId = request.POST.get('datasetId')
     current_datetime = datetime.strftime(timezone.now(), '%Y-%m-%d %H:%M:%S%z')
 
-    Approve_User = Users.objects.get(pk='shawn@mlops.com')
+    Approve_User = Users.objects.get(pk='john@mlops.com')
     # for now, hardcode this. have to change to actual user id when login page is done.
     # user = Users.objects.get(pk='hannah@mlops.com')
     print(user_id)

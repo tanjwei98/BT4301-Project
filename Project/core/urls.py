@@ -5,15 +5,9 @@ from django.views.generic import RedirectView
 from . import views
 
 urlpatterns = [
-    path('main/', views.index, name='main'),
-    path('form/', views.form, name='form'),
-    path('card/', views.card, name='card'),
-    path('chart/', views.chart, name='chart'),
-    path('button/', views.button, name='button'),
-    path('modal/', views.modal, name='modal'),
-    path('table/', views.table, name='table'),
+    path('login/', views.userlogin, name='login'),
+    path('logout/', views.userlogout, name = 'logout'),
     path('deployment/', views.deployment, name = 'deployment'),
-    #path(r'overview/?P<model_id>[a-z0-9]*/>', views.overview, name = 'overview'),
     path('overview/<Project_Name>/', views.overview, name = 'overview'),
     path('overview/<model_name>/approve-model/', views.approveModel, name = 'approveModel'),
     path('accuracy/<Project_Name>/', views.accuracy, name = 'accuracy'),
@@ -28,15 +22,9 @@ urlpatterns = [
     path('challengers/<Project_Name>/modelRegistry/get_dataset_info/', views.get_dataset_info, name = 'get_dataset_info'),
     path('challengers/<Project_Name>/challenger_chart', views.challenger_chart, name = 'challenger_charts'),
     path('codeEditor2/', views.codeEditor2, name = 'codeEditor2'),
-    # path('mregistry/', views.mregistry, name = 'mregistry'),
-    #path('login/', views.loginpage, name='loginpage'),
-    path('login/', views.userlogin, name='login'),
-    path('logout/', views.userlogout, name = 'logout'),
     path('challengers/<Project_Name>/modelRegistry/translate/', views.translate_code, name='translate_code'), # Code porting
     path('challengers/<Project_Name>/modelRegistry/add-model/', views.addModel, name='addModel'), # Add model into database
-    # path('saveas/<str:filename>',views.save_saved, name='save_saved'),
     path('challengers/<Project_Name>/saveas/',views.save_saved, name='save_saved'),
-    # path('save',views.save),
     path('challengers/<Project_Name>/make_champion_model/',views.make_champion_model, name='make_champion'),
     path("codeEditor2/run_code/", views.run_code, name="run_code")
     ]
